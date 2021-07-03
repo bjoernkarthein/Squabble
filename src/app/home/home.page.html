@@ -1,12 +1,7 @@
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+  <ion-header>
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">{{ this.courseName }} (<a [href]="this.courseUrl">Open in moodle</a>)</ion-title>
     </ion-toolbar>
   </ion-header>
-
-  <div id="container">
-    <strong>Basic Setup</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
 </ion-content>
