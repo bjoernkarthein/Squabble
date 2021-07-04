@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BackendService } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 
 @Component({
@@ -12,14 +13,24 @@ export class HomePage {
   public courseName: string;
   public courseUrl: string;
 
-  constructor(private moodleService: MoodleService) {
+  constructor(
+    private moodleService: MoodleService,
+    private backendService: BackendService
+  ) {
     this.getMoodleCourseInfo();
+    this.testBackendSerice();
   }
 
-  public getMoodleCourseInfo() {
+  private getMoodleCourseInfo() {
     this.moodleService.getCourseInfo().subscribe(info => {
       this.courseName = info.sitename;
       this.courseUrl = info.siteurl;
+    });
+  }
+
+  private testBackendSerice() {
+    this.backendService.getAuthors().subscribe(authors => {
+      console.log(authors);
     });
   }
 
