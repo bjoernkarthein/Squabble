@@ -1,7 +1,9 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title size="large">{{ this.courseName }} (<a [href]="this.courseUrl">Open in moodle</a>)</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [fullscreen]="true">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title size="large">{{ this.courseName }} (<a [href]="this.courseUrl">Open in moodle</a>)</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div #questions></div>
 </ion-content>
