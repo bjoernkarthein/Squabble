@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -13,28 +13,36 @@ export class BackendService {
     return this.http.get<any>('/api');
   }
 
-  public getAuthors() {
-    return this.http.get<any>('/api/authors');
-  }
-
   public getUsers() {
     return this.http.get<any>('/api/users');
   }
 
   public getUser(id: number) {
-    return this.http.get<any>('/api/users');
+    return this.http.get<any>('/api/users/' + id);
   }
 
   public createUser(user: User) {
-    // Check if user already exists
-    this.http.get<any>('api/users/' + user.id);
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    this.getUser(user.id).subscribe(response => {
+      if (response.length > 0) {
+        console.log(user.id);
+        console.log('here');
+        return;
+      }
+      this.http.post('api/users', { user }, httpOptions);
+    });
   }
 }
 
 export interface User {
   id: number;
-  email: string;
-  firstname: string;
-  lastname: string;
-  username: string;
+  email?: string;
+  firstname?: string;
+  lastname?: string;
+  username?: string;
 }

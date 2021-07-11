@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, ViewChild, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/services/auth/auth.service';
 import { BackendService } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 
@@ -17,10 +19,10 @@ export class HomePage {
 
   constructor(
     private moodleService: MoodleService,
-    private backendService: BackendService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.getMoodleSiteInfo();
-    this.testBackendSerice();
     this.moodleService.getCourses().subscribe(courses => {
       this.course = courses[1];
       this.courseName = this.course.fullname;
@@ -29,16 +31,15 @@ export class HomePage {
     });
   }
 
+  public async logout() {
+    await this.authService.logout();
+    this.router.navigateByUrl('/', { replaceUrl: true });
+  }
+
   private getMoodleSiteInfo() {
     this.moodleService.getSiteInfo().subscribe(info => {
       console.log(info);
       this.courseUrl = info.siteurl;
-    });
-  }
-
-  private testBackendSerice() {
-    this.backendService.getAuthors().subscribe(authors => {
-      console.log(authors);
     });
   }
 

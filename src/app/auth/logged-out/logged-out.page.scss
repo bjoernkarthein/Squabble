@@ -1,7 +1,3 @@
-ion-toolbar {
-  padding: 0 .5rem;
-}
-
 #container {
   text-align: center;
 
@@ -10,9 +6,9 @@ ion-toolbar {
   right: 0;
   top: 30%;
   transform: translateY(-50%);
-
-  ion-row {
-    display: flex;
-    justify-content: center;
-  }
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

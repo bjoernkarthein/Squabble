@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 import { BackendService, User } from '../backend/backend.service';
 import { MoodleService } from '../moodle/moodle.service';
 
@@ -10,20 +10,25 @@ import { MoodleService } from '../moodle/moodle.service';
 export class AuthService {
 
   public currentUser: User;
+  isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
 
-  constructor(private http: HttpClient,
-              private router: Router,
-              private moodleService: MoodleService,
-              private backendService: BackendService) { }
+  constructor(
+    private router: Router,
+    private moodleService: MoodleService,
+    private backendService: BackendService) {
+    this.currentUser = { id: -1 };
+  }
 
   public login(form) {
     this.moodleService.getUsers('email', form.email).subscribe(response => {
-      console.log(response);
+
       const user = response.users[0];
-      if(!user) {
+      if (!user) {
+        // User not registered for given moodle instance
         return;
       }
 
+      // Create user in database and navigate to home screen if successful
       this.currentUser.id = user.id;
       this.currentUser.email = user.email;
       this.currentUser.firstname = user.firstname;
@@ -31,7 +36,12 @@ export class AuthService {
       this.currentUser.username = user.username;
 
       this.backendService.createUser(this.currentUser);
+      this.isAuthenticated.next(true);
       this.router.navigateByUrl('/home');
     });
+  }
+
+  public logout() {
+    this.isAuthenticated.next(false);
   }
 }
