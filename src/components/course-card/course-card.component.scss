@@ -1,0 +1,11 @@
+ion-card {
+  width: 20rem;
+  height: 12rem;
+  cursor: pointer;
+
+  ion-card-content {
+    height: 4rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

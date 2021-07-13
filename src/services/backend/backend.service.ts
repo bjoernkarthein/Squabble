@@ -30,8 +30,6 @@ export class BackendService {
 
     this.getUser(user.id).subscribe(response => {
       if (response.length > 0) {
-        console.log(user.id);
-        console.log('here');
         return;
       }
       this.http.post('api/users', { user }, httpOptions);

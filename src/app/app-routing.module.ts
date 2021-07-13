@@ -21,6 +21,11 @@ const routes: Routes = [
     path: 'logged-out',
     loadChildren: () => import('./auth/logged-out/logged-out.module').then(m => m.LoggedOutPageModule)
   },
+  {
+    path: 'mycourses/:id',
+    loadChildren: () => import('./course-detail/course-detail.module').then( m => m.CourseDetailPageModule),
+    canLoad: [AuthGuard]
+  },
 
 
 ];

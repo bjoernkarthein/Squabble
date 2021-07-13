@@ -3,11 +3,18 @@
     <ion-thumbnail slot="start">
       <img src="../assets/logo.png">
     </ion-thumbnail>
-    <ion-title size="large">{{ this.courseName }} (<a [href]="this.courseUrl">Open in moodle</a>)</ion-title>
+    <ion-title size="large">Competitive Quiz (<a [href]="this.moodleUrl">Open Moodle</a>)</ion-title>
     <ion-label slot="end" (click)="this.logout()">Log out</ion-label>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div #questions></div>
+  <div id="courses">
+    <app-course-card
+      *ngFor="let course of this.courses"
+      [courseName]="course.displayname"
+      [courseDesc]="course.summary"
+      [routerLink]="'/mycourses/' + course.id"
+    ></app-course-card>
+  </div>
 </ion-content>

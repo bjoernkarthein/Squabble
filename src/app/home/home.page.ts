@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/services/auth/auth.service';
-import { BackendService } from 'src/services/backend/backend.service';
+import { BackendService, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 
 @Component({
@@ -14,8 +14,9 @@ export class HomePage {
   @ViewChild('questions') questions: ElementRef;
 
   public courseName: string;
-  public courseUrl: string;
-  public course;
+  public moodleUrl: string;
+  public courses;
+  public currentUser: User = { id: -1 };
 
   constructor(
     private moodleService: MoodleService,
@@ -23,12 +24,7 @@ export class HomePage {
     private router: Router
   ) {
     this.getMoodleSiteInfo();
-    this.moodleService.getCourses().subscribe(courses => {
-      this.course = courses[1];
-      this.courseName = this.course.fullname;
-      console.log(this.course);
-      this.getQuizzes(this.course.id);
-    });
+    this.getCourses();
   }
 
   public async logout() {
@@ -38,46 +34,46 @@ export class HomePage {
 
   private getMoodleSiteInfo() {
     this.moodleService.getSiteInfo().subscribe(info => {
-      console.log(info);
-      this.courseUrl = info.siteurl;
+      this.moodleUrl = info.siteurl;
     });
   }
 
-  private getCourse() {
-    this.moodleService.getCourses().subscribe(courses => {
-      this.course = courses[0];
-      console.log(this.course);
+  private getCourses() {
+    this.currentUser.id = this.authService.currentUserId;
+    this.moodleService.getCoursesForUser(this.currentUser.id).subscribe(courses => {
+      this.courses = courses;
     });
   }
 
-  private getQuizzes(courseId: number) {
-    this.moodleService.getQuizzesFromCourse(courseId).subscribe(response => {
-      console.log(response);
-      const quizzes = response.quizzes;
-      for (const quiz of quizzes) {
-        console.log(quiz.id);
-        this.getQuestions(quiz.id);
-      }
-    });
-  }
+  // private getCourse() {
+  //   this.moodleService.getCourses().subscribe(courses => {
+  //     this.course = courses[0];
+  //   });
+  // }
 
-  private getQuestions(quizId: number) {
-    this.moodleService.startAttemptForQuiz(quizId).subscribe(response => {
-      console.log(response);
-      const attempt = response.attempt;
-      const attemptId = attempt.id;
+  // private getQuizzes(courseId: number) {
+  //   this.moodleService.getQuizzesFromCourse(courseId).subscribe(response => {
+  //     const quizzes = response.quizzes;
+  //     for (const quiz of quizzes) {
+  //       this.getQuestions(quiz.id);
+  //     }
+  //   });
+  // }
 
-      this.moodleService.finishAttemptForQuiz(attempt.id).subscribe(r => {
-        console.log(r);
-        this.moodleService.getFinishedQuizInfo(attemptId).subscribe(re => {
-          console.log(re);
-          const questions = re.questions;
-          for (const question of questions) {
-            this.questions.nativeElement.innerHTML += question.html;
-          }
-        });
-      });
-    });
-  }
+  // private getQuestions(quizId: number) {
+  //   this.moodleService.startAttemptForQuiz(quizId).subscribe(response => {
+  //     const attempt = response.attempt;
+  //     const attemptId = attempt.id;
+
+  //     this.moodleService.finishAttemptForQuiz(attempt.id).subscribe(r => {
+  //       this.moodleService.getFinishedQuizInfo(attemptId).subscribe(re => {
+  //         const questions = re.questions;
+  //         for (const question of questions) {
+  //           this.questions.nativeElement.innerHTML += question.html;
+  //         }
+  //       });
+  //     });
+  //   });
+  // }
 
 }

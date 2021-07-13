@@ -29,8 +29,20 @@ export class MoodleService {
    *
    * @returns List of all created courses
    */
-  public getCourses() {
+  public getAllCourses() {
     return this.http.get<any>(this.getRequestUrl(this.webServiceUserToken, 'core_course_get_courses', 'json'));
+  }
+
+  public getCourseById(courseId: string) {
+    let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'core_course_get_courses', 'json');
+    reqUrl += '&options[ids][0]=' + courseId;
+    return this.http.get<any>(reqUrl);
+  }
+
+  public getCourseContent(courseId: string) {
+    let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'core_course_get_contents', 'json');
+    reqUrl += '&courseid=' + courseId;
+    return this.http.get<any>(reqUrl);
   }
 
   /**
@@ -39,7 +51,7 @@ export class MoodleService {
    * @param courseId The id of the course the quizzes should be loaded from
    * @returns A list of all quizzes in this course
    */
-  public getQuizzesFromCourse(courseId: number) {
+  public getQuizzesFromCourse(courseId: string) {
     let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'mod_quiz_get_quizzes_by_courses', 'json');
     reqUrl += '&courseids[0]=' + courseId;
     return this.http.get<any>(reqUrl);
@@ -119,6 +131,12 @@ export class MoodleService {
     let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'core_user_get_users', 'json');
     reqUrl += '&criteria[0][key]=' + key;
     reqUrl += '&criteria[0][value]=' + value;
+    return this.http.get<any>(reqUrl);
+  }
+
+  public getCoursesForUser(userId: number) {
+    let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'core_enrol_get_users_courses', 'json');
+    reqUrl += '&userid=' + userId;
     return this.http.get<any>(reqUrl);
   }
 
