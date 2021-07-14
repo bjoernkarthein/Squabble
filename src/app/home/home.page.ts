@@ -15,7 +15,7 @@ export class HomePage {
 
   public courseName: string;
   public moodleUrl: string;
-  public courses;
+  public courses = new Map();
   public currentUser: User = { id: -1 };
 
   constructor(
@@ -32,6 +32,19 @@ export class HomePage {
     this.router.navigateByUrl('/', { replaceUrl: true });
   }
 
+  public getUrl(courseId: string, disabled: boolean): string {
+    if(disabled) {
+      return null;
+    } else {
+      return '/mycourses/' + courseId;
+    }
+  }
+
+  public hasQuizzes(courseId: number): boolean {
+    const course = this.courses.get(courseId);
+    return course.quizCount > 0;
+  }
+
   private getMoodleSiteInfo() {
     this.moodleService.getSiteInfo().subscribe(info => {
       this.moodleUrl = info.siteurl;
@@ -39,9 +52,18 @@ export class HomePage {
   }
 
   private getCourses() {
-    this.currentUser.id = this.authService.currentUserId;
-    this.moodleService.getCoursesForUser(this.currentUser.id).subscribe(courses => {
-      this.courses = courses;
+    this.moodleService.getCoursesForUser(4).subscribe(courses => {
+      for(const course of courses) {
+        const elem: Course = {
+          title: course.displayname,
+          description: course.summary,
+        };
+        this.moodleService.getQuizzesFromCourse(course.id).subscribe(res => {
+          const quizzes = res.quizzes;
+          elem.quizCount = quizzes.length;
+          this.courses.set(course.id, elem);
+        });
+      }
     });
   }
 
@@ -76,4 +98,10 @@ export class HomePage {
   //   });
   // }
 
+}
+
+interface Course {
+  title: string;
+  description: string;
+  quizCount?: number;
 }

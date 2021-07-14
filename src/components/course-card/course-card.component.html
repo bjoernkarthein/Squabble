@@ -1,6 +1,6 @@
-<ion-card button>
+<ion-card button [disabled]="this.disabled">
   <ion-card-header>
-    <ion-card-subtitle>Course</ion-card-subtitle>
+    <ion-card-subtitle>{{this.type}}</ion-card-subtitle>
     <ion-card-title>{{this.courseName}}</ion-card-title>
   </ion-card-header>
 

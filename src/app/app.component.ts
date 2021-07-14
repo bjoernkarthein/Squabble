@@ -12,7 +12,5 @@ export class AppComponent {
     this.initializeApp();
   }
 
-  private initializeApp(): void {
-    this.authService.initAuthService();
-  }
+  private initializeApp(): void {}
 }

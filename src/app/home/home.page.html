@@ -11,10 +11,12 @@
 <ion-content [fullscreen]="true">
   <div id="courses">
     <app-course-card
-      *ngFor="let course of this.courses"
-      [courseName]="course.displayname"
-      [courseDesc]="course.summary"
-      [routerLink]="'/mycourses/' + course.id"
+      *ngFor="let course of this.courses | keyvalue"
+      [courseName]="course.value.title"
+      [courseDesc]="course.value.description"
+      [type]="'Course'"
+      [disabled]="!this.hasQuizzes(course.key)"
+      [routerLink]="this.getUrl(course.key, !this.hasQuizzes(course.key))"
     ></app-course-card>
   </div>
 </ion-content>

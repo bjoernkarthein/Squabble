@@ -5,5 +5,13 @@
 </ion-header>
 
 <ion-content>
-  <div #questions></div>
+  <div id="courses">
+    <app-course-card
+      *ngFor="let quiz of this.quizzes"
+      [courseName]="quiz.name"
+      [courseDesc]="quiz.intro"
+      [type]="'Quiz'"
+      [disabled]="true"
+    ></app-course-card>
+  </div>
 </ion-content>

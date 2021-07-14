@@ -9,3 +9,7 @@ ion-card {
     text-overflow: ellipsis;
   }
 }
+
+.unclickable {
+  pointer-events: none;
+}

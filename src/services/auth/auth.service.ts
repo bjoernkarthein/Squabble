@@ -20,10 +20,11 @@ export class AuthService {
     private moodleService: MoodleService,
     private backendService: BackendService,
     private storage: Storage) {
-    this.currentUser = { id: -1 };
+    this.initAuthService();
   }
 
   public async initAuthService() {
+    this.currentUser = { id: -1 };
     await this.storage.create();
     this.isLoggedIn();
   }

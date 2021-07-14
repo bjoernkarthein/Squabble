@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MoodleService } from 'src/services/moodle/moodle.service';
+import { QuestionParserService } from 'src/services/parser/question-parser.service';
 
 @Component({
   selector: 'app-course-detail',
@@ -12,10 +13,12 @@ export class CourseDetailPage implements OnInit {
 
   public courseInfo = {};
   public courseContent = {};
+  public quizzes;
 
   constructor(
     private route: ActivatedRoute,
-    private moodleService: MoodleService
+    private moodleService: MoodleService,
+    private parserService: QuestionParserService
   ) { }
 
   ngOnInit() {
@@ -37,10 +40,7 @@ export class CourseDetailPage implements OnInit {
 
   private getQuizzes(courseId: string) {
     this.moodleService.getQuizzesFromCourse(courseId).subscribe(response => {
-      const quizzes = response.quizzes;
-      for (const quiz of quizzes) {
-        this.getQuestions(quiz.id);
-      }
+      this.quizzes = response.quizzes;
     });
   }
 
@@ -55,6 +55,8 @@ export class CourseDetailPage implements OnInit {
           for (const question of questions) {
             this.questions.nativeElement.innerHTML += question.html;
           }
+          const field = this.parserService.getRightAnswer();
+          console.log(field);
         });
       });
     });

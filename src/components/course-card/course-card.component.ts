@@ -12,6 +12,8 @@ export class CourseCardComponent implements AfterViewInit {
   @Input() courseName: string;
   @Input() courseDesc: string;
   @Input() courseImage: string;
+  @Input() type: string;
+  @Input() disabled: boolean;
 
   constructor() { }
 
