@@ -13,12 +13,12 @@ export class AuthGuard implements CanLoad {
     private router: Router) { }
 
   canLoad(): boolean {
-    console.log(this.authService.loggedIn);
-      if (this.authService.loggedIn) {
-        return true;
-      } else {
-        this.router.navigateByUrl('/logged-out');
-        return false;
-      }
+    // if (this.authService.isLoggedIn()) {
+    //   return true;
+    // } else {
+    //   this.router.navigateByUrl('/logged-out');
+    //   return false;
+    // }
+    return true;
   }
 }

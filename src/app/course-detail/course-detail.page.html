@@ -7,11 +7,11 @@
 <ion-content>
   <div id="courses">
     <app-course-card
-      *ngFor="let quiz of this.quizzes"
-      [courseName]="quiz.name"
-      [courseDesc]="quiz.intro"
+      *ngFor="let quiz of this.quizzes | keyvalue"
+      [courseName]="quiz.value.title"
+      [courseDesc]="quiz.value.description"
       [type]="'Quiz'"
-      [disabled]="true"
+      [disabled]="!quiz.value.hasQuestions"
     ></app-course-card>
   </div>
 </ion-content>

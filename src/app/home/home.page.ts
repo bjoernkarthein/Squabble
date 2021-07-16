@@ -13,10 +13,8 @@ import { MoodleService } from 'src/services/moodle/moodle.service';
 export class HomePage {
   @ViewChild('questions') questions: ElementRef;
 
-  public courseName: string;
   public moodleUrl: string;
   public courses = new Map();
-  public currentUser: User = { id: -1 };
 
   constructor(
     private moodleService: MoodleService,
@@ -25,10 +23,12 @@ export class HomePage {
   ) {
     this.getMoodleSiteInfo();
     this.getCourses();
+    console.log(this.authService.currentUser);
   }
 
-  public async logout() {
-    await this.authService.logout();
+  public logout() {
+    this.authService.logout();
+    console.log(this.authService.currentUser);
     this.router.navigateByUrl('/', { replaceUrl: true });
   }
 
@@ -52,7 +52,8 @@ export class HomePage {
   }
 
   private getCourses() {
-    this.moodleService.getCoursesForUser(4).subscribe(courses => {
+    const id = this.authService.currentUser.id;
+    this.moodleService.getCoursesForUser(id).subscribe(courses => {
       for(const course of courses) {
         const elem: Course = {
           title: course.displayname,

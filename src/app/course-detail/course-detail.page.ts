@@ -13,7 +13,7 @@ export class CourseDetailPage implements OnInit {
 
   public courseInfo = {};
   public courseContent = {};
-  public quizzes;
+  public quizzes = new Map();
 
   constructor(
     private route: ActivatedRoute,
@@ -40,7 +40,15 @@ export class CourseDetailPage implements OnInit {
 
   private getQuizzes(courseId: string) {
     this.moodleService.getQuizzesFromCourse(courseId).subscribe(response => {
-      this.quizzes = response.quizzes;
+      const quizzes = response.quizzes;
+      for (const quiz of quizzes) {
+        const elem: Quiz = {
+          title: quiz.name,
+          description: quiz.intro,
+          hasQuestions: quiz.hasquestions
+        };
+        this.quizzes.set(quiz.id, elem);
+      }
     });
   }
 
@@ -61,5 +69,10 @@ export class CourseDetailPage implements OnInit {
       });
     });
   }
+}
 
+interface Quiz {
+  title: string;
+  description: string;
+  hasQuestions?: number;
 }

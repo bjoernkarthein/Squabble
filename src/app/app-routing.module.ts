@@ -6,6 +6,7 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
+    canLoad: [AuthGuard]
   },
   {
     path: '',
@@ -22,7 +23,8 @@ const routes: Routes = [
   },
   {
     path: 'mycourses/:id',
-    loadChildren: () => import('./course-detail/course-detail.module').then( m => m.CourseDetailPageModule),
+    loadChildren: () => import('./course-detail/course-detail.module').then(m => m.CourseDetailPageModule),
+    canLoad: [AuthGuard]
   },
 
 

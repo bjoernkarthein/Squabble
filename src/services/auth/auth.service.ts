@@ -11,22 +11,12 @@ import { Storage } from '@ionic/storage';
 export class AuthService {
 
   public currentUser: User;
-  isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
-  public loggedIn: boolean;
-  public currentUserId: number;
 
   constructor(
     private router: Router,
     private moodleService: MoodleService,
-    private backendService: BackendService,
-    private storage: Storage) {
-    this.initAuthService();
-  }
-
-  public async initAuthService() {
+    private backendService: BackendService) {
     this.currentUser = { id: -1 };
-    await this.storage.create();
-    this.isLoggedIn();
   }
 
   public login(form) {
@@ -44,31 +34,18 @@ export class AuthService {
       this.currentUser.firstname = user.firstname;
       this.currentUser.lastname = user.lastname;
       this.currentUser.username = user.username;
+      this.currentUser.loggedIn = true;
 
       this.backendService.createUser(this.currentUser);
-      this.isAuthenticated.next(true);
-      await this.storage.set('loggedIn', true);
-      await this.storage.set('user', user.id);
-      await this.isLoggedIn();
-      await this.getCurrentUserId();
       this.router.navigateByUrl('/home');
     });
   }
 
-  public async logout() {
-    this.isAuthenticated.next(false);
-    await this.storage.remove('loggedIn');
-    await this.storage.remove('user');
-    await this.isLoggedIn();
+  public logout() {
+    this.currentUser.loggedIn = false;
   }
 
-  public async getCurrentUserId() {
-    const id = await this.storage.get('user');
-    this.currentUserId = id;
-  }
-
-  private async isLoggedIn() {
-    const value = await this.storage.get('loggedIn');
-    this.loggedIn = value;
+  public isLoggedIn(): boolean {
+    return this.currentUser.loggedIn;
   }
 }
