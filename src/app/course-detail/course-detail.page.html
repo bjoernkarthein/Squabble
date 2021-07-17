@@ -5,13 +5,15 @@
 </ion-header>
 
 <ion-content>
-  <div id="courses">
+  <h4>Quizzes of this course:</h4>
+  <div id="quizzes">
     <app-course-card
       *ngFor="let quiz of this.quizzes | keyvalue"
       [courseName]="quiz.value.title"
       [courseDesc]="quiz.value.description"
       [type]="'Quiz'"
       [disabled]="!quiz.value.hasQuestions"
+      [routerLink]="this.getUrl(quiz.key, !quiz.value.hasQuestions)"
     ></app-course-card>
   </div>
 </ion-content>

@@ -14,6 +14,7 @@ export class CourseDetailPage implements OnInit {
   public courseInfo = {};
   public courseContent = {};
   public quizzes = new Map();
+  public courseId: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -25,17 +26,25 @@ export class CourseDetailPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    const courseId = this.route.snapshot.paramMap.get('id');
+    this.courseId = this.route.snapshot.paramMap.get('cid');
 
-    this.moodleService.getCourseById(courseId).subscribe(info => {
+    this.moodleService.getCourseById(this.courseId).subscribe(info => {
       this.courseInfo = info[0];
     });
 
-    this.moodleService.getCourseContent(courseId).subscribe(content => {
+    this.moodleService.getCourseContent(this.courseId).subscribe(content => {
       this.courseContent = content[0];
     });
 
-    this.getQuizzes(courseId);
+    this.getQuizzes(this.courseId);
+  }
+
+  public getUrl(quizId: string, disabled: boolean): string {
+    if (disabled) {
+      return null;
+    } else {
+      return '/mycourses/' + this.courseId + '/myquizzes/' + quizId;
+    }
   }
 
   private getQuizzes(courseId: string) {

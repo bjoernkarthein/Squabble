@@ -22,10 +22,15 @@ const routes: Routes = [
     loadChildren: () => import('./auth/logged-out/logged-out.module').then(m => m.LoggedOutPageModule)
   },
   {
-    path: 'mycourses/:id',
+    path: 'mycourses/:cid',
     loadChildren: () => import('./course-detail/course-detail.module').then(m => m.CourseDetailPageModule),
     canLoad: [AuthGuard]
   },
+  {
+    path: 'mycourses/:cid/myquizzes/:qid',
+    loadChildren: () => import('./quiz-detail/quiz-detail.module').then(m => m.QuizDetailPageModule)
+  },
+
 
 
 ];
