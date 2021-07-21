@@ -11,8 +11,6 @@ import { MoodleService } from 'src/services/moodle/moodle.service';
 })
 
 export class HomePage {
-  @ViewChild('questions') questions: ElementRef;
-
   public moodleUrl: string;
   public courses = new Map();
 

@@ -61,23 +61,23 @@ export class CourseDetailPage implements OnInit {
     });
   }
 
-  private getQuestions(quizId: number) {
-    this.moodleService.startAttemptForQuiz(quizId).subscribe(response => {
-      const attempt = response.attempt;
-      const attemptId = attempt.id;
+  // private getQuestions(quizId: number) {
+  //   this.moodleService.startAttemptForQuiz(quizId).subscribe(response => {
+  //     const attempt = response.attempt;
+  //     const attemptId = attempt.id;
 
-      this.moodleService.finishAttemptForQuiz(attempt.id).subscribe(r => {
-        this.moodleService.getFinishedQuizInfo(attemptId).subscribe(re => {
-          const questions = re.questions;
-          for (const question of questions) {
-            this.questions.nativeElement.innerHTML += question.html;
-          }
-          const field = this.parserService.getRightAnswer();
-          console.log(field);
-        });
-      });
-    });
-  }
+  //     this.moodleService.finishAttemptForQuiz(attempt.id).subscribe(r => {
+  //       this.moodleService.getFinishedQuizInfo(attemptId).subscribe(re => {
+  //         const questions = re.questions;
+  //         for (const question of questions) {
+  //           this.questions.nativeElement.innerHTML += question.html;
+  //         }
+  //         const field = this.parserService.getRightAnswer();
+  //         console.log(field);
+  //       });
+  //     });
+  //   });
+  // }
 }
 
 interface Quiz {

@@ -8,9 +8,5 @@ import { AuthService } from 'src/services/auth/auth.service';
 })
 export class AppComponent {
 
-  constructor(private authService: AuthService) {
-    this.initializeApp();
-  }
-
-  private initializeApp(): void {}
+  constructor() {}
 }

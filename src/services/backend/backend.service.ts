@@ -6,6 +6,13 @@ import { Injectable } from '@angular/core';
 })
 export class BackendService {
 
+  private httpOptions = {
+    headers: new HttpHeaders({
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      'Content-Type': 'application/json'
+    })
+  };
+
   constructor(private http: HttpClient) { }
 
   //TODO: Possibly change type any to interface for the important calls?
@@ -22,17 +29,26 @@ export class BackendService {
   }
 
   public createUser(user: User) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    };
-
     this.getUser(user.id).subscribe(response => {
       if (response.length > 0) {
         return;
       }
-      this.http.post('api/users', { user }, httpOptions);
+      this.http.post('/api/users', { user }, this.httpOptions);
+    });
+  }
+
+  public async getAttempt(quizId: string) {
+    return await this.http.get<any>('/api/webuserattempts/' + quizId).toPromise();
+  }
+
+  public async createAttempt(quizId: string, attemptId: number) {
+    const res = await this.getAttempt(quizId);
+    console.log(res);
+    if (res.length > 0) {
+      return;
+    }
+    this.http.post('/api/webuserattempts', { quizId, attemptId }, this.httpOptions).subscribe(response => {
+      console.log(response);
     });
   }
 }

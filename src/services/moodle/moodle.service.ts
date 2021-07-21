@@ -61,24 +61,24 @@ export class MoodleService {
    * Starts a quiz attempt for the given quiz with the user that the token is registered to
    *
    * @param quizId Id of the quiz the attempt should be started for
-   * @returns An object describing the started attempt
+   * @returns
    */
-  public startAttemptForQuiz(quizId: number) {
+  public async startAttemptForQuiz(quizId: string) {
     let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'mod_quiz_start_attempt', 'json');
     reqUrl += '&quizid=' + quizId;
-    return this.http.get<any>(reqUrl);
+    return await this.http.get<any>(reqUrl).toPromise();
   }
 
   /**
    * Finishes the given quiz attempt
    *
    * @param attemptId Id of the attempt to finish
-   * @returns Object with new state of the quiz attempt
+   * @returns
    */
-  public finishAttemptForQuiz(attemptId: number) {
+  public async finishAttemptForQuiz(attemptId: number) {
     let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'mod_quiz_process_attempt', 'json');
     reqUrl += '&attemptid=' + attemptId + '&finishattempt=1';
-    return this.http.get<any>(reqUrl);
+    return await this.http.get<any>(reqUrl).toPromise();
   }
 
   /**

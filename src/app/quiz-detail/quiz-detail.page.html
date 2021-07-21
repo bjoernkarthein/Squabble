@@ -1,7 +1,19 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>quiz-detail</ion-title>
+    <ion-title>{{this.quizTitle}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content>
+  <div id="questions">
+    <!-- <span *ngFor="let question of this.questions | keyvalue">{{question.value.text}}</span> -->
+    <app-general-question
+      *ngFor="let question of this.questions | keyvalue"
+      [questionText]="question.value.text">
+    </app-general-question>
+  </div>
+</ion-content>
+
+<!-- Hidden question container for question parser to be able to search all
+classLists -->
+<div #hiddenQuestions class="noDisplay"></div>
