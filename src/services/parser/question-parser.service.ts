@@ -24,10 +24,10 @@ export class QuestionParserService {
       //     return this.parseCloze(qid);
       //   case Type.DRAG_IMAGE:
       //     return this.parseImage(qid);
-        case Type.DRAG_MARKER:
-          return this.parseMarker(qid);
-        case Type.DRAG_TEXT:
-          return this.parseText(qid);
+      case Type.DRAG_MARKER:
+        return this.parseMarker(qid);
+      case Type.DRAG_TEXT:
+        return this.parseText(qid);
       case Type.NUMERICAL:
         return this.parseNumerical(qid);
       case Type.SHORT_ANSWER:
@@ -82,9 +82,18 @@ export class QuestionParserService {
       id: qid,
       type: Type.MATCH,
       text: qtext,
-      gapText: gText,
+      gapText: [],
       answerOptions: []
     };
+
+    let answer = null;
+    do {
+      answer = document.querySelector('.que.match .answer .text');
+      if (answer) {
+        question.gapText.push(answer.textContent);
+        document.querySelector('.que.match .answer .text').remove();
+      }
+    } while (answer != null);
 
     let aOption = null;
     let i = 1;
@@ -112,6 +121,7 @@ export class QuestionParserService {
 
   private parseMarker(qid: number) {
     const qtext = document.querySelector('.que.ddmarker .content .qtext').textContent;
+    // eslint-disable-next-line @typescript-eslint/dot-notation
     const qimage = document.querySelector('.que.ddmarker .content .dropbackground').attributes['src'].textContent;
 
     const question: DragMarker = {
@@ -270,7 +280,7 @@ interface Match {
   id: number;
   type: Type;
   text: string;
-  gapText: string;
+  gapText: string[];
   answerOptions: string[];
 }
 

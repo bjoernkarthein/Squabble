@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from 'src/components/components.module';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { CommonModule } from '@angular/common';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,7 +22,8 @@ import { CommonModule } from '@angular/common';
     AppRoutingModule,
     HttpClientModule,
     IonicStorageModule.forRoot(),
-    CommonModule
+    CommonModule,
+    BrowserAnimationsModule
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],

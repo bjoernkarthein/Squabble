@@ -1,0 +1,6 @@
+<ion-card cdkDrag>
+  <ion-card-content>
+    <span *ngIf="this.text">{{ this.text }}</span>
+    <img *ngIf="this.image" [src]="this.image" />
+  </ion-card-content>
+</ion-card>

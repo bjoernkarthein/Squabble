@@ -1,14 +1,17 @@
 <ion-header>
   <ion-toolbar>
     <ion-thumbnail slot="start">
-      <img src="../assets/logo.png">
+      <img src="../assets/logo.png" />
     </ion-thumbnail>
-    <ion-title size="large">Competitive Quiz (<a [href]="this.moodleUrl">Open Moodle</a>)</ion-title>
+    <ion-title size="large"
+      >Competitive Quiz (<a [href]="this.moodleUrl">Open Moodle</a>)</ion-title
+    >
     <ion-label slot="end" (click)="this.logout()">Log out</ion-label>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <h4>Your Courses:</h4>
   <div id="courses">
     <app-course-card
       *ngFor="let course of this.courses | keyvalue"
@@ -19,4 +22,6 @@
       [routerLink]="this.getUrl(course.key, !this.hasQuizzes(course.key))"
     ></app-course-card>
   </div>
+
+  <h4>Personal Statistics:</h4>
 </ion-content>

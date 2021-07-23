@@ -6,11 +6,57 @@
 
 <ion-content>
   <div id="questions">
-    <!-- <span *ngFor="let question of this.questions | keyvalue">{{question.value.text}}</span> -->
-    <app-general-question
+    <ng-container
       *ngFor="let question of this.questions | keyvalue"
-      [questionText]="question.value.text">
-    </app-general-question>
+      [ngSwitch]="question.value.type"
+    >
+      <app-true-false-question
+        *ngSwitchCase="'truefalse'"
+        [text]="question.value.text"
+        [questionNumber]="question.key + 1"
+        class="grow"
+      ></app-true-false-question>
+
+      <app-multiple-choice-question
+        *ngSwitchCase="'multichoice'"
+        [text]="question.value.text"
+        [questionNumber]="question.key + 1"
+        [answerOptions]="question.value.answerOptions"
+        [multipleAllowed]="true"
+        class="grow"
+      ></app-multiple-choice-question>
+
+      <app-matching-question
+        *ngSwitchCase="'match'"
+        [text]="question.value.text"
+        [questionNumber]="question.key + 1"
+        [answerOptions]="question.value.answerOptions"
+        [gapText]="question.value.gapText"
+        class="grow"
+      ></app-matching-question>
+
+      <app-short-answer-question
+        *ngSwitchCase="'shortanswer'"
+        [text]="question.value.text"
+        [questionNumber]="question.key + 1"
+        class="grow"
+      ></app-short-answer-question>
+
+      <app-numeric-question
+        *ngSwitchCase="'numerical'"
+        [text]="question.value.text"
+        [questionNumber]="question.key + 1"
+        class="grow"
+      ></app-numeric-question>
+
+      <app-drag-drop-text-question
+        *ngSwitchCase="'ddwtos'"
+        [text]="question.value.text"
+        [questionNumber]="question.key + 1"
+        [answerOptions]="question.value.answerOptions"
+        class="grow"
+      ></app-drag-drop-text-question>
+    </ng-container>
   </div>
 </ion-content>
 

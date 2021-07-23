@@ -1,0 +1,21 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-subtitle>Question {{ this.questionNumber }}</ion-card-subtitle>
+    <ion-card-title>{{ this.text }}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-radio-group>
+        <ion-item>
+          <ion-label>True</ion-label>
+          <ion-radio value="true"></ion-radio>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>False</ion-label>
+          <ion-radio value="false"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+  </ion-card-content>
+</ion-card>

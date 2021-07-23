@@ -1,0 +1,18 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-subtitle>Question {{ this.questionNumber }}</ion-card-subtitle>
+    <ion-card-title>{{ this.text }}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-item *ngFor="let gap of this.gapText">
+      <ion-label>{{ gap }}</ion-label>
+      <ion-select interface="popover" placeholder="Select One">
+        <ion-select-option
+          *ngFor="let option of this.answerOptions"
+          [value]="option"
+          >{{ option }}</ion-select-option
+        >
+      </ion-select>
+    </ion-item>
+  </ion-card-content>
+</ion-card>

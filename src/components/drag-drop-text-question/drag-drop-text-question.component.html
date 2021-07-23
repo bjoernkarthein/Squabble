@@ -1,0 +1,12 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-subtitle>Question {{ this.questionNumber }}</ion-card-subtitle>
+    <ion-card-title>{{ this.text }}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <app-draggable
+      *ngFor="let option of this.answerOptions"
+      [text]="option"
+    ></app-draggable>
+  </ion-card-content>
+</ion-card>

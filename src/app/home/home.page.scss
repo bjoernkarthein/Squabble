@@ -1,5 +1,5 @@
 ion-toolbar {
-  padding: 0 .8rem 0 .4rem;
+  padding: 0 0.8rem 0 0.4rem;
 
   ion-label {
     text-decoration: underline;
@@ -9,10 +9,12 @@ ion-toolbar {
 
 #courses {
   margin-top: 1rem;
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
   width: 100%;
   display: flex;
   flex-wrap: wrap;
 }
 
-
+h4 {
+  margin: 1.5rem 0 0 1.5rem;
+}

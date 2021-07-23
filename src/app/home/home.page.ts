@@ -31,7 +31,7 @@ export class HomePage {
   }
 
   public getUrl(courseId: string, disabled: boolean): string {
-    if(disabled) {
+    if (disabled) {
       return null;
     } else {
       return '/mycourses/' + courseId;
@@ -46,13 +46,14 @@ export class HomePage {
   private getMoodleSiteInfo() {
     this.moodleService.getSiteInfo().subscribe(info => {
       this.moodleUrl = info.siteurl;
+      this.moodleUrl += '/my';
     });
   }
 
   private getCourses() {
     const id = this.authService.currentUser.id;
     this.moodleService.getCoursesForUser(id).subscribe(courses => {
-      for(const course of courses) {
+      for (const course of courses) {
         const elem: Course = {
           title: course.displayname,
           description: course.summary,
@@ -65,37 +66,6 @@ export class HomePage {
       }
     });
   }
-
-  // private getCourse() {
-  //   this.moodleService.getCourses().subscribe(courses => {
-  //     this.course = courses[0];
-  //   });
-  // }
-
-  // private getQuizzes(courseId: number) {
-  //   this.moodleService.getQuizzesFromCourse(courseId).subscribe(response => {
-  //     const quizzes = response.quizzes;
-  //     for (const quiz of quizzes) {
-  //       this.getQuestions(quiz.id);
-  //     }
-  //   });
-  // }
-
-  // private getQuestions(quizId: number) {
-  //   this.moodleService.startAttemptForQuiz(quizId).subscribe(response => {
-  //     const attempt = response.attempt;
-  //     const attemptId = attempt.id;
-
-  //     this.moodleService.finishAttemptForQuiz(attempt.id).subscribe(r => {
-  //       this.moodleService.getFinishedQuizInfo(attemptId).subscribe(re => {
-  //         const questions = re.questions;
-  //         for (const question of questions) {
-  //           this.questions.nativeElement.innerHTML += question.html;
-  //         }
-  //       });
-  //     });
-  //   });
-  // }
 
 }
 

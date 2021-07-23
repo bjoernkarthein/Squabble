@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { GeneralQuestionComponent } from './general-question.component';
+import { DragDropTextQuestionComponent } from './drag-drop-text-question.component';
 
-describe('GeneralQuestionComponent', () => {
-  let component: GeneralQuestionComponent;
-  let fixture: ComponentFixture<GeneralQuestionComponent>;
+describe('DragDropTextQuestionComponent', () => {
+  let component: DragDropTextQuestionComponent;
+  let fixture: ComponentFixture<DragDropTextQuestionComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ GeneralQuestionComponent ],
+      declarations: [ DragDropTextQuestionComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GeneralQuestionComponent);
+    fixture = TestBed.createComponent(DragDropTextQuestionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

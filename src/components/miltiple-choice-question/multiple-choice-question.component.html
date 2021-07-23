@@ -1,0 +1,26 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-subtitle>Question {{ this.questionNumber }}</ion-card-subtitle>
+    <ion-card-title>{{ this.text }}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-list>
+      <ion-radio-group *ngIf="!this.multipleAllowed">
+        <ion-item *ngFor="let option of this.answerOptions">
+          <ion-label>{{ option }}</ion-label>
+          <ion-radio [value]="option"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+      <ng-container *ngIf="this.multipleAllowed">
+        <ion-item *ngFor="let option of this.answerOptions; let i = index">
+          <ion-label>{{ option }}</ion-label>
+          <ion-checkbox
+            ngDefaultControl
+            slot="end"
+            [(ngModel)]="this.selected[i]"
+          ></ion-checkbox>
+        </ion-item>
+      </ng-container>
+    </ion-list>
+  </ion-card-content>
+</ion-card>
