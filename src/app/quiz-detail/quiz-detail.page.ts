@@ -31,6 +31,10 @@ export class QuizDetailPage implements OnInit {
     this.getQuizzeQuestions(this.quizId);
   }
 
+  public getQText(input: string): string[] {
+    return input.split('##BLANK##');
+  }
+
   private async getQuizzeQuestions(id: string) {
     const res = await this.getAttemptId(id);
     console.log(res);
