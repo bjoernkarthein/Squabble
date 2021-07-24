@@ -1,3 +1,10 @@
 ion-card-content {
   display: flex;
 }
+
+app-drop-zone {
+  width: 8rem;
+  height: 3rem;
+  border: white dashed 3px;
+  display: inline-block;
+}

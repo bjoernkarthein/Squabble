@@ -9,7 +9,7 @@ import { NumericQuestionComponent } from './numeric-question/numeric-question.co
 import { ShortAnswerQuestionComponent } from './short-answer-question/short-answer-question.component';
 import { DragDropTextQuestionComponent } from './drag-drop-text-question/drag-drop-text-question.component';
 import { DraggableComponent } from './draggable/draggable.component';
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DropZoneComponent } from './drop-zone/drop-zone.component';
 
 @NgModule({
   declarations: [
@@ -20,9 +20,10 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     NumericQuestionComponent,
     ShortAnswerQuestionComponent,
     DragDropTextQuestionComponent,
-    DraggableComponent
+    DraggableComponent,
+    DropZoneComponent
   ],
-  imports: [CommonModule, FormsModule, DragDropModule],
+  imports: [CommonModule, FormsModule],
   exports: [
     CourseCardComponent,
     TrueFalseQuestionComponent,
@@ -31,7 +32,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     NumericQuestionComponent,
     ShortAnswerQuestionComponent,
     DragDropTextQuestionComponent,
-    DraggableComponent
+    DraggableComponent,
+    DropZoneComponent
   ]
 })
 export class ComponentsModule { }

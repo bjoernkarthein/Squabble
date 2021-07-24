@@ -1,7 +1,15 @@
 <ion-card>
   <ion-card-header>
     <ion-card-subtitle>Question {{ this.questionNumber }}</ion-card-subtitle>
-    <ion-card-title>{{ this.text }}</ion-card-title>
+    <ion-card-title>
+      <ng-container *ngFor="let snippet of this.snippets; let i = index">
+        {{ snippet }}
+        <app-drop-zone
+          *ngIf="i < this.snippets.length - 1"
+          (click)="this.handleDropClick($event)"
+        ></app-drop-zone>
+      </ng-container>
+    </ion-card-title>
   </ion-card-header>
   <ion-card-content>
     <app-draggable
