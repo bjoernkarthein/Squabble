@@ -39,26 +39,28 @@ export class QuizDetailPage implements OnInit {
     const res = await this.getAttemptId(id);
     console.log(res);
 
-    this.moodleService.getFinishedQuizInfo(res).subscribe(re => {
+    this.moodleService.getQuizInProgressInformation(res).subscribe(re => {
       const questions = re.questions;
       for (const question of questions) {
         this.handleQuestion(question);
       }
-      console.log(this.questions);
     });
+
+    //TODO: remove and add current attempt in progress id to database
+    await this.moodleService.finishAttemptForQuiz(res);
   }
 
   private async getAttemptId(quizId: string) {
-    const res = await this.backendService.getAttempt(quizId);
-    console.log(res);
-    if (res[0]) {
-      return res[0].attemptid;
-    }
+    // const res = await this.backendService.getAttempt(quizId);
+    // console.log(res);
+    // if (res[0]) {
+    //   return res[0].attemptid;
+    // }
 
     const createdAttempt = await this.moodleService.startAttemptForQuiz(quizId);
-    console.log(createdAttempt);
-    await this.backendService.createAttempt(quizId, createdAttempt.attempt.id);
-    await this.moodleService.finishAttemptForQuiz(createdAttempt.attempt.id);
+    // console.log(createdAttempt);
+    // await this.backendService.createAttempt(quizId, createdAttempt.attempt.id);
+    // await this.moodleService.finishAttemptForQuiz(createdAttempt.attempt.id);
     return createdAttempt.attempt.id;
   }
 
@@ -72,6 +74,7 @@ export class QuizDetailPage implements OnInit {
     };
 
     const parsedQuestion = this.questionParser.parseQuestion(elem);
+    console.log(parsedQuestion);
     this.questions.set(parsedQuestion.id, parsedQuestion);
   }
 }

@@ -56,6 +56,13 @@
         [answerOptions]="question.value.answerOptions"
         class="grow"
       ></app-drag-drop-text-question>
+
+      <app-not-supported-question
+        *ngSwitchDefault
+        [questionNumber]="question.key + 1"
+        [text]="question.value.text"
+        class="grow"
+      ></app-not-supported-question>
     </ng-container>
   </div>
 </ion-content>

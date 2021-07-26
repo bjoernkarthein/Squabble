@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { asNativeElements, Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +24,8 @@ export class QuestionParserService {
       //     return this.parseCloze(qid);
       //   case Type.DRAG_IMAGE:
       //     return this.parseImage(qid);
-      case Type.DRAG_MARKER:
-        return this.parseMarker(qid);
+      // case Type.DRAG_MARKER:
+      //   return this.parseMarker(qid);
       case Type.DRAG_TEXT:
         return this.parseText(qid);
       case Type.NUMERICAL:
@@ -39,20 +39,7 @@ export class QuestionParserService {
     }
   }
 
-  public getNumberField(id: number): string {
-    const numberField = document.getElementsByClassName('no');
-    return numberField[id].textContent;
-  }
-
-  public getQuestionText(id: number, type: string): string {
-    // Do this for all subanswers
-    if (type === Type.CLOZE) {
-      return document.getElementsByClassName('subquestion')[0].nextSibling.textContent;
-    }
-
-    const questionText = document.getElementsByClassName('qtext');
-    return questionText[id] ? questionText[id].textContent : '';
-  }
+  //! ALSO GET ANSWER OPTION VALUES IN CASE OF RELOAD
 
   private parseMultiChoice(qid: number): MultipleChoice {
     const qtext = document.querySelector('.que.multichoice .qtext').textContent;
@@ -60,13 +47,30 @@ export class QuestionParserService {
     const qansweroptions = qanswer.split('\n');
     qansweroptions.pop();
 
+    const qSequenceName = document.querySelector('.que.multichoice .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector('.que.multichoice .content .formulation.clearfix input')['value'];
+    const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
+
+
     const question: MultipleChoice = {
       id: qid,
       type: Type.MULTIPLE_CHOICE,
       text: qtext,
       multipleAllowed: false,
-      answerOptions: qansweroptions
+      answerOptions: qansweroptions,
+      sequenceCheck: qSequence,
+      answerFields: []
     };
+
+    let answer = null;
+    do {
+      answer = document.querySelector('.que.multichoice .answer input');
+      if (answer) {
+        question.answerFields.push({ name: answer['name'], value: '' });
+        document.querySelector('.que.multichoice .answer input').remove();
+        document.querySelector('.que.multichoice .answer input').remove();
+      }
+    } while (answer != null);
 
     document.querySelector('.que.multichoice').remove();
     return question;
@@ -74,9 +78,6 @@ export class QuestionParserService {
 
   private parseMatch(qid: number) {
     const qtext = document.querySelector('.que.match .content .qtext').textContent;
-    let gText = document.querySelector('.que.match .content .rightanswer').textContent;
-    gText = gText.replace('The correct answer is: ', '');
-    gText = gText.replace(/→/g, '##GAP##');
 
     const question: Match = {
       id: qid,
@@ -105,7 +106,7 @@ export class QuestionParserService {
       i++;
     } while (aOption != null);
 
-    document.querySelector('.que.match').remove();
+    // document.querySelector('.que.match').remove();
     return question;
   }
 
@@ -141,7 +142,7 @@ export class QuestionParserService {
       }
     } while (marker != null);
 
-    document.querySelector('.que.ddmarker').remove();
+    // document.querySelector('.que.ddmarker').remove();
     return question;
   }
 
@@ -165,16 +166,26 @@ export class QuestionParserService {
       }
     } while (aOption != null);
 
-    document.querySelector('.que.ddwtos').remove();
+    // document.querySelector('.que.ddwtos').remove();
     return question;
   }
 
   private parseNumerical(qid: number) {
     const qtext = document.querySelector('.que.numerical .content .qtext').textContent;
+
+    const qSequenceName = document.querySelector('.que.numerical .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector('.que.numerical .content .formulation.clearfix input')['value'];
+    const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
+
+    const qAnswerFieldName = document.querySelector('.que.numerical .answer input')['name'];
+    const qAnswerField: Field = { name: qAnswerFieldName, value: '' };
+
     const question: Numerical = {
       id: qid,
       type: Type.NUMERICAL,
-      text: qtext
+      text: qtext,
+      sequenceCheck: qSequence,
+      answerField: qAnswerField
     };
 
     document.querySelector('.que.numerical').remove();
@@ -183,10 +194,20 @@ export class QuestionParserService {
 
   private parseShort(qid: number): ShortAnswer {
     const qtext = document.querySelector('.que.shortanswer .content .qtext').textContent;
-    const question: TrueFalse = {
+
+    const qSequenceName = document.querySelector('.que.shortanswer .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector('.que.shortanswer .content .formulation.clearfix input')['value'];
+    const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
+
+    const qAnswerFieldName = document.querySelector('.que.shortanswer .answer input')['name'];
+    const qAnswerField: Field = { name: qAnswerFieldName, value: '' };
+
+    const question: ShortAnswer = {
       id: qid,
       type: Type.SHORT_ANSWER,
-      text: qtext
+      text: qtext,
+      sequenceCheck: qSequence,
+      answerField: qAnswerField
     };
 
     document.querySelector('.que.shortanswer').remove();
@@ -195,10 +216,19 @@ export class QuestionParserService {
 
   private parseTrueFalse(qid: number): TrueFalse {
     const qtext = document.querySelector('.que.truefalse .content .qtext').textContent;
+    const qSequenceName = document.querySelector('.que.truefalse .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector('.que.truefalse .content .formulation.clearfix input')['value'];
+    const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
+
+    const qAnswerFieldName = document.querySelector('.que.truefalse .answer input')['name'];
+    const qAnswerField: Field = { name: qAnswerFieldName, value: '' };
+
     const question: TrueFalse = {
       id: qid,
       type: Type.TRUE_FALSE,
-      text: qtext
+      text: qtext,
+      sequenceCheck: qSequence,
+      answerField: qAnswerField
     };
 
     document.querySelector('.que.truefalse').remove();
@@ -208,11 +238,10 @@ export class QuestionParserService {
   private parseNotSupported(qid: number, type: string): NotSupported {
     const question: NotSupported = {
       id: qid,
-      text: 'This Question type is currently not supported by this App',
-      type: Type.NOT_SUPPORTED
+      text: 'This Question type is currently not supported by this App (' + type + ')',
     };
 
-    document.querySelector('.que.' + type).remove();
+    // document.querySelector('.que.' + type).remove();
     return question;
   }
 }
@@ -240,7 +269,11 @@ enum Type {
   DRAG_TEXT = 'ddwtos',
   DRAG_MARKER = 'ddmarker',
   DRAG_IMAGE = 'ddimageortext',
-  NOT_SUPPORTED = 'notsupported'
+}
+
+interface Field {
+  name: string;
+  value: string;
 }
 
 interface MultipleChoice {
@@ -249,24 +282,32 @@ interface MultipleChoice {
   text: string;
   multipleAllowed: boolean;
   answerOptions: string[];
+  sequenceCheck: Field;
+  answerFields: Field[];
 }
 
 interface TrueFalse {
   id: number;
   type: Type;
   text: string;
+  sequenceCheck: Field;
+  answerField: Field;
 }
 
 interface Numerical {
   id: number;
   type: Type;
   text: string;
+  sequenceCheck: Field;
+  answerField: Field;
 }
 
 interface ShortAnswer {
   id: number;
   type: Type;
   text: string;
+  sequenceCheck: Field;
+  answerField: Field;
 }
 
 interface Cloze {
@@ -317,6 +358,5 @@ interface DragMarker {
 
 interface NotSupported {
   id: number;
-  type: Type;
   text: string;
 }
