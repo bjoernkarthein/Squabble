@@ -10,6 +10,7 @@ import { ShortAnswerQuestionComponent } from './short-answer-question/short-answ
 import { DragDropTextQuestionComponent } from './drag-drop-text-question/drag-drop-text-question.component';
 import { DraggableComponent } from './draggable/draggable.component';
 import { DropZoneComponent } from './drop-zone/drop-zone.component';
+import { NotSupportedQuestionComponent } from './not-supported-question/not-supported-question.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { DropZoneComponent } from './drop-zone/drop-zone.component';
     ShortAnswerQuestionComponent,
     DragDropTextQuestionComponent,
     DraggableComponent,
-    DropZoneComponent
+    DropZoneComponent,
+    NotSupportedQuestionComponent
   ],
   imports: [CommonModule, FormsModule],
   exports: [
@@ -33,7 +35,8 @@ import { DropZoneComponent } from './drop-zone/drop-zone.component';
     ShortAnswerQuestionComponent,
     DragDropTextQuestionComponent,
     DraggableComponent,
-    DropZoneComponent
+    DropZoneComponent,
+    NotSupportedQuestionComponent
   ]
 })
 export class ComponentsModule { }
