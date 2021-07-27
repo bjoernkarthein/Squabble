@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
 import { BackendService, User } from '../backend/backend.service';
 import { MoodleService } from '../moodle/moodle.service';
-import { Storage } from '@ionic/storage';
+import { Storage } from '@capacitor/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -20,32 +19,51 @@ export class AuthService {
   }
 
   public login(form) {
-    this.moodleService.getUsers('email', form.email).subscribe(async response => {
+    this.moodleService.authenticateAndGetToken(form.email, form.password).subscribe(response => {
 
-      const user = response.users[0];
-      if (!user) {
-        // User not registered for given moodle instance
+      const error = response.error;
+      if (error) {
+        // Wrong login credentials
+        console.log(error);
         return;
       }
 
-      // Create user in database and navigate to home screen if successful
-      this.currentUser.id = user.id;
-      this.currentUser.email = user.email;
-      this.currentUser.firstname = user.firstname;
-      this.currentUser.lastname = user.lastname;
-      this.currentUser.username = user.username;
-      this.currentUser.loggedIn = true;
+      this.currentUser.token = response.token;
 
-      this.backendService.createUser(this.currentUser);
-      this.router.navigateByUrl('/home');
+      this.moodleService.getUsers('email', form.email).subscribe(async res => {
+        const user = res.users[0];
+        // Create user in database and navigate to home screen if successful
+        this.currentUser.id = user.id;
+        this.currentUser.email = user.email;
+        this.currentUser.firstname = user.firstname;
+        this.currentUser.lastname = user.lastname;
+        this.currentUser.username = user.username;
+        this.currentUser.loggedIn = true;
+
+        this.backendService.createUser(this.currentUser);
+
+        await Storage.set({
+          key: 'currentUser',
+          value: JSON.stringify(this.currentUser)
+        });
+        this.router.navigateByUrl('/home');
+      });
     });
   }
 
-  public logout() {
-    this.currentUser.loggedIn = false;
+  public async logout() {
+    await Storage.remove({ key: 'currentUser' });
   }
 
-  public isLoggedIn(): boolean {
-    return this.currentUser.loggedIn;
+  public async isLoggedIn(): Promise<boolean> {
+    const ret = await Storage.get({ key: 'currentUser' });
+    const user = JSON.parse(ret.value);
+    return user.loggedIn;
+  }
+
+  public async getCurrentUser(): Promise<User> {
+    const ret = await Storage.get({ key: 'currentUser' });
+    const user = JSON.parse(ret.value);
+    return user;
   }
 }

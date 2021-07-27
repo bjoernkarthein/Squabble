@@ -1,8 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BackendService } from 'src/services/backend/backend.service';
+import { AuthService } from 'src/services/auth/auth.service';
+import { BackendService, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 import { QuestionParserService, MoodleQuestionType } from 'src/services/parser/question-parser.service';
+import { Storage } from '@capacitor/storage';
 
 @Component({
   selector: 'app-quiz-detail',
@@ -15,20 +17,37 @@ export class QuizDetailPage implements OnInit {
   public quizId: string;
   public quizTitle: string;
   public questions = new Map();
+  private currentUser: User;
 
   constructor(private moodleService: MoodleService,
     private route: ActivatedRoute,
-    private questionParser: QuestionParserService,
-    private backendService: BackendService) { }
+    private authService: AuthService,
+    private questionParser: QuestionParserService) {
+  }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.questions.clear();
+    this.currentUser = await this.authService.getCurrentUser();
+    console.log(this.currentUser);
   }
 
   ionViewWillEnter() {
     this.quizId = this.route.snapshot.paramMap.get('qid');
 
     this.getQuizzeQuestions(this.quizId);
+  }
+
+  public async handleSaveClick(): Promise<void> {
+    const attempt = await this.getAttemptId(this.quizId);
+    await this.moodleService.processQuizAttempt(attempt, this.currentUser.token, [], 0);
+  }
+
+  public async handleSubmitClick(): Promise<void> {
+    const attempt = await this.getAttemptId(this.quizId);
+    await this.moodleService.processQuizAttempt(attempt, this.currentUser.token, [], 1).then(res => {
+      console.log(res);
+    });
+    await Storage.remove({ key: 'inProgressAttempt' });
   }
 
   public getQText(input: string): string[] {
@@ -39,28 +58,22 @@ export class QuizDetailPage implements OnInit {
     const res = await this.getAttemptId(id);
     console.log(res);
 
-    this.moodleService.getQuizInProgressInformation(res).subscribe(re => {
+    this.moodleService.getQuizInProgressInformation(res, this.currentUser.token).subscribe(re => {
       const questions = re.questions;
       for (const question of questions) {
         this.handleQuestion(question);
       }
     });
-
-    //TODO: remove and add current attempt in progress id to database
-    await this.moodleService.finishAttemptForQuiz(res);
   }
 
   private async getAttemptId(quizId: string) {
-    // const res = await this.backendService.getAttempt(quizId);
-    // console.log(res);
-    // if (res[0]) {
-    //   return res[0].attemptid;
-    // }
+    const attemptInProgress = await Storage.get({ key: 'inProgressAttempt' });
+    if (attemptInProgress.value) {
+      return attemptInProgress.value;
+    }
 
-    const createdAttempt = await this.moodleService.startAttemptForQuiz(quizId);
-    // console.log(createdAttempt);
-    // await this.backendService.createAttempt(quizId, createdAttempt.attempt.id);
-    // await this.moodleService.finishAttemptForQuiz(createdAttempt.attempt.id);
+    const createdAttempt = await this.moodleService.startAttemptForQuiz(quizId, this.currentUser.token);
+    await Storage.set({ key: 'inProgressAttempt', value: createdAttempt.attempt.id });
     return createdAttempt.attempt.id;
   }
 

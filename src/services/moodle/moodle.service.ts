@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { Field } from '../parser/question-parser.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,18 @@ export class MoodleService {
 
   private moodleBaseUrl = 'http://localhost/moodle/webservice/rest/server.php?';
   private webServiceUserToken = 'b8f762ebc0e11f9e28d7d1b5ad1f023b';
+  private webServiceName = 'webservices';
 
   constructor(private http: HttpClient) { }
 
   //TODO: Possibly change type any to interface for the important calls?
 
+  public authenticateAndGetToken(username: string, password: string) {
+    let baseUrl = 'http://localhost/moodle/login/token.php?';
+    const escPassword = encodeURIComponent(password);
+    baseUrl += 'username=' + username + '&password=' + escPassword + '&service=' + this.webServiceName;
+    return this.http.get<any>(baseUrl);
+  }
   /**
    * Get the site information for the specified moodle server
    *
@@ -63,8 +71,8 @@ export class MoodleService {
    * @param quizId Id of the quiz the attempt should be started for
    * @returns
    */
-  public async startAttemptForQuiz(quizId: string) {
-    let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'mod_quiz_start_attempt', 'json');
+  public async startAttemptForQuiz(quizId: string, token: string) {
+    let reqUrl = this.getRequestUrl(token, 'mod_quiz_start_attempt', 'json');
     reqUrl += '&quizid=' + quizId;
     return await this.http.get<any>(reqUrl).toPromise();
   }
@@ -75,9 +83,9 @@ export class MoodleService {
    * @param attemptId Id of the attempt to finish
    * @returns
    */
-  public async finishAttemptForQuiz(attemptId: number) {
-    let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'mod_quiz_process_attempt', 'json');
-    reqUrl += '&attemptid=' + attemptId + '&finishattempt=1';
+  public async processQuizAttempt(attemptId: number, token: string, data: Field[], finish: number) {
+    let reqUrl = this.getRequestUrl(token, 'mod_quiz_process_attempt', 'json');
+    reqUrl += '&attemptid=' + attemptId + '&finishattempt=' + finish;
     return await this.http.get<any>(reqUrl).toPromise();
   }
 
@@ -88,8 +96,8 @@ export class MoodleService {
    * @param attemptId The id of the attempt the information should be taken from
    * @returns An array of quiz questions
    */
-  public getQuizInProgressInformation(attemptId: number) {
-    let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'mod_quiz_get_attempt_summary', 'json');
+  public getQuizInProgressInformation(attemptId: number, token: string) {
+    let reqUrl = this.getRequestUrl(token, 'mod_quiz_get_attempt_summary', 'json');
     reqUrl += '&attemptid=' + attemptId;
     return this.http.get<any>(reqUrl);
   }
@@ -101,8 +109,8 @@ export class MoodleService {
    * @param attemptId The id of the attempt the information should be taken from
    * @returns An array of quiz questions
    */
-  public getFinishedQuizInfo(attemptId: number) {
-    let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'mod_quiz_get_attempt_review', 'json');
+  public getFinishedQuizInfo(attemptId: number, token: string) {
+    let reqUrl = this.getRequestUrl(token, 'mod_quiz_get_attempt_review', 'json');
     reqUrl += '&attemptid=' + attemptId;
     return this.http.get<any>(reqUrl);
   }

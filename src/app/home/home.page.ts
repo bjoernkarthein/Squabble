@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, ElementRef } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/services/auth/auth.service';
 import { BackendService, User } from 'src/services/backend/backend.service';
@@ -10,23 +10,26 @@ import { MoodleService } from 'src/services/moodle/moodle.service';
   styleUrls: ['home.page.scss'],
 })
 
-export class HomePage {
+export class HomePage implements OnInit {
   public moodleUrl: string;
   public courses = new Map();
+  private currentUser;
 
   constructor(
     private moodleService: MoodleService,
     private authService: AuthService,
     private router: Router
-  ) {
+  ) { }
+
+  async ngOnInit(): Promise<void> {
+    this.currentUser = await this.authService.getCurrentUser();
+    console.log(this.currentUser);
     this.getMoodleSiteInfo();
     this.getCourses();
-    console.log(this.authService.currentUser);
   }
 
   public logout() {
     this.authService.logout();
-    console.log(this.authService.currentUser);
     this.router.navigateByUrl('/', { replaceUrl: true });
   }
 
@@ -51,7 +54,7 @@ export class HomePage {
   }
 
   private getCourses() {
-    const id = this.authService.currentUser.id;
+    const id = this.currentUser.id;
     this.moodleService.getCoursesForUser(id).subscribe(courses => {
       for (const course of courses) {
         const elem: Course = {

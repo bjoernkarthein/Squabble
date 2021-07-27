@@ -28,7 +28,8 @@ const routes: Routes = [
   },
   {
     path: 'mycourses/:cid/myquizzes/:qid',
-    loadChildren: () => import('./quiz-detail/quiz-detail.module').then(m => m.QuizDetailPageModule)
+    loadChildren: () => import('./quiz-detail/quiz-detail.module').then(m => m.QuizDetailPageModule),
+    canLoad: [AuthGuard]
   },
 
 

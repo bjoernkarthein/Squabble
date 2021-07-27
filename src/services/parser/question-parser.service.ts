@@ -271,7 +271,7 @@ enum Type {
   DRAG_IMAGE = 'ddimageortext',
 }
 
-interface Field {
+export interface Field {
   name: string;
   value: string;
 }

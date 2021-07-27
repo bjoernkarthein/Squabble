@@ -33,7 +33,10 @@ export class BackendService {
       if (response.length > 0) {
         return;
       }
-      this.http.post('/api/users', { user }, this.httpOptions);
+      console.log('here');
+      this.http.post('/api/users', { user }, this.httpOptions).subscribe(res => {
+        console.log(res);
+      });
     });
   }
 
@@ -56,6 +59,7 @@ export class BackendService {
 export interface User {
   id: number;
   email?: string;
+  token?: string;
   firstname?: string;
   lastname?: string;
   username?: string;

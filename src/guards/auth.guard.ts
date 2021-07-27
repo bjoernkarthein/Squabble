@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { CanLoad, Route, Router, UrlSegment, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanLoad, Router } from '@angular/router';
 import { AuthService } from 'src/services/auth/auth.service';
-import { filter, map, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +10,13 @@ export class AuthGuard implements CanLoad {
     private authService: AuthService,
     private router: Router) { }
 
-  canLoad(): boolean {
-    // if (this.authService.isLoggedIn()) {
-    //   return true;
-    // } else {
-    //   this.router.navigateByUrl('/logged-out');
-    //   return false;
-    // }
-    return true;
+  async canLoad(): Promise<boolean> {
+    const currentUser = await this.authService.getCurrentUser();
+    if (currentUser) {
+      return true;
+    } else {
+      this.router.navigateByUrl('/logged-out');
+      return false;
+    }
   }
 }
