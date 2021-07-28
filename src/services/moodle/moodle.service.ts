@@ -83,9 +83,18 @@ export class MoodleService {
    * @param attemptId Id of the attempt to finish
    * @returns
    */
-  public async processQuizAttempt(attemptId: number, token: string, data: Field[], finish: number) {
+  public async processQuizAttempt(attemptId: number, token: string, data: Map<string, Field[]>, finish: number) {
     let reqUrl = this.getRequestUrl(token, 'mod_quiz_process_attempt', 'json');
-    reqUrl += '&attemptid=' + attemptId + '&finishattempt=' + finish;
+    let dataString = '';
+    let index = 0;
+    data.forEach((array: Field[], key: string) => {
+      for (const elem of array) {
+        dataString += '&data[' + index + '][name]=' + elem.name + '&data[' + index + '][value]=' + elem.value;
+        index++;
+      }
+    });
+    reqUrl += '&attemptid=' + attemptId + '&finishattempt=' + finish + dataString;
+    console.log(dataString);
     return await this.http.get<any>(reqUrl).toPromise();
   }
 

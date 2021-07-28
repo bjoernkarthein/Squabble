@@ -46,6 +46,13 @@ export class QuestionParserService {
     const qanswer = document.querySelector('.que.multichoice .answer').textContent;
     const qansweroptions = qanswer.split('\n');
     qansweroptions.pop();
+    const answerOptionsAndSelected: any[] = [];
+    for (const a of qansweroptions) {
+      answerOptionsAndSelected.push({
+        text: a,
+        isChecked: false
+      });
+    }
 
     const qSequenceName = document.querySelector('.que.multichoice .content .formulation.clearfix input')['name'];
     const qSequenceValue = document.querySelector('.que.multichoice .content .formulation.clearfix input')['value'];
@@ -57,7 +64,7 @@ export class QuestionParserService {
       type: Type.MULTIPLE_CHOICE,
       text: qtext,
       multipleAllowed: false,
-      answerOptions: qansweroptions,
+      answerOptions: answerOptionsAndSelected,
       sequenceCheck: qSequence,
       answerFields: []
     };
@@ -228,7 +235,7 @@ export class QuestionParserService {
       type: Type.TRUE_FALSE,
       text: qtext,
       sequenceCheck: qSequence,
-      answerField: qAnswerField
+      answerField: [qAnswerField]
     };
 
     document.querySelector('.que.truefalse').remove();
@@ -281,7 +288,7 @@ interface MultipleChoice {
   type: Type;
   text: string;
   multipleAllowed: boolean;
-  answerOptions: string[];
+  answerOptions: any[];
   sequenceCheck: Field;
   answerFields: Field[];
 }
@@ -291,7 +298,7 @@ interface TrueFalse {
   type: Type;
   text: string;
   sequenceCheck: Field;
-  answerField: Field;
+  answerField: Field[];
 }
 
 interface Numerical {

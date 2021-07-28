@@ -14,6 +14,7 @@
         *ngSwitchCase="'truefalse'"
         [text]="question.value.text"
         [questionNumber]="question.key + 1"
+        (changeAnswer)="this.addAnswer($event, question.value.sequenceCheck, question.value.answerField)"
         class="grow"
       ></app-true-false-question>
 
@@ -23,6 +24,7 @@
         [questionNumber]="question.key + 1"
         [answerOptions]="question.value.answerOptions"
         [multipleAllowed]="true"
+        (changeAnswer)="this.addAnswer($event, question.value.sequenceCheck, question.value.answerFields)"
         class="grow"
       ></app-multiple-choice-question>
 
@@ -66,10 +68,11 @@
     </ng-container>
   </div>
   <div id="footer">
-    <ion-button color="medium" (click)="this.handleSaveClick()"
+    <ion-button size="large" color="medium" (click)="this.handleSaveClick()"
       ><span>Save Attempt</span></ion-button
     >
     <ion-button
+      size="large"
       color="success"
       (click)="this.handleSubmitClick()"
       routerLink="../../"

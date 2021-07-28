@@ -5,7 +5,7 @@
   </ion-card-header>
   <ion-card-content>
     <ion-list>
-      <ion-radio-group>
+      <ion-radio-group (ionChange)="this.radioGroupChange($event)">
         <ion-item>
           <ion-label>True</ion-label>
           <ion-radio value="1"></ion-radio>
