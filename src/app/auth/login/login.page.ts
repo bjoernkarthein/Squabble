@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/services/auth/auth.service';
 
 @Component({
@@ -8,9 +9,15 @@ import { AuthService } from 'src/services/auth/auth.service';
 })
 export class LoginPage implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const loggedIn = await this.authService.isLoggedIn();
+    if (loggedIn) {
+      this.router.navigateByUrl('/home');
+    }
   }
 
   public login(form) {

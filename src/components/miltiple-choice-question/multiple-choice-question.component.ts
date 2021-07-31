@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   templateUrl: './multiple-choice-question.component.html',
   styleUrls: ['./multiple-choice-question.component.scss'],
 })
-export class MultipleChoiceQuestionComponent {
+export class MultipleChoiceQuestionComponent implements OnInit {
 
   @Input() public text: string;
   @Input() public questionNumber: number;
@@ -14,6 +14,10 @@ export class MultipleChoiceQuestionComponent {
   @Output() public changeAnswer = new EventEmitter<string[]>();
 
   constructor() {
+  }
+
+  ngOnInit(): void {
+    this.changeAnswer.emit(['']);
   }
 
   public radioGroupChange(event: any) {

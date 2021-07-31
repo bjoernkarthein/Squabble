@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/services/auth/auth.service';
 import { BackendService, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
@@ -21,7 +21,9 @@ export class QuizDetailPage implements OnInit {
   private currentUser: User;
   private givenAnswers = new Map<string, Field[]>();
 
-  constructor(private moodleService: MoodleService,
+  constructor(
+    private moodleService: MoodleService,
+    private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
     private questionParser: QuestionParserService,
@@ -41,16 +43,17 @@ export class QuizDetailPage implements OnInit {
     this.getQuizzeQuestions(this.quizId);
   }
 
-  public async handleSaveClick(): Promise<void> {
-    const attempt = await this.getAttemptId(this.quizId);
-    const res = await this.moodleService.processQuizAttempt(attempt, this.currentUser.token, this.givenAnswers, 0);
-    if (res.errorcode) {
-      console.log(res.errorcode);
-      this.showToast('An error occured while saving', 'danger');
-      return;
-    }
-    this.showToast('Attempt saved successfully', 'success');
-  }
+  // public async handleSaveClick(): Promise<void> {
+  //   const attempt = await this.getAttemptId(this.quizId);
+  //   const res = await this.moodleService.processQuizAttempt(attempt, this.currentUser.token, this.givenAnswers, 0);
+  //   if (res.errorcode) {
+  //     console.log(res.errorcode);
+  //     this.showToast('An error occured while saving', 'danger');
+  //     return;
+  //   }
+  //   await this.getQuizzeQuestions(this.quizId);
+  //   this.showToast('Attempt saved successfully', 'success');
+  // }
 
   public async handleSubmitClick(): Promise<void> {
     const attempt = await this.getAttemptId(this.quizId);
@@ -79,10 +82,15 @@ export class QuizDetailPage implements OnInit {
     return input.split('##BLANK##');
   }
 
-  public addAnswer(input: string[], sCheck: Field, answers: Field[]) {
+  public addAnswer(input: string[], questionId: number) {
+    const question = this.questions.get(questionId);
+    const answers = question.answerFields;
+    const sCheck = question.sequenceCheck;
+
     const data: Field[] = [];
     data.push(sCheck);
     for (let i = 0; i < input.length; i++) {
+      if (!input[i] || input[i] === '') { return; }
       answers[i].value = input[i];
       data.push(answers[i]);
     }

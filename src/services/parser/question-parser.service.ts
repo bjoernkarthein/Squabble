@@ -86,22 +86,19 @@ export class QuestionParserService {
   private parseMatch(qid: number) {
     const qtext = document.querySelector('.que.match .content .qtext').textContent;
 
+    const qSequenceName = document.querySelector('.que.match .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector('.que.match .content .formulation.clearfix input')['value'];
+    const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
+
     const question: Match = {
       id: qid,
       type: Type.MATCH,
       text: qtext,
       gapText: [],
-      answerOptions: []
+      answerOptions: [],
+      sequenceCheck: qSequence,
+      answerFields: []
     };
-
-    let answer = null;
-    do {
-      answer = document.querySelector('.que.match .answer .text');
-      if (answer) {
-        question.gapText.push(answer.textContent);
-        document.querySelector('.que.match .answer .text').remove();
-      }
-    } while (answer != null);
 
     let aOption = null;
     let i = 1;
@@ -113,7 +110,23 @@ export class QuestionParserService {
       i++;
     } while (aOption != null);
 
-    // document.querySelector('.que.match').remove();
+    let answer = null;
+    do {
+      answer = document.querySelector('.que.match .answer .text');
+      if (answer) {
+        question.gapText.push(answer.textContent);
+
+        question.answerFields.push({
+          name: document.querySelector('.que.match .answer .select')['name'],
+          value: '0'
+        });
+
+        document.querySelector('.que.match .answer .select').remove();
+        document.querySelector('.que.match .answer .text').remove();
+      }
+    } while (answer != null);
+
+    document.querySelector('.que.match').remove();
     return question;
   }
 
@@ -157,23 +170,46 @@ export class QuestionParserService {
     let qtext = document.querySelector('.que.ddwtos .content .qtext').textContent;
     qtext = qtext.replace(/\w*blank\w*/g, '##BLANK##');
 
+    const qSequenceName = document.querySelector('.que.ddwtos .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector('.que.ddwtos .content .formulation.clearfix input')['value'];
+    const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
+
     const question: DragText = {
       id: qid,
       type: Type.DRAG_TEXT,
       text: qtext,
-      answerOptions: []
+      answerOptions: [],
+      sequenceCheck: qSequence,
+      answerFields: []
     };
+
+    let answer = null;
+    do {
+      answer = document.querySelector('.que.ddwtos .placeinput');
+      if (answer) {
+        question.answerFields.push({
+          name: answer['name'],
+          value: '0'
+        });
+        document.querySelector('.que.ddwtos .placeinput').remove();
+      }
+    } while (answer != null);
 
     let aOption = null;
     do {
       aOption = document.querySelector('.que.ddwtos .draghome');
       if (aOption != null) {
-        question.answerOptions.push(aOption.textContent);
+        let answerOptionId = aOption.classList[1];
+        answerOptionId = answerOptionId.replace('choice', '');
+        question.answerOptions.push({
+          id: answerOptionId,
+          text: aOption.textContent
+        });
         document.querySelector('.que.ddwtos .draghome').remove();
       }
     } while (aOption != null);
 
-    // document.querySelector('.que.ddwtos').remove();
+    document.querySelector('.que.ddwtos').remove();
     return question;
   }
 
@@ -192,7 +228,7 @@ export class QuestionParserService {
       type: Type.NUMERICAL,
       text: qtext,
       sequenceCheck: qSequence,
-      answerField: qAnswerField
+      answerFields: [qAnswerField]
     };
 
     document.querySelector('.que.numerical').remove();
@@ -214,7 +250,7 @@ export class QuestionParserService {
       type: Type.SHORT_ANSWER,
       text: qtext,
       sequenceCheck: qSequence,
-      answerField: qAnswerField
+      answerFields: [qAnswerField]
     };
 
     document.querySelector('.que.shortanswer').remove();
@@ -235,7 +271,7 @@ export class QuestionParserService {
       type: Type.TRUE_FALSE,
       text: qtext,
       sequenceCheck: qSequence,
-      answerField: [qAnswerField]
+      answerFields: [qAnswerField]
     };
 
     document.querySelector('.que.truefalse').remove();
@@ -290,7 +326,7 @@ interface MultipleChoice {
   multipleAllowed: boolean;
   answerOptions: any[];
   sequenceCheck: Field;
-  answerFields: Field[];
+  answerFields?: Field[];
 }
 
 interface TrueFalse {
@@ -298,23 +334,23 @@ interface TrueFalse {
   type: Type;
   text: string;
   sequenceCheck: Field;
-  answerField: Field[];
+  answerFields?: Field[];
 }
 
 interface Numerical {
   id: number;
   type: Type;
   text: string;
-  sequenceCheck: Field;
-  answerField: Field;
+  sequenceCheck?: Field;
+  answerFields?: Field[];
 }
 
 interface ShortAnswer {
   id: number;
   type: Type;
   text: string;
-  sequenceCheck: Field;
-  answerField: Field;
+  sequenceCheck?: Field;
+  answerFields?: Field[];
 }
 
 interface Cloze {
@@ -322,6 +358,8 @@ interface Cloze {
   type: Type;
   text: string;
   answerOptions: string[];
+  sequenceCheck?: Field;
+  answerFields?: Field[];
 }
 
 interface Match {
@@ -330,6 +368,8 @@ interface Match {
   text: string;
   gapText: string[];
   answerOptions: string[];
+  sequenceCheck?: Field;
+  answerFields?: Field[];
 }
 
 interface DragImage {
@@ -338,13 +378,17 @@ interface DragImage {
   text?: string;
   image: string;
   answerOptions: string[];
+  sequenceCheck?: Field;
+  answerFields?: Field[];
 }
 
 interface DragText {
   id: number;
   type: Type;
   text: string;
-  answerOptions: string[];
+  answerOptions: any[];
+  sequenceCheck?: Field;
+  answerFields?: Field[];
 }
 
 interface DragImageOrText {
@@ -353,6 +397,8 @@ interface DragImageOrText {
   text?: string;
   image?: string;
   answerOptions: string[];
+  sequenceCheck?: Field;
+  answerFields?: Field[];
 }
 
 interface DragMarker {
@@ -361,9 +407,13 @@ interface DragMarker {
   text?: string;
   image: string;
   markers: string[];
+  sequenceCheck?: Field;
+  answerFields?: Field[];
 }
 
 interface NotSupported {
   id: number;
   text: string;
+  sequenceCheck?: Field;
+  answerFields?: Field[];
 }

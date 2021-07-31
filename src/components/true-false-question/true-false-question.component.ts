@@ -13,7 +13,9 @@ export class TrueFalseQuestionComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.changeAnswer.emit(['']);
+  }
 
   public radioGroupChange(event: any) {
     console.log(event.detail.value);

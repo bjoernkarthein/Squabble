@@ -4,9 +4,14 @@
     <ion-card-title>{{ this.text }}</ion-card-title>
   </ion-card-header>
   <ion-card-content>
-    <ion-item *ngFor="let gap of this.gapText">
+    <ion-item *ngFor="let gap of this.gapText; let i = index">
       <ion-label>{{ gap }}</ion-label>
-      <ion-select interface="popover" placeholder="Select One">
+      <ion-select
+        [id]="i"
+        interface="popover"
+        placeholder="Select One"
+        (ionChange)="this.selectChange($event)"
+      >
         <ion-select-option
           *ngFor="let option of this.answerOptions"
           [value]="option"

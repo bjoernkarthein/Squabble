@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { Gesture, GestureController } from '@ionic/angular';
 import { DraggableComponent } from '../draggable/draggable.component';
 import { DropZoneComponent } from '../drop-zone/drop-zone.component';
@@ -14,7 +14,8 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
 
   @Input() public snippets: string[];
   @Input() public questionNumber: number;
-  @Input() public answerOptions: string[];
+  @Input() public answerOptions: any[];
+  @Output() public changeAnswer = new EventEmitter<string[]>();
   public gestureArray: Gesture[] = [];
   public givenAnswers: string[] = [];
 
@@ -25,23 +26,21 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     for (const zone of this.dropZones) {
-      this.givenAnswers.push('');
+      this.givenAnswers.push('0');
     }
     this.updateGestures();
-    console.log(this.dropZones);
   }
 
   public handleDropClick(event: any): void {
-    const text = event.target.textContent;
-    const index = this.givenAnswers.indexOf(text);
-    if (text === '') {
-      return;
-    }
-    this.givenAnswers[index] = '';
-    console.log(this.givenAnswers);
-    this.answerOptions.push(text);
-    event.target.innerHTML = '';
-    event.target.style.background = 'none';
+    // const text = event.target.textContent;
+    // const index = this.givenAnswers.indexOf(text);
+    // if (text === '') {
+    //   return;
+    // }
+    // this.givenAnswers[index] = '0';
+    // this.answerOptions.push(text);
+    // event.target.innerHTML = '';
+    // event.target.style.background = 'none';
   }
 
   private updateGestures(): void {
@@ -74,8 +73,10 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
 
     this.options.changes.subscribe(res => {
       if (this.gestureArray.length !== this.options.length) {
-        console.log('changed');
         this.updateGestures();
+        console.log('changed');
+        console.log(this.givenAnswers);
+        this.changeAnswer.emit(this.givenAnswers);
       }
     });
   }
@@ -109,11 +110,10 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
       const box = drop.nativeElement.getBoundingClientRect();
       if (this.isInZone(x, y, box)) {
         const removedItem = this.answerOptions.splice(index, 1);
-        this.givenAnswers[i] = removedItem[0];
-        drop.nativeElement.firstChild.innerHTML = removedItem[0];
+        this.givenAnswers[i] = removedItem[0].id;
+        drop.nativeElement.firstChild.innerHTML = removedItem[0].text;
         drop.nativeElement.style.cursor = 'pointer';
         item.nativeElement.remove();
-        console.log(this.givenAnswers);
       } else {
         item.nativeElement.style.transform = `translate(0,0)`;
       }
