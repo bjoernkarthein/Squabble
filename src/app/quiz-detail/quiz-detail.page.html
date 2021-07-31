@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-button [routerLink]="['../../']">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title>{{this.quizTitle}}</ion-title>
   </ion-toolbar>
@@ -26,7 +28,7 @@
         [text]="question.value.text"
         [questionNumber]="question.key + 1"
         [answerOptions]="question.value.answerOptions"
-        [multipleAllowed]="true"
+        [multipleAllowed]="question.value.multipleAllowed"
         (changeAnswer)="this.addAnswer($event, question.value.id)"
         class="grow"
       ></app-multiple-choice-question>

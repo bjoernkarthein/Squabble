@@ -21,8 +21,12 @@ export class MultipleChoiceQuestionComponent implements OnInit {
   }
 
   public radioGroupChange(event: any) {
-    console.log(event.detail.value);
-    this.changeAnswer.emit([event.detail.value]);
+    const selected = event.detail.value;
+    for (let i = 0; i < this.answerOptions.length; i++) {
+      if (this.answerOptions[i].text === selected) {
+        this.changeAnswer.emit([i.toString()]);
+      }
+    }
   }
 
   public selectChange(option: any) {

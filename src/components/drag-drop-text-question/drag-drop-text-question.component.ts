@@ -18,6 +18,7 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
   @Output() public changeAnswer = new EventEmitter<string[]>();
   public gestureArray: Gesture[] = [];
   public givenAnswers: string[] = [];
+  public contentScrollActive = true;
 
   constructor(
     private gestureController: GestureController,
@@ -56,6 +57,7 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
         threshold: 0,
         gestureName: 'drag',
         onStart: ev => {
+          this.contentScrollActive = false;
           this.changeDetectorRef.detectChanges();
         },
         onMove: ev => {
@@ -64,6 +66,7 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
           this.checkDropZoneHover(ev.currentX, ev.currentY);
         },
         onEnd: ev => {
+          this.contentScrollActive = true;
           this.handleDrop(item, ev.currentX, ev.currentY, i);
         }
       });

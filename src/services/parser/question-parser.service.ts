@@ -11,15 +11,15 @@ export class QuestionParserService {
     this.feedback = { block: null };
   }
 
-  public parseQuestion(question: MoodleQuestionType) {
-    const qid = question.slot - 1;
+  public parseQuestion(question: MoodleQuestionType, attemptId: number) {
+    const qid = question.slot;
     const questionType = question.type;
 
     switch (questionType) {
       case Type.MULTIPLE_CHOICE:
-        return this.parseMultiChoice(qid);
+        return this.parseMultiChoice(qid, attemptId);
       case Type.MATCH:
-        return this.parseMatch(qid);
+        return this.parseMatch(qid, attemptId);
       //   case Type.CLOZE:
       //     return this.parseCloze(qid);
       //   case Type.DRAG_IMAGE:
@@ -27,23 +27,24 @@ export class QuestionParserService {
       // case Type.DRAG_MARKER:
       //   return this.parseMarker(qid);
       case Type.DRAG_TEXT:
-        return this.parseText(qid);
+        return this.parseText(qid, attemptId);
       case Type.NUMERICAL:
-        return this.parseNumerical(qid);
+        return this.parseNumerical(qid, attemptId);
       case Type.SHORT_ANSWER:
-        return this.parseShort(qid);
+        return this.parseShort(qid, attemptId);
       case Type.TRUE_FALSE:
-        return this.parseTrueFalse(qid);
+        return this.parseTrueFalse(qid, attemptId);
       default:
-        return this.parseNotSupported(qid, questionType);
+        return this.parseNotSupported(qid, questionType, attemptId);
     }
   }
 
   //! ALSO GET ANSWER OPTION VALUES IN CASE OF RELOAD
 
-  private parseMultiChoice(qid: number): MultipleChoice {
-    const qtext = document.querySelector('.que.multichoice .qtext').textContent;
-    const qanswer = document.querySelector('.que.multichoice .answer').textContent;
+  private parseMultiChoice(qid: number, attemptId: number): MultipleChoice {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
+    const qtext = document.querySelector(moodleQId + ' .qtext').textContent;
+    const qanswer = document.querySelector(moodleQId + ' .answer').textContent;
     const qansweroptions = qanswer.split('\n');
     qansweroptions.pop();
     const answerOptionsAndSelected: any[] = [];
@@ -54,8 +55,8 @@ export class QuestionParserService {
       });
     }
 
-    const qSequenceName = document.querySelector('.que.multichoice .content .formulation.clearfix input')['name'];
-    const qSequenceValue = document.querySelector('.que.multichoice .content .formulation.clearfix input')['value'];
+    const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
     const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
 
 
@@ -63,7 +64,7 @@ export class QuestionParserService {
       id: qid,
       type: Type.MULTIPLE_CHOICE,
       text: qtext,
-      multipleAllowed: false,
+      multipleAllowed: true,
       answerOptions: answerOptionsAndSelected,
       sequenceCheck: qSequence,
       answerFields: []
@@ -71,23 +72,30 @@ export class QuestionParserService {
 
     let answer = null;
     do {
-      answer = document.querySelector('.que.multichoice .answer input');
+      answer = document.querySelector(moodleQId + ' .answer input');
       if (answer) {
+        if (answer['type'] === 'radio') {
+          question.multipleAllowed = false;
+        }
+
         question.answerFields.push({ name: answer['name'], value: '' });
-        document.querySelector('.que.multichoice .answer input').remove();
-        document.querySelector('.que.multichoice .answer input').remove();
+        document.querySelector(moodleQId + ' .answer input').remove();
+        if (question.multipleAllowed) {
+          document.querySelector(moodleQId + ' .answer input').remove();
+        }
       }
     } while (answer != null);
 
-    document.querySelector('.que.multichoice').remove();
+    document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseMatch(qid: number) {
-    const qtext = document.querySelector('.que.match .content .qtext').textContent;
+  private parseMatch(qid: number, attemptId: number) {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
+    const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
-    const qSequenceName = document.querySelector('.que.match .content .formulation.clearfix input')['name'];
-    const qSequenceValue = document.querySelector('.que.match .content .formulation.clearfix input')['value'];
+    const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
     const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
 
     const question: Match = {
@@ -103,7 +111,7 @@ export class QuestionParserService {
     let aOption = null;
     let i = 1;
     do {
-      aOption = document.querySelector('.que.match .content option[value="' + i + '"]');
+      aOption = document.querySelector(moodleQId + ' .content option[value="' + i + '"]');
       if (aOption) {
         question.answerOptions.push(aOption.textContent);
       }
@@ -112,21 +120,21 @@ export class QuestionParserService {
 
     let answer = null;
     do {
-      answer = document.querySelector('.que.match .answer .text');
+      answer = document.querySelector(moodleQId + ' .answer .text');
       if (answer) {
         question.gapText.push(answer.textContent);
 
         question.answerFields.push({
-          name: document.querySelector('.que.match .answer .select')['name'],
+          name: document.querySelector(moodleQId + ' .answer .select')['name'],
           value: '0'
         });
 
-        document.querySelector('.que.match .answer .select').remove();
-        document.querySelector('.que.match .answer .text').remove();
+        document.querySelector(moodleQId + ' .answer .select').remove();
+        document.querySelector(moodleQId + ' .answer .text').remove();
       }
     } while (answer != null);
 
-    document.querySelector('.que.match').remove();
+    document.querySelector(moodleQId).remove();
     return question;
   }
 
@@ -140,10 +148,11 @@ export class QuestionParserService {
     document.querySelector('.que.ddimageortext').remove();
   }
 
-  private parseMarker(qid: number) {
-    const qtext = document.querySelector('.que.ddmarker .content .qtext').textContent;
+  private parseMarker(qid: number, attemptId: number) {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
+    const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
     // eslint-disable-next-line @typescript-eslint/dot-notation
-    const qimage = document.querySelector('.que.ddmarker .content .dropbackground').attributes['src'].textContent;
+    const qimage = document.querySelector(moodleQId + ' .content .dropbackground').attributes['src'].textContent;
 
     const question: DragMarker = {
       id: qid,
@@ -155,10 +164,10 @@ export class QuestionParserService {
 
     let marker = null;
     do {
-      marker = document.querySelector('.que.ddmarker .content .markertext');
+      marker = document.querySelector(moodleQId + ' .content .markertext');
       if (marker != null) {
         question.markers.push(marker.textContent);
-        document.querySelector('.que.ddmarker .content .markertext').remove();
+        document.querySelector(moodleQId + ' .content .markertext').remove();
       }
     } while (marker != null);
 
@@ -166,12 +175,13 @@ export class QuestionParserService {
     return question;
   }
 
-  private parseText(qid: number) {
-    let qtext = document.querySelector('.que.ddwtos .content .qtext').textContent;
+  private parseText(qid: number, attemptId: number) {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
+    let qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
     qtext = qtext.replace(/\w*blank\w*/g, '##BLANK##');
 
-    const qSequenceName = document.querySelector('.que.ddwtos .content .formulation.clearfix input')['name'];
-    const qSequenceValue = document.querySelector('.que.ddwtos .content .formulation.clearfix input')['value'];
+    const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
     const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
 
     const question: DragText = {
@@ -185,19 +195,19 @@ export class QuestionParserService {
 
     let answer = null;
     do {
-      answer = document.querySelector('.que.ddwtos .placeinput');
+      answer = document.querySelector(moodleQId + ' .placeinput');
       if (answer) {
         question.answerFields.push({
           name: answer['name'],
           value: '0'
         });
-        document.querySelector('.que.ddwtos .placeinput').remove();
+        document.querySelector(moodleQId + ' .placeinput').remove();
       }
     } while (answer != null);
 
     let aOption = null;
     do {
-      aOption = document.querySelector('.que.ddwtos .draghome');
+      aOption = document.querySelector(moodleQId + ' .draghome');
       if (aOption != null) {
         let answerOptionId = aOption.classList[1];
         answerOptionId = answerOptionId.replace('choice', '');
@@ -205,22 +215,23 @@ export class QuestionParserService {
           id: answerOptionId,
           text: aOption.textContent
         });
-        document.querySelector('.que.ddwtos .draghome').remove();
+        document.querySelector(moodleQId + ' .draghome').remove();
       }
     } while (aOption != null);
 
-    document.querySelector('.que.ddwtos').remove();
+    document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseNumerical(qid: number) {
-    const qtext = document.querySelector('.que.numerical .content .qtext').textContent;
+  private parseNumerical(qid: number, attemptId: number) {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
+    const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
-    const qSequenceName = document.querySelector('.que.numerical .content .formulation.clearfix input')['name'];
-    const qSequenceValue = document.querySelector('.que.numerical .content .formulation.clearfix input')['value'];
+    const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
     const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
 
-    const qAnswerFieldName = document.querySelector('.que.numerical .answer input')['name'];
+    const qAnswerFieldName = document.querySelector(moodleQId + ' .answer input')['name'];
     const qAnswerField: Field = { name: qAnswerFieldName, value: '' };
 
     const question: Numerical = {
@@ -231,18 +242,19 @@ export class QuestionParserService {
       answerFields: [qAnswerField]
     };
 
-    document.querySelector('.que.numerical').remove();
+    document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseShort(qid: number): ShortAnswer {
-    const qtext = document.querySelector('.que.shortanswer .content .qtext').textContent;
+  private parseShort(qid: number, attemptId: number): ShortAnswer {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
+    const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
-    const qSequenceName = document.querySelector('.que.shortanswer .content .formulation.clearfix input')['name'];
-    const qSequenceValue = document.querySelector('.que.shortanswer .content .formulation.clearfix input')['value'];
+    const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
     const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
 
-    const qAnswerFieldName = document.querySelector('.que.shortanswer .answer input')['name'];
+    const qAnswerFieldName = document.querySelector(moodleQId + ' .answer input')['name'];
     const qAnswerField: Field = { name: qAnswerFieldName, value: '' };
 
     const question: ShortAnswer = {
@@ -253,17 +265,19 @@ export class QuestionParserService {
       answerFields: [qAnswerField]
     };
 
-    document.querySelector('.que.shortanswer').remove();
+    document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseTrueFalse(qid: number): TrueFalse {
-    const qtext = document.querySelector('.que.truefalse .content .qtext').textContent;
-    const qSequenceName = document.querySelector('.que.truefalse .content .formulation.clearfix input')['name'];
-    const qSequenceValue = document.querySelector('.que.truefalse .content .formulation.clearfix input')['value'];
+  private parseTrueFalse(qid: number, attemptId: number): TrueFalse {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
+    const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
+
+    const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
     const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
 
-    const qAnswerFieldName = document.querySelector('.que.truefalse .answer input')['name'];
+    const qAnswerFieldName = document.querySelector(moodleQId + ' .answer input')['name'];
     const qAnswerField: Field = { name: qAnswerFieldName, value: '' };
 
     const question: TrueFalse = {
@@ -274,11 +288,12 @@ export class QuestionParserService {
       answerFields: [qAnswerField]
     };
 
-    document.querySelector('.que.truefalse').remove();
+    document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseNotSupported(qid: number, type: string): NotSupported {
+  private parseNotSupported(qid: number, type: string, attemptId: number): NotSupported {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
     const question: NotSupported = {
       id: qid,
       text: 'This Question type is currently not supported by this App (' + type + ')',

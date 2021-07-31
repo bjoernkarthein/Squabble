@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { MoodleService } from 'src/services/moodle/moodle.service';
-import { QuestionParserService } from 'src/services/parser/question-parser.service';
+import { Storage } from '@capacitor/storage';
 
 @Component({
   selector: 'app-course-detail',
@@ -17,16 +18,17 @@ export class CourseDetailPage implements OnInit {
   public courseId: string;
 
   constructor(
-    private route: ActivatedRoute,
+    private router: Router,
+    private activeRoute: ActivatedRoute,
     private moodleService: MoodleService,
-    private parserService: QuestionParserService
+    private alertController: AlertController,
   ) { }
 
   ngOnInit() {
   }
 
   ionViewWillEnter() {
-    this.courseId = this.route.snapshot.paramMap.get('cid');
+    this.courseId = this.activeRoute.snapshot.paramMap.get('cid');
 
     this.moodleService.getCourseById(this.courseId).subscribe(info => {
       this.courseInfo = info[0];
@@ -39,11 +41,15 @@ export class CourseDetailPage implements OnInit {
     this.getQuizzes(this.courseId);
   }
 
-  public getUrl(quizId: string, disabled: boolean): string {
+  public async startQuizAttempt(quizId: string, disabled: boolean) {
+    const attemptInProgress = await Storage.get({ key: 'inProgressAttempt' + quizId });
+    console.log(attemptInProgress);
     if (disabled) {
-      return null;
+      return;
+    } else if (attemptInProgress.value) {
+      this.router.navigateByUrl('/mycourses/' + this.courseId + '/myquizzes/' + quizId);
     } else {
-      return '/mycourses/' + this.courseId + '/myquizzes/' + quizId;
+      this.presentAlertConfirm(quizId);
     }
   }
 
@@ -78,6 +84,30 @@ export class CourseDetailPage implements OnInit {
   //     });
   //   });
   // }
+
+  private async presentAlertConfirm(quizId: string) {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Start Quiz Attempt',
+      message: 'You are about to start an attempt for the selected Quiz. Do you wish to continue?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        }, {
+          text: 'Continue',
+          handler: () => {
+            this.router.navigateByUrl('/mycourses/' + this.courseId + '/myquizzes/' + quizId);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
 }
 
 interface Quiz {

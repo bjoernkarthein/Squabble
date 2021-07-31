@@ -58,7 +58,8 @@ export class QuizDetailPage implements OnInit {
   public async handleSubmitClick(): Promise<void> {
     const attempt = await this.getAttemptId(this.quizId);
     const res = await this.moodleService.processQuizAttempt(attempt, this.currentUser.token, this.givenAnswers, 1);
-    await Storage.remove({ key: 'inProgressAttempt' });
+    await Storage.remove({ key: 'inProgressAttempt' + this.quizId });
+    this.givenAnswers.clear();
 
     if (res.errorcode) {
       console.log(res.errorcode);
@@ -111,17 +112,17 @@ export class QuizDetailPage implements OnInit {
   }
 
   private async getAttemptId(quizId: string) {
-    const attemptInProgress = await Storage.get({ key: 'inProgressAttempt' });
+    const attemptInProgress = await Storage.get({ key: 'inProgressAttempt' + quizId });
     if (attemptInProgress.value) {
       return attemptInProgress.value;
     }
 
     const createdAttempt = await this.moodleService.startAttemptForQuiz(quizId, this.currentUser.token);
-    await Storage.set({ key: 'inProgressAttempt', value: createdAttempt.attempt.id });
+    await Storage.set({ key: 'inProgressAttempt' + quizId, value: createdAttempt.attempt.id });
     return createdAttempt.attempt.id;
   }
 
-  private handleQuestion(question: any) {
+  private async handleQuestion(question: any) {
     this.hiddenQuestionDOM.nativeElement.innerHTML += question.html;
     const elem: MoodleQuestionType = {
       type: question.type,
@@ -129,8 +130,8 @@ export class QuizDetailPage implements OnInit {
       blockedByPrevious: question.blockedbyprevious,
       slot: question.slot
     };
-
-    const parsedQuestion = this.questionParser.parseQuestion(elem);
+    const attempt = await this.getAttemptId(this.quizId);
+    const parsedQuestion = this.questionParser.parseQuestion(elem, attempt);
     console.log(parsedQuestion);
     this.questions.set(parsedQuestion.id, parsedQuestion);
   }

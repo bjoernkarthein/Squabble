@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-button [routerLink]="['/home']">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title>{{this.courseInfo.displayname}}</ion-title>
   </ion-toolbar>
@@ -16,7 +18,7 @@
       [courseDesc]="quiz.value.description"
       [type]="'Quiz'"
       [disabled]="!quiz.value.hasQuestions"
-      [routerLink]="this.getUrl(quiz.key, !quiz.value.hasQuestions)"
+      (click)="this.startQuizAttempt(quiz.key, !quiz.value.hasQuestions)"
     ></app-course-card>
   </div>
 </ion-content>
