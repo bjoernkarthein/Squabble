@@ -11,6 +11,8 @@ import { DragDropTextQuestionComponent } from './drag-drop-text-question/drag-dr
 import { DraggableComponent } from './draggable/draggable.component';
 import { DropZoneComponent } from './drop-zone/drop-zone.component';
 import { NotSupportedQuestionComponent } from './not-supported-question/not-supported-question.component';
+import { GapSelectQuestionComponent } from './gap-select-question/gap-select-question.component';
+import { CrQuestionComponent } from './cr-question/cr-question.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { NotSupportedQuestionComponent } from './not-supported-question/not-supp
     DragDropTextQuestionComponent,
     DraggableComponent,
     DropZoneComponent,
-    NotSupportedQuestionComponent
+    NotSupportedQuestionComponent,
+    GapSelectQuestionComponent,
+    CrQuestionComponent
   ],
   imports: [CommonModule, FormsModule],
   exports: [
@@ -36,7 +40,9 @@ import { NotSupportedQuestionComponent } from './not-supported-question/not-supp
     DragDropTextQuestionComponent,
     DraggableComponent,
     DropZoneComponent,
-    NotSupportedQuestionComponent
+    NotSupportedQuestionComponent,
+    GapSelectQuestionComponent,
+    CrQuestionComponent
   ]
 })
 export class ComponentsModule { }

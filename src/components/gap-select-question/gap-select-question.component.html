@@ -1,0 +1,24 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-subtitle>Question {{ this.questionNumber }}</ion-card-subtitle>
+    <ion-card-title>
+      <ng-container *ngFor="let snippet of this.snippets; let i = index">
+        {{ snippet }}
+        <ion-select
+          *ngIf="i < this.snippets.length - 1"
+          [id]="i"
+          interface="popover"
+          placeholder="Select One"
+          (ionChange)="this.selectChange($event)"
+        >
+          <ion-select-option
+            *ngFor="let option of this.answerOptions"
+            [value]="option"
+            >{{ option }}</ion-select-option
+          >
+        </ion-select>
+      </ng-container>
+    </ion-card-title>
+  </ion-card-header>
+  <ion-card-content> </ion-card-content>
+</ion-card>

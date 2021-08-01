@@ -18,7 +18,7 @@
       <app-true-false-question
         *ngSwitchCase="'truefalse'"
         [text]="question.value.text"
-        [questionNumber]="question.key + 1"
+        [questionNumber]="question.key"
         (changeAnswer)="this.addAnswer($event, question.value.id)"
         class="grow"
       ></app-true-false-question>
@@ -26,7 +26,7 @@
       <app-multiple-choice-question
         *ngSwitchCase="'multichoice'"
         [text]="question.value.text"
-        [questionNumber]="question.key + 1"
+        [questionNumber]="question.key"
         [answerOptions]="question.value.answerOptions"
         [multipleAllowed]="question.value.multipleAllowed"
         (changeAnswer)="this.addAnswer($event, question.value.id)"
@@ -36,7 +36,7 @@
       <app-matching-question
         *ngSwitchCase="'match'"
         [text]="question.value.text"
-        [questionNumber]="question.key + 1"
+        [questionNumber]="question.key"
         [answerOptions]="question.value.answerOptions"
         [gapText]="question.value.gapText"
         (changeAnswer)="this.addAnswer($event, question.value.id)"
@@ -46,7 +46,7 @@
       <app-short-answer-question
         *ngSwitchCase="'shortanswer'"
         [text]="question.value.text"
-        [questionNumber]="question.key + 1"
+        [questionNumber]="question.key"
         (changeAnswer)="this.addAnswer($event, question.value.id)"
         class="grow"
       ></app-short-answer-question>
@@ -54,23 +54,40 @@
       <app-numeric-question
         *ngSwitchCase="'numerical'"
         [text]="question.value.text"
-        [questionNumber]="question.key + 1"
+        [questionNumber]="question.key"
         (changeAnswer)="this.addAnswer($event, question.value.id)"
         class="grow"
       ></app-numeric-question>
 
+      <app-cr-question
+        *ngSwitchCase="'essay'"
+        [text]="question.value.text"
+        [questionNumber]="question.key"
+        (changeAnswer)="this.addAnswer($event, question.value.id)"
+        class="grow"
+      ></app-cr-question>
+
       <app-drag-drop-text-question
         *ngSwitchCase="'ddwtos'"
         [snippets]="this.getQText(question.value.text)"
-        [questionNumber]="question.key + 1"
+        [questionNumber]="question.key"
         [answerOptions]="question.value.answerOptions"
         (changeAnswer)="this.addAnswer($event, question.value.id)"
         class="grow"
       ></app-drag-drop-text-question>
 
+      <app-gap-select-question
+        *ngSwitchCase="'gapselect'"
+        [snippets]="question.value.gapText"
+        [questionNumber]="question.key"
+        [answerOptions]="question.value.answerOptions"
+        (changeAnswer)="this.addAnswer($event, question.value.id)"
+        class="grow"
+      ></app-gap-select-question>
+
       <app-not-supported-question
         *ngSwitchDefault
-        [questionNumber]="question.key + 1"
+        [questionNumber]="question.key"
         [text]="question.value.text"
         class="grow"
       ></app-not-supported-question>

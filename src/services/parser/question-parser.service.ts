@@ -26,6 +26,8 @@ export class QuestionParserService {
       //     return this.parseImage(qid);
       // case Type.DRAG_MARKER:
       //   return this.parseMarker(qid);
+      case Type.ESSAY:
+        return this.parseEssay(qid, attemptId);
       case Type.DRAG_TEXT:
         return this.parseText(qid, attemptId);
       case Type.NUMERICAL:
@@ -34,6 +36,8 @@ export class QuestionParserService {
         return this.parseShort(qid, attemptId);
       case Type.TRUE_FALSE:
         return this.parseTrueFalse(qid, attemptId);
+      case Type.GAP_SELECT:
+        return this.parseGapSelect(qid, attemptId);
       default:
         return this.parseNotSupported(qid, questionType, attemptId);
     }
@@ -133,6 +137,53 @@ export class QuestionParserService {
         document.querySelector(moodleQId + ' .answer .text').remove();
       }
     } while (answer != null);
+
+    document.querySelector(moodleQId).remove();
+    return question;
+  }
+
+  private parseGapSelect(qid: number, attemptId: number) {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
+
+    const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
+    const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
+
+    const question: GapSelect = {
+      id: qid,
+      type: Type.GAP_SELECT,
+      gapText: [],
+      answerOptions: [],
+      sequenceCheck: qSequence,
+      answerFields: []
+    };
+
+    let aOption = null;
+    let i = 1;
+    do {
+      aOption = document.querySelector(moodleQId + ' .content option[value="' + i + '"]');
+      if (aOption) {
+        question.answerOptions.push(aOption.textContent);
+      }
+      i++;
+    } while (aOption != null);
+
+    let answer = null;
+    do {
+      answer = document.querySelector(moodleQId + ' .content .select');
+      if (answer) {
+        question.answerFields.push({
+          name: document.querySelector(moodleQId + ' .content .select')['name'],
+          value: '0'
+        });
+
+        document.querySelector(moodleQId + ' .content .select').remove();
+      }
+    } while (answer != null);
+
+    const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
+    const gaps = qtext.split(/[ ]+/);
+    question.gapText = gaps;
 
     document.querySelector(moodleQId).remove();
     return question;
@@ -269,6 +320,29 @@ export class QuestionParserService {
     return question;
   }
 
+  private parseEssay(qid: number, attemptId: number): ShortAnswer {
+    const moodleQId = '#question-' + attemptId + '-' + qid;
+    const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
+
+    const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
+    const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
+    const qSequence: Field = { name: qSequenceName, value: qSequenceValue };
+
+    const qAnswerFieldName = document.querySelector(moodleQId + ' textarea')['name'];
+    const qAnswerField: Field = { name: qAnswerFieldName, value: '' };
+
+    const question: Essay = {
+      id: qid,
+      type: Type.ESSAY,
+      text: qtext,
+      sequenceCheck: qSequence,
+      answerFields: [qAnswerField]
+    };
+
+    document.querySelector(moodleQId).remove();
+    return question;
+  }
+
   private parseTrueFalse(qid: number, attemptId: number): TrueFalse {
     const moodleQId = '#question-' + attemptId + '-' + qid;
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
@@ -327,6 +401,8 @@ enum Type {
   DRAG_TEXT = 'ddwtos',
   DRAG_MARKER = 'ddmarker',
   DRAG_IMAGE = 'ddimageortext',
+  GAP_SELECT = 'gapselect',
+  ESSAY = 'essay'
 }
 
 export interface Field {
@@ -368,6 +444,14 @@ interface ShortAnswer {
   answerFields?: Field[];
 }
 
+interface Essay {
+  id: number;
+  type: Type;
+  text: string;
+  sequenceCheck?: Field;
+  answerFields?: Field[];
+}
+
 interface Cloze {
   id: number;
   type: Type;
@@ -381,6 +465,15 @@ interface Match {
   id: number;
   type: Type;
   text: string;
+  gapText: string[];
+  answerOptions: string[];
+  sequenceCheck?: Field;
+  answerFields?: Field[];
+}
+
+interface GapSelect {
+  id: number;
+  type: Type;
   gapText: string[];
   answerOptions: string[];
   sequenceCheck?: Field;

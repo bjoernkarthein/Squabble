@@ -33,15 +33,19 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
   }
 
   public handleDropClick(event: any): void {
-    // const text = event.target.textContent;
-    // const index = this.givenAnswers.indexOf(text);
-    // if (text === '') {
-    //   return;
-    // }
-    // this.givenAnswers[index] = '0';
-    // this.answerOptions.push(text);
-    // event.target.innerHTML = '';
-    // event.target.style.background = 'none';
+    console.log(event.target);
+    const stext = event.target.textContent;
+    const value = event.target.id;
+    console.log(value, stext);
+    console.log(this.givenAnswers);
+    const index = this.givenAnswers.indexOf(value);
+    if (stext === '') {
+      return;
+    }
+    this.givenAnswers[index] = '0';
+    this.answerOptions.push({ text: stext, id: value });
+    event.target.innerHTML = '\u00a0';
+    event.target.classList.add('clear');
   }
 
   private updateGestures(): void {
@@ -111,14 +115,18 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
     for (let i = 0; i < dropZones.length; i++) {
       const drop = dropZones[i];
       const box = drop.nativeElement.getBoundingClientRect();
-      if (this.isInZone(x, y, box)) {
+      if (this.isInZone(x, y, box) && drop.nativeElement.firstChild.classList.contains('clear')) {
         const removedItem = this.answerOptions.splice(index, 1);
         this.givenAnswers[i] = removedItem[0].id;
         drop.nativeElement.firstChild.innerHTML = removedItem[0].text;
+        drop.nativeElement.firstChild.id = removedItem[0].id;
+        drop.nativeElement.firstChild.classList.remove('clear');
         drop.nativeElement.style.cursor = 'pointer';
+        drop.nativeElement.firstChild.style.background = 'none';
         item.nativeElement.remove();
       } else {
         item.nativeElement.style.transform = `translate(0,0)`;
+        drop.nativeElement.firstChild.style.background = 'none';
       }
     }
 
