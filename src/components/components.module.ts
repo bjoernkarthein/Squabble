@@ -13,6 +13,7 @@ import { DropZoneComponent } from './drop-zone/drop-zone.component';
 import { NotSupportedQuestionComponent } from './not-supported-question/not-supported-question.component';
 import { GapSelectQuestionComponent } from './gap-select-question/gap-select-question.component';
 import { CrQuestionComponent } from './cr-question/cr-question.component';
+import { GamePreviewItemComponent } from './game-preview-item/game-preview-item.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { CrQuestionComponent } from './cr-question/cr-question.component';
     DropZoneComponent,
     NotSupportedQuestionComponent,
     GapSelectQuestionComponent,
-    CrQuestionComponent
+    CrQuestionComponent,
+    GamePreviewItemComponent
   ],
   imports: [CommonModule, FormsModule],
   exports: [
@@ -42,7 +44,8 @@ import { CrQuestionComponent } from './cr-question/cr-question.component';
     DropZoneComponent,
     NotSupportedQuestionComponent,
     GapSelectQuestionComponent,
-    CrQuestionComponent
+    CrQuestionComponent,
+    GamePreviewItemComponent
   ]
 })
 export class ComponentsModule { }

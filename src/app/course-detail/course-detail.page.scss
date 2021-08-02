@@ -1,6 +1,6 @@
 #quizzes {
   margin-top: 1rem;
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
   width: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -9,4 +9,16 @@
 h4 {
   margin-top: 2rem;
   margin-left: 1.5rem;
+}
+
+.multi-player {
+  margin: 0 1rem;
+
+  ion-list {
+    margin-top: 1rem;
+
+    ion-select {
+      margin-right: 1rem;
+    }
+  }
 }

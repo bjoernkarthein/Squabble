@@ -21,4 +21,31 @@
       (click)="this.startQuizAttempt(quiz.key, !quiz.value.hasQuestions)"
     ></app-course-card>
   </div>
+  <h4>Multi-Player:</h4>
+  <div class="multi-player">
+    <ion-button size="large" color="success" (click)="this.startMultiPlayer()"
+      ><span>Start new multi-player game</span></ion-button
+    >
+    <ion-list>
+      <ion-list-header>
+        <ion-label>Your Games</ion-label>
+        <ion-select
+          interface="popover"
+          value="progress"
+          (ionChange)="this.filter($event)"
+        >
+          <ion-select-option value="progress">In Progress</ion-select-option>
+          <ion-select-option value="finished">Finished</ion-select-option>
+        </ion-select>
+      </ion-list-header>
+      <app-game-preview-item
+        *ngFor="let game of this.filteredGames"
+        [gameId]="game.gid"
+        [turn]="game.nextTurnId"
+        [opponentName]="game.firstname + ' ' + game.lastname"
+        [inProgress]="game.inprogress"
+        [score]="'1:2'"
+      ></app-game-preview-item>
+    </ion-list>
+  </div>
 </ion-content>

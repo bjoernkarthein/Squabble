@@ -1,16 +1,18 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/services/auth/auth.service';
-import { BackendService, User } from 'src/services/backend/backend.service';
+import { BackendService, SinglePlayerAttempt, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 import { QuestionParserService, MoodleQuestionType, Field } from 'src/services/parser/question-parser.service';
 import { Storage } from '@capacitor/storage';
 import { ToastController } from '@ionic/angular';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-quiz-detail',
   templateUrl: './quiz-detail.page.html',
   styleUrls: ['./quiz-detail.page.scss'],
+  providers: [DatePipe]
 })
 export class QuizDetailPage implements OnInit {
   @ViewChild('hiddenQuestions') hiddenQuestionDOM: ElementRef;
@@ -23,11 +25,12 @@ export class QuizDetailPage implements OnInit {
 
   constructor(
     private moodleService: MoodleService,
-    private router: Router,
+    private backendService: BackendService,
     private route: ActivatedRoute,
     private authService: AuthService,
     private questionParser: QuestionParserService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private datePipe: DatePipe
   ) {
   }
 
@@ -100,15 +103,28 @@ export class QuizDetailPage implements OnInit {
   }
 
   private async getQuizzeQuestions(id: string) {
-    const res = await this.getAttemptId(id);
-    console.log(res);
+    const attempt = await this.getAttemptId(id);
+    console.log(attempt);
 
-    this.moodleService.getQuizInProgressInformation(res, this.currentUser.token).subscribe(re => {
+    this.moodleService.getQuizInProgressInformation(attempt, this.currentUser.token).subscribe(re => {
       const questions = re.questions;
       for (const question of questions) {
         this.handleQuestion(question);
       }
     });
+
+    const date = new Date();
+    const formattedDate = this.datePipe.transform(date, 'yyyy-MM-dd HH:mm:ss', 'UTC+2');
+
+    const singleAttempt: SinglePlayerAttempt = {
+      attemptId: attempt,
+      userId: this.currentUser.id,
+      usename: this.currentUser.username,
+      quizId: id,
+      quizname: this.quizTitle,
+      startDate: formattedDate
+    };
+    await this.backendService.saveSinglePlayerAttempt(singleAttempt);
   }
 
   private async getAttemptId(quizId: string) {
@@ -118,6 +134,10 @@ export class QuizDetailPage implements OnInit {
     }
 
     const createdAttempt = await this.moodleService.startAttemptForQuiz(quizId, this.currentUser.token);
+    if (createdAttempt.errorcode) {
+      this.showToast('Failed to start quiz attempt (' + createdAttempt.errorcode + ')', 'danger');
+      return;
+    }
     await Storage.set({ key: 'inProgressAttempt' + quizId, value: createdAttempt.attempt.id });
     return createdAttempt.attempt.id;
   }

@@ -3,6 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 import { Storage } from '@capacitor/storage';
+import { GameProgressStatus } from 'src/components/game-preview-item/game-preview-item.component';
+import { BackendService, MultiPlayerAttempt, User } from 'src/services/backend/backend.service';
+import { AuthService } from 'src/services/auth/auth.service';
 
 @Component({
   selector: 'app-course-detail',
@@ -16,18 +19,25 @@ export class CourseDetailPage implements OnInit {
   public courseContent = {};
   public quizzes = new Map();
   public courseId: string;
+  public currentUser: User;
+  public inProgress: GameProgressStatus = GameProgressStatus.IN_PROGRESS;
+  public multiPlayerGames = [];
+  public filteredGames = [];
 
   constructor(
     private router: Router,
     private activeRoute: ActivatedRoute,
     private moodleService: MoodleService,
     private alertController: AlertController,
+    private backendService: BackendService,
+    private authService: AuthService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.currentUser = await this.authService.getCurrentUser();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.courseId = this.activeRoute.snapshot.paramMap.get('cid');
 
     this.moodleService.getCourseById(this.courseId).subscribe(info => {
@@ -39,9 +49,12 @@ export class CourseDetailPage implements OnInit {
     });
 
     this.getQuizzes(this.courseId);
+    this.multiPlayerGames = await this.backendService.getMultiPlayerAttemptsByCourseAndUser(this.courseId, this.currentUser.id);
+    console.log(this.multiPlayerGames);
+    this.filterOpenGames();
   }
 
-  public async startQuizAttempt(quizId: string, disabled: boolean) {
+  public async startQuizAttempt(quizId: string, disabled: boolean): Promise<void> {
     const attemptInProgress = await Storage.get({ key: 'inProgressAttempt' + quizId });
     console.log(attemptInProgress);
     if (disabled) {
@@ -53,7 +66,30 @@ export class CourseDetailPage implements OnInit {
     }
   }
 
-  private getQuizzes(courseId: string) {
+  public async startMultiPlayer(): Promise<void> {
+    const randomUser = await this.backendService.getRandomUser(this.currentUser.id);
+    console.log(randomUser);
+    const oId = randomUser.id;
+    const multiplayerAttempt: MultiPlayerAttempt = {
+      initiatorId: this.currentUser.id,
+      opponentId: oId,
+      courseId: this.courseId,
+      inProgress: true
+    };
+
+    await this.backendService.saveMultiPlayerAttempt(multiplayerAttempt);
+  }
+
+  public filter(event: any): void {
+    console.log(event.target.value);
+    if (event.target.value === 'progress') {
+      this.filterOpenGames();
+    } else {
+      this.filterClosedGames();
+    }
+  }
+
+  private getQuizzes(courseId: string): void {
     this.moodleService.getQuizzesFromCourse(courseId).subscribe(response => {
       const quizzes = response.quizzes;
       for (const quiz of quizzes) {
@@ -67,25 +103,25 @@ export class CourseDetailPage implements OnInit {
     });
   }
 
-  // private getQuestions(quizId: number) {
-  //   this.moodleService.startAttemptForQuiz(quizId).subscribe(response => {
-  //     const attempt = response.attempt;
-  //     const attemptId = attempt.id;
+  private filterOpenGames(): void {
+    this.filteredGames = [];
+    for (const game of this.multiPlayerGames) {
+      if (game.inprogress === 1) {
+        this.filteredGames.push(game);
+      }
+    }
+  }
 
-  //     this.moodleService.finishAttemptForQuiz(attempt.id).subscribe(r => {
-  //       this.moodleService.getFinishedQuizInfo(attemptId).subscribe(re => {
-  //         const questions = re.questions;
-  //         for (const question of questions) {
-  //           this.questions.nativeElement.innerHTML += question.html;
-  //         }
-  //         const field = this.parserService.getRightAnswer();
-  //         console.log(field);
-  //       });
-  //     });
-  //   });
-  // }
+  private filterClosedGames(): void {
+    this.filteredGames = [];
+    for (const game of this.multiPlayerGames) {
+      if (game.inprogress === 0) {
+        this.filteredGames.push(game);
+      }
+    }
+  }
 
-  private async presentAlertConfirm(quizId: string) {
+  private async presentAlertConfirm(quizId: string): Promise<void> {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Start Quiz Attempt',

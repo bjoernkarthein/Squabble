@@ -1,0 +1,8 @@
+<ion-item [href]="['multi-player-overview/' + this.gameId]">
+  <ion-label>
+    <h2>{{ this.turnText }}</h2>
+    <h3>against {{ this.opponentName }}</h3>
+    <p>{{ this.status }}</p>
+  </ion-label>
+  <ion-label slot="end">{{ this.score }}</ion-label>
+</ion-item>

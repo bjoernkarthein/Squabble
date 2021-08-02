@@ -31,9 +31,14 @@ const routes: Routes = [
     loadChildren: () => import('./quiz-detail/quiz-detail.module').then(m => m.QuizDetailPageModule),
     canLoad: [AuthGuard]
   },
-
-
-
+  {
+    path: 'multi-player-overview/:gid',
+    loadChildren: () => import('./multi-player-overview/multi-player-overview.module').then(m => m.MultiPlayerOverviewPageModule)
+  },
+  {
+    path: 'multi-player-overview/:gid/multi-player-round/:rid',
+    loadChildren: () => import('./multi-player-round/multi-player-round.module').then(m => m.MultiPlayerRoundPageModule)
+  },
 ];
 
 @NgModule({
