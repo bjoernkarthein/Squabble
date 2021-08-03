@@ -1,0 +1,36 @@
+#container {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 2rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .names-and-score {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 76%;
+    margin-bottom: 2rem;
+  }
+
+  #rounds {
+    width: 80%;
+  }
+
+  .quiz-round {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    app-quiz-round-preview {
+      width: 10rem;
+    }
+  }
+}

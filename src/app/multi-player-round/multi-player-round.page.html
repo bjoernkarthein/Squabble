@@ -5,5 +5,88 @@
 </ion-header>
 
 <ion-content>
+  <div id="questions">
+    <ng-container
+      *ngIf="this.currentQuestion"
+      [ngSwitch]="this.currentQuestion.type"
+    >
+      <app-true-false-question
+        *ngSwitchCase="'truefalse'"
+        [text]="this.currentQuestion.text"
+        [questionNumber]="this.questionNumber"
+        class="grow"
+      ></app-true-false-question>
 
+      <app-multiple-choice-question
+        *ngSwitchCase="'multichoice'"
+        [text]="this.currentQuestion.text"
+        [questionNumber]="this.questionNumber"
+        [answerOptions]="this.currentQuestion.answerOptions"
+        [multipleAllowed]="this.currentQuestion.multipleAllowed"
+        class="grow"
+      ></app-multiple-choice-question>
+
+      <app-matching-question
+        *ngSwitchCase="'match'"
+        [text]="this.currentQuestion.text"
+        [questionNumber]="this.questionNumber"
+        [answerOptions]="this.currentQuestion.answerOptions"
+        [gapText]="this.currentQuestion.gapText"
+        class="grow"
+      ></app-matching-question>
+
+      <app-short-answer-question
+        *ngSwitchCase="'shortanswer'"
+        [text]="this.currentQuestion.text"
+        [questionNumber]="this.questionNumber"
+        class="grow"
+      ></app-short-answer-question>
+
+      <app-numeric-question
+        *ngSwitchCase="'numerical'"
+        [text]="this.currentQuestion.text"
+        [questionNumber]="this.questionNumber"
+        class="grow"
+      ></app-numeric-question>
+
+      <app-cr-question
+        *ngSwitchCase="'essay'"
+        [text]="this.currentQuestion.text"
+        [questionNumber]="this.questionNumber"
+        class="grow"
+      ></app-cr-question>
+
+      <app-drag-drop-text-question
+        *ngSwitchCase="'ddwtos'"
+        [snippets]="this.getQText(this.currentQuestion.text)"
+        [questionNumber]="this.questionNumber"
+        [answerOptions]="this.currentQuestion.answerOptions"
+        class="grow"
+      ></app-drag-drop-text-question>
+
+      <app-gap-select-question
+        *ngSwitchCase="'gapselect'"
+        [snippets]="this.currentQuestion.gapText"
+        [questionNumber]="this.questionNumber"
+        [answerOptions]="this.currentQuestion.answerOptions"
+        class="grow"
+      ></app-gap-select-question>
+
+      <app-not-supported-question
+        *ngSwitchDefault
+        [questionNumber]="this.questionNumber"
+        [text]="this.currentQuestion.text"
+        class="grow"
+      ></app-not-supported-question>
+    </ng-container>
+  </div>
+  <div id="footer">
+    <ion-button size="large" color="success" (click)="this.handleNextQuestion()"
+      ><span>Next</span></ion-button
+    >
+  </div>
 </ion-content>
+
+<!-- Hidden question container for question parser to be able to search all
+classLists -->
+<div #hiddenQuestions class="noDisplay"></div>

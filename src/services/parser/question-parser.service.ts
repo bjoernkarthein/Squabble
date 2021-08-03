@@ -391,6 +391,7 @@ export interface MoodleQuestionType {
   slot: number;
 }
 
+//TODO: comment
 enum Type {
   MULTIPLE_CHOICE = 'multichoice',
   NUMERICAL = 'numerical',

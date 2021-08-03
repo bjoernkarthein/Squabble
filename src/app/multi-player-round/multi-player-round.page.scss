@@ -1,0 +1,27 @@
+.noDisplay {
+  display: none;
+}
+
+#questions {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+
+  .grow {
+    width: 90%;
+  }
+}
+
+#footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5rem;
+
+  span {
+    color: white;
+  }
+}

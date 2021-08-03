@@ -14,6 +14,7 @@ import { NotSupportedQuestionComponent } from './not-supported-question/not-supp
 import { GapSelectQuestionComponent } from './gap-select-question/gap-select-question.component';
 import { CrQuestionComponent } from './cr-question/cr-question.component';
 import { GamePreviewItemComponent } from './game-preview-item/game-preview-item.component';
+import { QuizRoundPreviewComponent } from './quiz-round-preview/quiz-round-preview.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { GamePreviewItemComponent } from './game-preview-item/game-preview-item.
     NotSupportedQuestionComponent,
     GapSelectQuestionComponent,
     CrQuestionComponent,
-    GamePreviewItemComponent
+    GamePreviewItemComponent,
+    QuizRoundPreviewComponent
   ],
   imports: [CommonModule, FormsModule],
   exports: [
@@ -45,7 +47,8 @@ import { GamePreviewItemComponent } from './game-preview-item/game-preview-item.
     NotSupportedQuestionComponent,
     GapSelectQuestionComponent,
     CrQuestionComponent,
-    GamePreviewItemComponent
+    GamePreviewItemComponent,
+    QuizRoundPreviewComponent
   ]
 })
 export class ComponentsModule { }

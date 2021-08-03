@@ -46,6 +46,9 @@
         [inProgress]="game.inprogress"
         [score]="'1:2'"
       ></app-game-preview-item>
+      <ion-item class="empty" *ngIf="this.filteredGames.length <= 0"
+        >Nothing here...</ion-item
+      >
     </ion-list>
   </div>
 </ion-content>

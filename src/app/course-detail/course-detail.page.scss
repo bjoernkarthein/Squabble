@@ -13,12 +13,17 @@ h4 {
 
 .multi-player {
   margin: 0 1rem;
+  margin-bottom: 3rem;
 
   ion-list {
     margin-top: 1rem;
 
     ion-select {
       margin-right: 1rem;
+    }
+
+    .empty {
+      opacity: 0.4;
     }
   }
 }

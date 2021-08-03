@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MoodleQuestionType } from '../parser/question-parser.service';
 
 @Injectable({
   providedIn: 'root'
@@ -71,10 +72,25 @@ export class BackendService {
     return await this.http.get<any>('/api/multi_player_attempts/course/' + courseId + '/user/' + userId).toPromise();
   }
 
+  public async getMultiPlayerAttemptById(attemptId: string): Promise<MultiPlayerAttempt> {
+    const res = await this.http.get<any>('/api/multi_player_attempts/' + attemptId).toPromise();
+    return res[0];
+  }
+
   public async saveMultiPlayerAttempt(mpa: MultiPlayerAttempt) {
-    this.http.post('/api/multi_player_attempts', { mpa }, this.httpOptions).subscribe(response => {
-      console.log(response);
-    });
+    await this.http.post('/api/multi_player_attempts', { mpa }, this.httpOptions).toPromise();
+  }
+
+  public async updateMultiPlayerAttempt(mpa: MultiPlayerAttempt) {
+    await this.http.put('/api/multi_player_attempts', { mpa }, this.httpOptions).toPromise();
+  }
+
+  public async saveMultiPlayerQuestion(mpq: MultiPlayerQuestion) {
+    await this.http.post('/api/multi_player_game_questions', { mpq }, this.httpOptions).toPromise();
+  }
+
+  public async getMultiPlayerQuestions(gameId: number, roundId: number) {
+    return await this.http.get<any>('/api/multi_player_game_questions/' + gameId + '/round/' + roundId).toPromise();
   }
 }
 
@@ -108,5 +124,15 @@ export interface MultiPlayerAttempt {
   inProgress: boolean;
   currentRound?: number;
   nextTurnId?: number;
-  questionIndex?: number;
+  turns: number;
+  questionsAreSet: boolean;
+}
+
+export interface MultiPlayerQuestion {
+  gameId: number;
+  roundNumber: number;
+  question: MoodleQuestionType;
+  attemptId: number;
+  givenAnswers?: JSON;
+  rightAnswers?: JSON;
 }

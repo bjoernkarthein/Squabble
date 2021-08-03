@@ -1,9 +1,35 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>multi-player-overview</ion-title>
+    <ion-buttons slot="start">
+      <ion-button [routerLink]="['/home']">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="this.opponent"
+      >Game against {{this.opponent.firstname}}
+      {{this.opponent.lastname}}</ion-title
+    >
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <div id="container">
+    <div class="names-and-score" *ngIf="this.opponent && this.myself">
+      <h3>{{this.myself.firstname}} {{this.myself.lastname}}</h3>
+      <h3>0:0</h3>
+      <h3>{{this.opponent.firstname}} {{this.opponent.lastname}}</h3>
+    </div>
+    <div id="rounds">
+      <div class="quiz-round" *ngFor="let round of this.rounds">
+        <app-quiz-round-preview></app-quiz-round-preview>
+        <span>Round {{round.num}}</span>
+        <app-quiz-round-preview></app-quiz-round-preview>
+      </div>
+    </div>
+    <ion-button
+      *ngIf="this.myTurn && !this.finished"
+      (click)="this.startNextRound()"
+      >Play</ion-button
+    >
+  </div>
 </ion-content>

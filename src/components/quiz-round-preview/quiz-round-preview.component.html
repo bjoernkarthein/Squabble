@@ -1,0 +1,9 @@
+<div id="outer">
+  <span *ngIf="!this.isFinished">Not answered yet...</span>
+  <ng-container *ngIf="this.isFinished">
+    <div
+      *ngFor="let question of this.questions"
+      [ngClass]="{ right: question.right }"
+    ></div>
+  </ng-container>
+</div>

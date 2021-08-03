@@ -65,6 +65,27 @@ export class MoodleService {
     return this.http.get<any>(reqUrl);
   }
 
+  public async getRandomQuizQuestion(courseId: string) {
+    const res = await this.getQuizzesFromCourse(courseId).toPromise();
+    const quizzes = res.quizzes;
+
+    let randomQuizIndex = Math.floor(Math.random() * quizzes.length);
+    let quiz = quizzes[randomQuizIndex];
+    while (!quiz || quiz.hasquestions !== 1) {
+      randomQuizIndex = Math.floor(Math.random() * quizzes.length);
+      quiz = quizzes[randomQuizIndex];
+    }
+
+    const resp = await this.startAttemptForQuiz(quiz.id, this.webServiceUserToken);
+    const attempt = resp.attempt.id;
+    await this.processQuizAttempt(attempt, this.webServiceUserToken, new Map(), 1);
+    const info = await this.getFinishedQuizInfo(attempt, this.webServiceUserToken).toPromise();
+    const questions = info.questions;
+    const randomQuestionIndex = Math.floor(Math.random() * questions.length);
+    const que = questions[randomQuestionIndex];
+    return { attemptId: attempt, question: que };
+  }
+
   /**
    * Starts a quiz attempt for the given quiz with the user that the token is registered to
    *

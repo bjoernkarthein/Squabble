@@ -50,7 +50,6 @@ export class CourseDetailPage implements OnInit {
 
     this.getQuizzes(this.courseId);
     this.multiPlayerGames = await this.backendService.getMultiPlayerAttemptsByCourseAndUser(this.courseId, this.currentUser.id);
-    console.log(this.multiPlayerGames);
     this.filterOpenGames();
   }
 
@@ -74,10 +73,16 @@ export class CourseDetailPage implements OnInit {
       initiatorId: this.currentUser.id,
       opponentId: oId,
       courseId: this.courseId,
-      inProgress: true
+      inProgress: true,
+      currentRound: 0,
+      questionsAreSet: false,
+      nextTurnId: this.currentUser.id,
+      turns: 0
     };
 
     await this.backendService.saveMultiPlayerAttempt(multiplayerAttempt);
+    this.multiPlayerGames = await this.backendService.getMultiPlayerAttemptsByCourseAndUser(this.courseId, this.currentUser.id);
+    this.filterOpenGames();
   }
 
   public filter(event: any): void {
