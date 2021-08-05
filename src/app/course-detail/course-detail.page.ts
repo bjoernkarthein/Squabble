@@ -20,7 +20,6 @@ export class CourseDetailPage implements OnInit {
   public quizzes = new Map();
   public courseId: string;
   public currentUser: User;
-  public inProgress: GameProgressStatus = GameProgressStatus.IN_PROGRESS;
   public multiPlayerGames = [];
   public filteredGames = [];
 
@@ -94,6 +93,10 @@ export class CourseDetailPage implements OnInit {
     }
   }
 
+  public async getOpponentName(game: MultiPlayerAttempt) {
+    const opponent = await this.getOpponent(game.initiatorId, game.opponentId);
+  }
+
   private getQuizzes(courseId: string): void {
     this.moodleService.getQuizzesFromCourse(courseId).subscribe(response => {
       const quizzes = response.quizzes;
@@ -124,6 +127,21 @@ export class CourseDetailPage implements OnInit {
         this.filteredGames.push(game);
       }
     }
+  }
+
+  private async getOpponent(initiatorId: number, opponentId: number): Promise<User> {
+    const firstPlayer = await this.backendService.getUser(initiatorId).toPromise();
+    const first = firstPlayer[0];
+    const secondPlayer = await this.backendService.getUser(opponentId).toPromise();
+    const second = secondPlayer[0];
+
+    let opponent: User;
+    if (first.id === this.currentUser.id) {
+      opponent = second;
+    } else {
+      opponent = first;
+    }
+    return opponent;
   }
 
   private async presentAlertConfirm(quizId: string): Promise<void> {

@@ -92,6 +92,12 @@ export class BackendService {
   public async getMultiPlayerQuestions(gameId: number, roundId: number) {
     return await this.http.get<any>('/api/multi_player_game_questions/' + gameId + '/round/' + roundId).toPromise();
   }
+
+  public async saveMultiPlayerAnswer(multiPlayerAnswers: MultiPlayerAnswer[]) {
+    for (const mpa of multiPlayerAnswers) {
+      await this.http.post('/api/multi_player_game_answers', { mpa }, this.httpOptions).toPromise();
+    }
+  }
 }
 
 export interface User {
@@ -130,9 +136,18 @@ export interface MultiPlayerAttempt {
 
 export interface MultiPlayerQuestion {
   gameId: number;
-  roundNumber: number;
-  question: MoodleQuestionType;
   attemptId: number;
-  givenAnswers?: JSON;
-  rightAnswers?: JSON;
+  roundNumber: number;
+  questionSlot: number;
+  question: MoodleQuestionType;
+  rightAnswers?: string;
+}
+
+export interface MultiPlayerAnswer {
+  gameId: number;
+  attemptId: number;
+  roundNumber: number;
+  questionSlot: number;
+  answerOption: string;
+  answerValue: string;
 }

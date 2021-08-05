@@ -11,33 +11,33 @@ export class QuestionParserService {
     this.feedback = { block: null };
   }
 
-  public parseQuestion(question: MoodleQuestionType, attemptId: number) {
+  public parseQuestion(question: MoodleQuestionType, attemptId: number, inProgress: boolean) {
     const qid = question.slot;
     const questionType = question.type;
 
     switch (questionType) {
       case Type.MULTIPLE_CHOICE:
-        return this.parseMultiChoice(qid, attemptId);
+        return this.parseMultiChoice(qid, attemptId, inProgress);
       case Type.MATCH:
-        return this.parseMatch(qid, attemptId);
+        return this.parseMatch(qid, attemptId, inProgress);
       //   case Type.CLOZE:
       //     return this.parseCloze(qid);
       //   case Type.DRAG_IMAGE:
       //     return this.parseImage(qid);
       // case Type.DRAG_MARKER:
       //   return this.parseMarker(qid);
-      case Type.ESSAY:
-        return this.parseEssay(qid, attemptId);
+      // case Type.ESSAY:
+      //   return this.parseEssay(qid, attemptId);
       case Type.DRAG_TEXT:
-        return this.parseText(qid, attemptId);
+        return this.parseText(qid, attemptId, inProgress);
       case Type.NUMERICAL:
-        return this.parseNumerical(qid, attemptId);
+        return this.parseNumerical(qid, attemptId, inProgress);
       case Type.SHORT_ANSWER:
-        return this.parseShort(qid, attemptId);
+        return this.parseShort(qid, attemptId, inProgress);
       case Type.TRUE_FALSE:
-        return this.parseTrueFalse(qid, attemptId);
+        return this.parseTrueFalse(qid, attemptId, inProgress);
       case Type.GAP_SELECT:
-        return this.parseGapSelect(qid, attemptId);
+        return this.parseGapSelect(qid, attemptId, inProgress);
       default:
         return this.parseNotSupported(qid, questionType, attemptId);
     }
@@ -45,13 +45,15 @@ export class QuestionParserService {
 
   //! ALSO GET ANSWER OPTION VALUES IN CASE OF RELOAD
 
-  private parseMultiChoice(qid: number, attemptId: number): MultipleChoice {
+  private parseMultiChoice(qid: number, attemptId: number, inProgress: boolean): MultipleChoice {
     const moodleQId = '#question-' + attemptId + '-' + qid;
+    console.log(moodleQId);
     const qtext = document.querySelector(moodleQId + ' .qtext').textContent;
     const qanswer = document.querySelector(moodleQId + ' .answer').textContent;
     const qansweroptions = qanswer.split('\n');
     qansweroptions.pop();
     const answerOptionsAndSelected: any[] = [];
+
     for (const a of qansweroptions) {
       answerOptionsAndSelected.push({
         text: a,
@@ -76,26 +78,58 @@ export class QuestionParserService {
 
     let answer = null;
     do {
+
+      // if (inProgress) {
+      //   answer = document.querySelector(moodleQId + ' .answer input');
+      // } else {
+      //   answer = document.querySelector(moodleQId + ' .answer div');
+      // }
+
       answer = document.querySelector(moodleQId + ' .answer input');
       if (answer) {
+        // if (inProgress ? answer['type'] === 'radio' : answer.classList[0][0] === 'r') {
         if (answer['type'] === 'radio') {
           question.multipleAllowed = false;
         }
 
+        // if (inProgress) {
+        //   question.answerFields.push({ name: answer['name'], value: '' });
+        //   document.querySelector(moodleQId + ' .answer input').remove();
+        // } else {
+        //   let optionName = answer.firstChild.id;
+        //   optionName = optionName.replace('-label', '');
+        //   question.answerFields.push({ name: optionName, value: '' });
+        //   document.querySelector(moodleQId + ' .answer div').remove();
+        // }
         question.answerFields.push({ name: answer['name'], value: '' });
         document.querySelector(moodleQId + ' .answer input').remove();
-        if (question.multipleAllowed) {
+
+        // if (question.multipleAllowed && inProgress) {
+        //   document.querySelector(moodleQId + ' .answer input').remove();
+        // }
+        if (question.multipleAllowed && inProgress) {
           document.querySelector(moodleQId + ' .answer input').remove();
         }
       }
     } while (answer != null);
 
+    if (!inProgress) {
+      let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      if (question.multipleAllowed) {
+        rightAnswer = rightAnswer.replace('The correct answers are: ', '');
+      } else {
+        rightAnswer = rightAnswer.replace('The correct answer is: ', '');
+      }
+      question.rightAnswers = rightAnswer.split(', ');
+    }
+
     document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseMatch(qid: number, attemptId: number) {
+  private parseMatch(qid: number, attemptId: number, inProgress: boolean): Match {
     const moodleQId = '#question-' + attemptId + '-' + qid;
+    console.log(moodleQId);
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
@@ -109,7 +143,8 @@ export class QuestionParserService {
       gapText: [],
       answerOptions: [],
       sequenceCheck: qSequence,
-      answerFields: []
+      answerFields: [],
+      rightAnswers: []
     };
 
     let aOption = null;
@@ -138,12 +173,25 @@ export class QuestionParserService {
       }
     } while (answer != null);
 
+    if (!inProgress) {
+      let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      rightAnswer = rightAnswer.replace('The correct answer is: ', '');
+
+      const regEx = new RegExp('\.+→ ');
+      const answerArray = rightAnswer.split(', ');
+
+      for (const str of answerArray) {
+        question.rightAnswers.push(str.replace(regEx, ''));
+      }
+    }
+
     document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseGapSelect(qid: number, attemptId: number) {
+  private parseGapSelect(qid: number, attemptId: number, inProgress: boolean): GapSelect {
     const moodleQId = '#question-' + attemptId + '-' + qid;
+    console.log(moodleQId);
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
     const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
@@ -155,7 +203,8 @@ export class QuestionParserService {
       gapText: [],
       answerOptions: [],
       sequenceCheck: qSequence,
-      answerFields: []
+      answerFields: [],
+      rightAnswers: []
     };
 
     let aOption = null;
@@ -185,6 +234,19 @@ export class QuestionParserService {
     const gaps = qtext.split(/[ ]+/);
     question.gapText = gaps;
 
+    if (!inProgress) {
+      let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      rightAnswer = rightAnswer.replace('The correct answer is: ', '');
+
+      const regEx = new RegExp('\.+\\[');
+      const answerArray = rightAnswer.split(']');
+      answerArray.pop();
+
+      for (const str of answerArray) {
+        question.rightAnswers.push(str.replace(regEx, ''));
+      }
+    }
+
     document.querySelector(moodleQId).remove();
     return question;
   }
@@ -199,8 +261,9 @@ export class QuestionParserService {
     document.querySelector('.que.ddimageortext').remove();
   }
 
-  private parseMarker(qid: number, attemptId: number) {
+  private parseMarker(qid: number, attemptId: number, inProgress: boolean): DragMarker {
     const moodleQId = '#question-' + attemptId + '-' + qid;
+    console.log(moodleQId);
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
     // eslint-disable-next-line @typescript-eslint/dot-notation
     const qimage = document.querySelector(moodleQId + ' .content .dropbackground').attributes['src'].textContent;
@@ -226,8 +289,9 @@ export class QuestionParserService {
     return question;
   }
 
-  private parseText(qid: number, attemptId: number) {
+  private parseText(qid: number, attemptId: number, inProgress: boolean): DragText {
     const moodleQId = '#question-' + attemptId + '-' + qid;
+    console.log(moodleQId);
     let qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
     qtext = qtext.replace(/\w*blank\w*/g, '##BLANK##');
 
@@ -241,7 +305,8 @@ export class QuestionParserService {
       text: qtext,
       answerOptions: [],
       sequenceCheck: qSequence,
-      answerFields: []
+      answerFields: [],
+      rightAnswers: []
     };
 
     let answer = null;
@@ -270,12 +335,26 @@ export class QuestionParserService {
       }
     } while (aOption != null);
 
+    if (!inProgress) {
+      let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      rightAnswer = rightAnswer.replace('The correct answer is: ', '');
+
+      const regEx = new RegExp('\.+\\[');
+      const answerArray = rightAnswer.split(']');
+      answerArray.pop();
+
+      for (const str of answerArray) {
+        question.rightAnswers.push(str.replace(regEx, ''));
+      }
+    }
+
     document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseNumerical(qid: number, attemptId: number) {
+  private parseNumerical(qid: number, attemptId: number, inProgress: boolean): Numerical {
     const moodleQId = '#question-' + attemptId + '-' + qid;
+    console.log(moodleQId);
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
@@ -290,15 +369,22 @@ export class QuestionParserService {
       type: Type.NUMERICAL,
       text: qtext,
       sequenceCheck: qSequence,
-      answerFields: [qAnswerField]
+      answerFields: [qAnswerField],
     };
+
+    if (!inProgress) {
+      let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      rightAnswer = rightAnswer.replace('The correct answer is: ', '');
+      question.rightAnswer = rightAnswer;
+    }
 
     document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseShort(qid: number, attemptId: number): ShortAnswer {
+  private parseShort(qid: number, attemptId: number, inProgress: boolean): ShortAnswer {
     const moodleQId = '#question-' + attemptId + '-' + qid;
+    console.log(moodleQId);
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
@@ -316,12 +402,19 @@ export class QuestionParserService {
       answerFields: [qAnswerField]
     };
 
+    if (!inProgress) {
+      let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      rightAnswer = rightAnswer.replace('The correct answer is: ', '');
+      question.rightAnswer = rightAnswer;
+    }
+
     document.querySelector(moodleQId).remove();
     return question;
   }
 
-  private parseEssay(qid: number, attemptId: number): ShortAnswer {
+  private parseEssay(qid: number, attemptId: number, inProgress: boolean): Essay {
     const moodleQId = '#question-' + attemptId + '-' + qid;
+    console.log(moodleQId);
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
@@ -343,8 +436,9 @@ export class QuestionParserService {
     return question;
   }
 
-  private parseTrueFalse(qid: number, attemptId: number): TrueFalse {
+  private parseTrueFalse(qid: number, attemptId: number, inProgress: boolean): TrueFalse {
     const moodleQId = '#question-' + attemptId + '-' + qid;
+    console.log(moodleQId);
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
@@ -361,6 +455,13 @@ export class QuestionParserService {
       sequenceCheck: qSequence,
       answerFields: [qAnswerField]
     };
+
+    if (!inProgress) {
+      let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      rightAnswer = rightAnswer.replace('The correct answer is \'', '');
+      rightAnswer = rightAnswer.replace('\'.', '');
+      question.rightAnswer = rightAnswer;
+    }
 
     document.querySelector(moodleQId).remove();
     return question;
@@ -419,6 +520,8 @@ interface MultipleChoice {
   answerOptions: any[];
   sequenceCheck: Field;
   answerFields?: Field[];
+  rightAnswers?: string[];
+  parsedRightAnswer?: string;
 }
 
 interface TrueFalse {
@@ -427,6 +530,8 @@ interface TrueFalse {
   text: string;
   sequenceCheck: Field;
   answerFields?: Field[];
+  rightAnswer?: string;
+  parsedRightAnswer?: string;
 }
 
 interface Numerical {
@@ -435,6 +540,8 @@ interface Numerical {
   text: string;
   sequenceCheck?: Field;
   answerFields?: Field[];
+  rightAnswer?: string;
+  parsedRightAnswer?: string;
 }
 
 interface ShortAnswer {
@@ -443,6 +550,8 @@ interface ShortAnswer {
   text: string;
   sequenceCheck?: Field;
   answerFields?: Field[];
+  rightAnswer?: string;
+  parsedRightAnswer?: string;
 }
 
 interface Essay {
@@ -460,6 +569,8 @@ interface Cloze {
   answerOptions: string[];
   sequenceCheck?: Field;
   answerFields?: Field[];
+  rightAnswers?: string[];
+  parsedRightAnswer?: string;
 }
 
 interface Match {
@@ -470,6 +581,8 @@ interface Match {
   answerOptions: string[];
   sequenceCheck?: Field;
   answerFields?: Field[];
+  rightAnswers?: string[];
+  parsedRightAnswer?: string;
 }
 
 interface GapSelect {
@@ -479,6 +592,8 @@ interface GapSelect {
   answerOptions: string[];
   sequenceCheck?: Field;
   answerFields?: Field[];
+  rightAnswers?: string[];
+  parsedRightAnswer?: string;
 }
 
 interface DragImage {
@@ -489,6 +604,8 @@ interface DragImage {
   answerOptions: string[];
   sequenceCheck?: Field;
   answerFields?: Field[];
+  rightAnswers?: string[];
+  parsedRightAnswer?: string;
 }
 
 interface DragText {
@@ -498,6 +615,8 @@ interface DragText {
   answerOptions: any[];
   sequenceCheck?: Field;
   answerFields?: Field[];
+  rightAnswers?: string[];
+  parsedRightAnswer?: string;
 }
 
 interface DragImageOrText {
@@ -508,6 +627,8 @@ interface DragImageOrText {
   answerOptions: string[];
   sequenceCheck?: Field;
   answerFields?: Field[];
+  rightAnswers?: string[];
+  parsedRightAnswer?: string;
 }
 
 interface DragMarker {
@@ -518,6 +639,8 @@ interface DragMarker {
   markers: string[];
   sequenceCheck?: Field;
   answerFields?: Field[];
+  rightAnswers?: string[];
+  parsedRightAnswer?: string;
 }
 
 interface NotSupported {

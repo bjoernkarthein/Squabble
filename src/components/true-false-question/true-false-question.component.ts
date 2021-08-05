@@ -9,12 +9,20 @@ export class TrueFalseQuestionComponent implements OnInit {
 
   @Input() public text: string;
   @Input() public questionNumber: number;
+  @Input() public rightAnswer: string;
+
+  @Output() public setRightAnswer = new EventEmitter<string>();
   @Output() public changeAnswer = new EventEmitter<string[]>();
 
   constructor() { }
 
   ngOnInit() {
-    this.changeAnswer.emit(['']);
+    if (this.rightAnswer === 'True') {
+      this.setRightAnswer.emit('1');
+    } else {
+      this.setRightAnswer.emit('0');
+    }
+    this.changeAnswer.emit(['-1']);
   }
 
   public radioGroupChange(event: any) {

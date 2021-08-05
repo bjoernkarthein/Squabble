@@ -72,16 +72,6 @@ export class QuizDetailPage implements OnInit {
     this.showToast('Attempt submitted successfully', 'success');
   }
 
-  public async showToast(msg: string, clr: string) {
-    const toast = await this.toastController.create({
-      message: msg,
-      duration: 3000,
-      animated: true,
-      color: clr
-    });
-    toast.present();
-  }
-
   public getQText(input: string): string[] {
     return input.split('##BLANK##');
   }
@@ -124,6 +114,7 @@ export class QuizDetailPage implements OnInit {
       quizname: this.quizTitle,
       startDate: formattedDate
     };
+    console.log(singleAttempt);
     await this.backendService.saveSinglePlayerAttempt(singleAttempt);
   }
 
@@ -151,8 +142,18 @@ export class QuizDetailPage implements OnInit {
       slot: question.slot
     };
     const attempt = await this.getAttemptId(this.quizId);
-    const parsedQuestion = this.questionParser.parseQuestion(elem, attempt);
+    const parsedQuestion = this.questionParser.parseQuestion(elem, attempt, true);
     console.log(parsedQuestion);
     this.questions.set(parsedQuestion.id, parsedQuestion);
+  }
+
+  private async showToast(msg: string, clr: string) {
+    const toast = await this.toastController.create({
+      message: msg,
+      duration: 3000,
+      animated: true,
+      color: clr
+    });
+    toast.present();
   }
 }

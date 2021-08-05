@@ -42,7 +42,7 @@
         *ngFor="let game of this.filteredGames"
         [gameId]="game.gid"
         [turn]="game.nextTurnId"
-        [opponentName]="game.firstname + ' ' + game.lastname"
+        [opponentName]=""
         [inProgress]="game.inprogress"
         [score]="'1:2'"
       ></app-game-preview-item>

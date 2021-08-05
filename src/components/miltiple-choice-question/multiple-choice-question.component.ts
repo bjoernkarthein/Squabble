@@ -17,7 +17,6 @@ export class MultipleChoiceQuestionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.changeAnswer.emit(['']);
   }
 
   public radioGroupChange(event: any) {

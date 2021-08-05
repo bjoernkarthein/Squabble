@@ -14,6 +14,9 @@
         *ngSwitchCase="'truefalse'"
         [text]="this.currentQuestion.text"
         [questionNumber]="this.questionNumber"
+        [rightAnswer]="this.currentQuestion.rightAnswer"
+        (setRightAnswer)="this.setRightAnswer($event)"
+        (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-true-false-question>
 
@@ -23,6 +26,7 @@
         [questionNumber]="this.questionNumber"
         [answerOptions]="this.currentQuestion.answerOptions"
         [multipleAllowed]="this.currentQuestion.multipleAllowed"
+        (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-multiple-choice-question>
 
@@ -32,6 +36,7 @@
         [questionNumber]="this.questionNumber"
         [answerOptions]="this.currentQuestion.answerOptions"
         [gapText]="this.currentQuestion.gapText"
+        (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-matching-question>
 
@@ -39,6 +44,7 @@
         *ngSwitchCase="'shortanswer'"
         [text]="this.currentQuestion.text"
         [questionNumber]="this.questionNumber"
+        (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-short-answer-question>
 
@@ -46,6 +52,7 @@
         *ngSwitchCase="'numerical'"
         [text]="this.currentQuestion.text"
         [questionNumber]="this.questionNumber"
+        (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-numeric-question>
 
@@ -53,6 +60,7 @@
         *ngSwitchCase="'essay'"
         [text]="this.currentQuestion.text"
         [questionNumber]="this.questionNumber"
+        (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-cr-question>
 
@@ -61,6 +69,7 @@
         [snippets]="this.getQText(this.currentQuestion.text)"
         [questionNumber]="this.questionNumber"
         [answerOptions]="this.currentQuestion.answerOptions"
+        (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-drag-drop-text-question>
 
@@ -69,6 +78,7 @@
         [snippets]="this.currentQuestion.gapText"
         [questionNumber]="this.questionNumber"
         [answerOptions]="this.currentQuestion.answerOptions"
+        (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-gap-select-question>
 
