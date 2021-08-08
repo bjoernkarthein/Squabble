@@ -3,7 +3,7 @@
   <ng-container *ngIf="this.isFinished">
     <div
       *ngFor="let question of this.questions"
-      [ngClass]="{ right: question.right }"
+      [ngClass]="{ right: this.isRight(question) }"
     ></div>
   </ng-container>
 </div>

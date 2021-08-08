@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 import { Storage } from '@capacitor/storage';
 import { GameProgressStatus } from 'src/components/game-preview-item/game-preview-item.component';
@@ -17,7 +17,7 @@ export class CourseDetailPage implements OnInit {
 
   public courseInfo = {};
   public courseContent = {};
-  public quizzes = new Map();
+  public quizzes: Quiz[] = [];
   public courseId: string;
   public currentUser: User;
   public multiPlayerGames = [];
@@ -29,7 +29,8 @@ export class CourseDetailPage implements OnInit {
     private moodleService: MoodleService,
     private alertController: AlertController,
     private backendService: BackendService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastController: ToastController
   ) { }
 
   async ngOnInit() {
@@ -52,7 +53,7 @@ export class CourseDetailPage implements OnInit {
     this.filterOpenGames();
   }
 
-  public async startQuizAttempt(quizId: string, disabled: boolean): Promise<void> {
+  public async startQuizAttempt(quizId: number, disabled: boolean): Promise<void> {
     const attemptInProgress = await Storage.get({ key: 'inProgressAttempt' + quizId });
     console.log(attemptInProgress);
     if (disabled) {
@@ -65,8 +66,15 @@ export class CourseDetailPage implements OnInit {
   }
 
   public async startMultiPlayer(): Promise<void> {
-    const randomUser = await this.backendService.getRandomUser(this.currentUser.id);
-    console.log(randomUser);
+    const randomUser = await this.backendService.getRandomOpponentFromCourse(this.currentUser.id, this.courseId);
+
+    if (randomUser.error) {
+      this.showToast('Could not find any other registered users to play against', 'danger');
+      return;
+    } else {
+      this.showToast('Successfully started game against ' + randomUser.firstname + ' ' + randomUser.lastname, 'success');
+    }
+
     const oId = randomUser.id;
     const multiplayerAttempt: MultiPlayerAttempt = {
       initiatorId: this.currentUser.id,
@@ -76,7 +84,9 @@ export class CourseDetailPage implements OnInit {
       currentRound: 0,
       questionsAreSet: false,
       nextTurnId: this.currentUser.id,
-      turns: 0
+      turns: 0,
+      initiatorPoints: 0,
+      opponentPoints: 0
     };
 
     await this.backendService.saveMultiPlayerAttempt(multiplayerAttempt);
@@ -97,18 +107,24 @@ export class CourseDetailPage implements OnInit {
     const opponent = await this.getOpponent(game.initiatorId, game.opponentId);
   }
 
-  private getQuizzes(courseId: string): void {
-    this.moodleService.getQuizzesFromCourse(courseId).subscribe(response => {
-      const quizzes = response.quizzes;
-      for (const quiz of quizzes) {
-        const elem: Quiz = {
-          title: quiz.name,
-          description: quiz.intro,
-          hasQuestions: quiz.hasquestions
-        };
-        this.quizzes.set(quiz.id, elem);
-      }
-    });
+  private async getQuizzes(courseId: string): Promise<void> {
+    this.quizzes = [];
+    const response = await this.moodleService.getQuizzesFromCourse(courseId).toPromise();
+    const quizzes = response.quizzes;
+    for (const quiz of quizzes) {
+      const elem: Quiz = {
+        id: quiz.id,
+        title: quiz.name,
+        description: quiz.intro,
+        hasQuestions: quiz.hasquestions
+      };
+      this.quizzes.push(elem);
+    }
+    this.sortQuizzes();
+  }
+
+  private sortQuizzes(): void {
+    this.quizzes.sort((a: Quiz, b: Quiz) => a.hasQuestions ? -1 : 1);
   }
 
   private filterOpenGames(): void {
@@ -144,7 +160,7 @@ export class CourseDetailPage implements OnInit {
     return opponent;
   }
 
-  private async presentAlertConfirm(quizId: string): Promise<void> {
+  private async presentAlertConfirm(quizId: number): Promise<void> {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Start Quiz Attempt',
@@ -167,9 +183,20 @@ export class CourseDetailPage implements OnInit {
 
     await alert.present();
   }
+
+  private async showToast(msg: string, clr: string) {
+    const toast = await this.toastController.create({
+      message: msg,
+      duration: 3000,
+      animated: true,
+      color: clr
+    });
+    toast.present();
+  }
 }
 
 interface Quiz {
+  id: number;
   title: string;
   description: string;
   hasQuestions?: number;

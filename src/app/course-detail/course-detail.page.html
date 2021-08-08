@@ -13,12 +13,12 @@
   <h4>Quizzes of this course:</h4>
   <div id="quizzes">
     <app-course-card
-      *ngFor="let quiz of this.quizzes | keyvalue"
-      [courseName]="quiz.value.title"
-      [courseDesc]="quiz.value.description"
+      *ngFor="let quiz of this.quizzes"
+      [courseName]="quiz.title"
+      [courseDesc]="quiz.description"
       [type]="'Quiz'"
-      [disabled]="!quiz.value.hasQuestions"
-      (click)="this.startQuizAttempt(quiz.key, !quiz.value.hasQuestions)"
+      [disabled]="!quiz.hasQuestions"
+      (click)="this.startQuizAttempt(quiz.id, !quiz.hasQuestions)"
     ></app-course-card>
   </div>
   <h4>Multi-Player:</h4>
@@ -44,7 +44,7 @@
         [turn]="game.nextTurnId"
         [opponentName]=""
         [inProgress]="game.inprogress"
-        [score]="'1:2'"
+        [score]="'0:0'"
       ></app-game-preview-item>
       <ion-item class="empty" *ngIf="this.filteredGames.length <= 0"
         >Nothing here...</ion-item

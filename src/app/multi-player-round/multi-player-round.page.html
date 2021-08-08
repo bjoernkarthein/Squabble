@@ -1,5 +1,10 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button [routerLink]="['../../']">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>multi-player-round</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -26,6 +31,8 @@
         [questionNumber]="this.questionNumber"
         [answerOptions]="this.currentQuestion.answerOptions"
         [multipleAllowed]="this.currentQuestion.multipleAllowed"
+        [rightAnswers]="this.currentQuestion.rightAnswers"
+        (setRightAnswer)="this.setRightAnswer($event)"
         (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-multiple-choice-question>
@@ -36,6 +43,8 @@
         [questionNumber]="this.questionNumber"
         [answerOptions]="this.currentQuestion.answerOptions"
         [gapText]="this.currentQuestion.gapText"
+        [rightAnswers]="this.currentQuestion.rightAnswers"
+        (setRightAnswer)="this.setRightAnswer($event)"
         (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-matching-question>
@@ -44,6 +53,8 @@
         *ngSwitchCase="'shortanswer'"
         [text]="this.currentQuestion.text"
         [questionNumber]="this.questionNumber"
+        [rightAnswer]="this.currentQuestion.rightAnswer"
+        (setRightAnswer)="this.setRightAnswer($event)"
         (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-short-answer-question>
@@ -52,6 +63,8 @@
         *ngSwitchCase="'numerical'"
         [text]="this.currentQuestion.text"
         [questionNumber]="this.questionNumber"
+        [rightAnswer]="this.currentQuestion.rightAnswer"
+        (setRightAnswer)="this.setRightAnswer($event)"
         (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-numeric-question>
@@ -69,6 +82,8 @@
         [snippets]="this.getQText(this.currentQuestion.text)"
         [questionNumber]="this.questionNumber"
         [answerOptions]="this.currentQuestion.answerOptions"
+        [rightAnswers]="this.currentQuestion.rightAnswers"
+        (setRightAnswer)="this.setRightAnswer($event)"
         (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-drag-drop-text-question>
@@ -78,6 +93,8 @@
         [snippets]="this.currentQuestion.gapText"
         [questionNumber]="this.questionNumber"
         [answerOptions]="this.currentQuestion.answerOptions"
+        [rightAnswers]="this.currentQuestion.rightAnswers"
+        (setRightAnswer)="this.setRightAnswer($event)"
         (changeAnswer)="this.saveAnswer($event)"
         class="grow"
       ></app-gap-select-question>

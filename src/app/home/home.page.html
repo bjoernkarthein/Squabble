@@ -14,12 +14,12 @@
   <h4>Your Courses:</h4>
   <div id="courses">
     <app-course-card
-      *ngFor="let course of this.courses | keyvalue"
-      [courseName]="course.value.title"
-      [courseDesc]="course.value.description"
+      *ngFor="let course of this.courses"
+      [courseName]="course.name"
+      [courseDesc]="course.description"
       [type]="'Course'"
-      [disabled]="!this.hasQuizzes(course.key)"
-      [routerLink]="this.getUrl(course.key, !this.hasQuizzes(course.key))"
+      [disabled]="course.quizCount < 1"
+      [routerLink]="this.getUrl(course.id, course.quizCount < 1)"
     ></app-course-card>
   </div>
 

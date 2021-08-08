@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button [routerLink]="['/home']">
+      <ion-button [routerLink]="['../../']">
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -16,14 +16,22 @@
   <div id="container">
     <div class="names-and-score" *ngIf="this.opponent && this.myself">
       <h3>{{this.myself.firstname}} {{this.myself.lastname}}</h3>
-      <h3>0:0</h3>
+      <h3>{{this.getScore(this.myself.id)}}</h3>
       <h3>{{this.opponent.firstname}} {{this.opponent.lastname}}</h3>
     </div>
     <div id="rounds">
-      <div class="quiz-round" *ngFor="let round of this.rounds">
-        <app-quiz-round-preview></app-quiz-round-preview>
-        <span>Round {{round.num}}</span>
-        <app-quiz-round-preview></app-quiz-round-preview>
+      <div class="quiz-round" *ngFor="let round of this.rounds | keyvalue">
+        <app-quiz-round-preview
+          [player]="this.getRightPlayerValue(this.myself.id)"
+          [isFinished]="this.getFinishedStatus(this.myself.id, round.value[2])"
+          [questions]="round.value"
+        ></app-quiz-round-preview>
+        <span>Round {{round.key}}</span>
+        <app-quiz-round-preview
+          [player]="this.getRightPlayerValue(this.opponent.id)"
+          [isFinished]="this.getFinishedStatus(this.opponent.id, round.value[2])"
+          [questions]="round.value"
+        ></app-quiz-round-preview>
       </div>
     </div>
     <ion-button

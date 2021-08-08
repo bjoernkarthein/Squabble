@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-import { Field } from '../parser/question-parser.service';
+import { Field, MoodleQuestionType } from '../parser/question-parser.service';
 
 @Injectable({
   providedIn: 'root'
@@ -65,7 +65,7 @@ export class MoodleService {
     return this.http.get<any>(reqUrl);
   }
 
-  //! Nees to be refactored somehow
+  //! Needs to be refactored somehow
   public async getRandomQuizQuestion(courseId: string, amount: number): Promise<any[]> {
     const questionsArray = [];
 
@@ -73,23 +73,10 @@ export class MoodleService {
     const quizzes = res.quizzes;
 
     for (let i = 0; i < amount; i++) {
-      let randomQuizIndex = Math.floor(Math.random() * quizzes.length);
-      let quiz = quizzes[0];
-
-      while (!quiz || quiz.hasquestions !== 1) {
-        randomQuizIndex = Math.floor(Math.random() * quizzes.length);
-        quiz = quizzes[0];
-      }
-
-      const resp = await this.startAttemptForQuiz(quiz.id, this.webServiceUserToken);
-      const attempt = resp.attempt.id;
-      await this.processQuizAttempt(attempt, this.webServiceUserToken, new Map(), 1);
-      const info = await this.getFinishedQuizInfo(attempt, this.webServiceUserToken).toPromise();
-      const questions = info.questions;
-      const randomQuestionIndex = Math.floor(Math.random() * questions.length);
-      const que = questions[1];
-
-      questionsArray.push({ attemptId: attempt, question: que });
+      const randomQuestionObject = await this.getRandomQuestion(quizzes);
+      const randomQuestion = randomQuestionObject.question;
+      const attempt = randomQuestionObject.attemptId;
+      questionsArray.push({ attemptId: attempt, question: randomQuestion });
     }
     return questionsArray;
   }
@@ -153,19 +140,6 @@ export class MoodleService {
     return this.http.get<any>(reqUrl);
   }
 
-  // /**
-  //  * Get Quiz Questions for specific quiz
-  //  *
-  //  * @param quizId Id of the requested quiz
-  //  * @returns Quiz question information or an error if the quiz attempt could not be started
-  //  */
-  // public getQuizInfo(quizId: number) {
-  //   this.startAttemptForQuiz(quizId).subscribe(attempt => {
-  //     this.finishAttemptForQuiz(attempt.id);
-  //     return this.getFinishedQuizInfo(attempt.id);
-  //   });
-  // }
-
   /**
    * Returns all registered users for a moodle instance
    *
@@ -196,5 +170,25 @@ export class MoodleService {
    */
   private getRequestUrl(wstoken: string, wsfunction: string, moodlewsrestformat: string): string {
     return this.moodleBaseUrl + 'wstoken=' + wstoken + '&wsfunction=' + wsfunction + '&moodlewsrestformat=' + moodlewsrestformat;
+  }
+
+  private async getRandomQuestion(quizArray: any[]): Promise<any> {
+    let randomQuizIndex = Math.floor(Math.random() * quizArray.length);
+    let quiz = quizArray[randomQuizIndex];
+
+    while (!quiz || quiz.hasquestions !== 1) {
+      randomQuizIndex = Math.floor(Math.random() * quizArray.length);
+      quiz = quizArray[randomQuizIndex];
+    }
+
+    const resp = await this.startAttemptForQuiz(quiz.id, this.webServiceUserToken);
+    const attempt = resp.attempt.id;
+    await this.processQuizAttempt(attempt, this.webServiceUserToken, new Map(), 1);
+    const info = await this.getFinishedQuizInfo(attempt, this.webServiceUserToken).toPromise();
+    const questions = info.questions;
+    const randomQuestionIndex = Math.floor(Math.random() * questions.length);
+    const randomQuestion = questions[randomQuestionIndex];
+
+    return { attemptId: attempt, question: randomQuestion };
   }
 }

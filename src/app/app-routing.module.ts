@@ -32,11 +32,11 @@ const routes: Routes = [
     canLoad: [AuthGuard]
   },
   {
-    path: 'multi-player-overview/:gid',
+    path: 'mycourses/:cid/multi-player-overview/:gid',
     loadChildren: () => import('./multi-player-overview/multi-player-overview.module').then(m => m.MultiPlayerOverviewPageModule)
   },
   {
-    path: 'multi-player-overview/:gid/multi-player-round/:rid',
+    path: 'mycourses/:cid/multi-player-overview/:gid/multi-player-round/:rid',
     loadChildren: () => import('./multi-player-round/multi-player-round.module').then(m => m.MultiPlayerRoundPageModule)
   },
 ];

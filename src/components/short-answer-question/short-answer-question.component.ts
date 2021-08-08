@@ -9,11 +9,17 @@ export class ShortAnswerQuestionComponent implements OnInit {
 
   @Input() public text: string;
   @Input() public questionNumber: number;
+  @Input() public rightAnswer: string;
+
+  @Output() public setRightAnswer = new EventEmitter<string>();
   @Output() public changeAnswer = new EventEmitter<string[]>();
 
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.changeAnswer.emit([' ']);
+    this.setRightAnswer.emit(this.rightAnswer);
+  }
 
   //TODO: possibly change so answer is not updated on every keystroke
   public inputChange(event: any): void {

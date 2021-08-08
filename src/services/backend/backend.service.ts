@@ -29,8 +29,8 @@ export class BackendService {
     return this.http.get<any>('/api/users/' + id);
   }
 
-  public async getRandomUser(uId: number) {
-    return await this.http.get<any>('/api/users/random/' + uId).toPromise();
+  public async getRandomOpponentFromCourse(uId: number, cId: string) {
+    return await this.http.get<any>('/api/users/random/currentUser/' + uId + '/course/' + cId).toPromise();
   }
 
   public createUser(user: User) {
@@ -43,6 +43,37 @@ export class BackendService {
         console.log(res);
       });
     });
+  }
+
+  public async getCourses() {
+    return await this.http.get<any>('/api/courses').toPromise();
+  }
+
+  public async getCourse(id: number) {
+    return await this.http.get<any>('/api/courses/' + id).toPromise();
+  }
+
+  public async saveCourse(course: Course) {
+    const existingCourses = await this.getCourse(course.id);
+    if (existingCourses.length > 0) {
+      return;
+    }
+
+    await this.http.post('/api/courses', { course }, this.httpOptions).toPromise();
+  }
+
+  public async existsUserCourseMapping(courseId: number, userId: number) {
+    const userCourseMappings = await this.http.get<any>('/api/user_courses/user/' + userId + '/course/' + courseId).toPromise();
+    return userCourseMappings.length > 0;
+  }
+
+  public async saveUserCourseMapping(courseId: number, userId: number) {
+    const alreadyExists = await this.existsUserCourseMapping(courseId, userId);
+    if (alreadyExists) {
+      return;
+    }
+
+    await this.http.post('/api/user_courses', { courseId, userId }, this.httpOptions).toPromise();
   }
 
   public async getQuizAttemptById(attemptId: number) {
@@ -89,7 +120,11 @@ export class BackendService {
     await this.http.post('/api/multi_player_game_questions', { mpq }, this.httpOptions).toPromise();
   }
 
-  public async getMultiPlayerQuestions(gameId: number, roundId: number) {
+  public async updateMultiPlayerQuestion(mpq: MultiPlayerQuestion) {
+    await this.http.put('/api/multi_player_game_questions', { mpq }, this.httpOptions).toPromise();
+  }
+
+  public async getMultiPlayerQuestions(gameId: string, roundId: number) {
     return await this.http.get<any>('/api/multi_player_game_questions/' + gameId + '/round/' + roundId).toPromise();
   }
 
@@ -108,6 +143,13 @@ export interface User {
   lastname?: string;
   username?: string;
   loggedIn?: boolean;
+}
+
+export interface Course {
+  id: number;
+  name: string;
+  description: string;
+  quizCount?: number;
 }
 
 export interface SinglePlayerAttempt {
@@ -132,6 +174,8 @@ export interface MultiPlayerAttempt {
   nextTurnId?: number;
   turns: number;
   questionsAreSet: boolean;
+  initiatorPoints?: number;
+  opponentPoints?: number;
 }
 
 export interface MultiPlayerQuestion {
@@ -141,11 +185,12 @@ export interface MultiPlayerQuestion {
   questionSlot: number;
   question: MoodleQuestionType;
   rightAnswers?: string;
+  playerOneRight?: boolean;
+  playerTwoRight?: boolean;
 }
 
 export interface MultiPlayerAnswer {
   gameId: number;
-  attemptId: number;
   roundNumber: number;
   questionSlot: number;
   answerOption: string;

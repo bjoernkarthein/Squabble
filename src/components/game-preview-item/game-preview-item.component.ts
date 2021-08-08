@@ -14,6 +14,7 @@ export class GamePreviewItemComponent implements OnInit {
   @Input() public score: string;
   @Input() public inProgress: number;
 
+  public currentUrl: string;
   public turnText: string;
   public status: string;
   private currentUser: User;
@@ -26,6 +27,7 @@ export class GamePreviewItemComponent implements OnInit {
     this.currentUser = await this.authService.getCurrentUser();
     this.turnText = this.turn === this.currentUser.id ? 'Your turn' : 'Opponents turn';
     this.status = this.inProgress === 1 ? 'In progress' : 'Finished';
+    this.currentUrl = window.location.href;
   }
 
 }

@@ -521,7 +521,6 @@ interface MultipleChoice {
   sequenceCheck: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
-  parsedRightAnswer?: string;
 }
 
 interface TrueFalse {
@@ -531,7 +530,6 @@ interface TrueFalse {
   sequenceCheck: Field;
   answerFields?: Field[];
   rightAnswer?: string;
-  parsedRightAnswer?: string;
 }
 
 interface Numerical {
@@ -541,7 +539,6 @@ interface Numerical {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswer?: string;
-  parsedRightAnswer?: string;
 }
 
 interface ShortAnswer {
@@ -551,7 +548,6 @@ interface ShortAnswer {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswer?: string;
-  parsedRightAnswer?: string;
 }
 
 interface Essay {
@@ -582,7 +578,6 @@ interface Match {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
-  parsedRightAnswer?: string;
 }
 
 interface GapSelect {
@@ -593,7 +588,6 @@ interface GapSelect {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
-  parsedRightAnswer?: string;
 }
 
 interface DragImage {
@@ -616,7 +610,6 @@ interface DragText {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
-  parsedRightAnswer?: string;
 }
 
 interface DragImageOrText {

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { MultiPlayerQuestion } from 'src/services/backend/backend.service';
 
 @Component({
   selector: 'app-quiz-round-preview',
@@ -7,15 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class QuizRoundPreviewComponent implements OnInit {
 
-  public isFinished = true;
-  public questions = [
-    { right: true },
-    { right: true },
-    { right: false },
-  ];
+  @Input() public player: number;
+  @Input() public isFinished: boolean;
+  @Input() public questions: MultiPlayerQuestion[];
 
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+  }
+
+  public isRight(question: MultiPlayerQuestion): boolean {
+    if (this.player === 1) {
+      return question.playerOneRight;
+    } else {
+      return question.playerTwoRight;
+    }
+  }
 
 }

@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/services/auth/auth.service';
-import { BackendService, User } from 'src/services/backend/backend.service';
+import { BackendService, Course, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 
 @Component({
@@ -12,12 +12,13 @@ import { MoodleService } from 'src/services/moodle/moodle.service';
 
 export class HomePage implements OnInit {
   public moodleUrl: string;
-  public courses = new Map();
-  private currentUser;
+  public courses: Course[] = [];
+  private currentUser: User;
 
   constructor(
     private moodleService: MoodleService,
     private authService: AuthService,
+    private backendService: BackendService,
     private router: Router
   ) { }
 
@@ -33,17 +34,12 @@ export class HomePage implements OnInit {
     this.router.navigateByUrl('/', { replaceUrl: true });
   }
 
-  public getUrl(courseId: string, disabled: boolean): string {
+  public getUrl(courseId: number, disabled: boolean): string {
     if (disabled) {
       return null;
     } else {
       return '/mycourses/' + courseId;
     }
-  }
-
-  public hasQuizzes(courseId: number): boolean {
-    const course = this.courses.get(courseId);
-    return course.quizCount > 0;
   }
 
   private getMoodleSiteInfo() {
@@ -53,27 +49,32 @@ export class HomePage implements OnInit {
     });
   }
 
-  private getCourses() {
+  private async getCourses() {
+    this.courses = [];
     const id = this.currentUser.id;
-    this.moodleService.getCoursesForUser(id).subscribe(courses => {
-      for (const course of courses) {
-        const elem: Course = {
-          title: course.displayname,
-          description: course.summary,
-        };
-        this.moodleService.getQuizzesFromCourse(course.id).subscribe(res => {
-          const quizzes = res.quizzes;
-          elem.quizCount = quizzes.length;
-          this.courses.set(course.id, elem);
-        });
-      }
-    });
+    const userCourses = await this.moodleService.getCoursesForUser(id).toPromise();
+
+    for (const course of userCourses) {
+      const elem: Course = {
+        id: course.id,
+        name: course.displayname,
+        description: course.summary,
+      };
+
+      await this.backendService.saveCourse(elem);
+      await this.backendService.saveUserCourseMapping(elem.id, this.currentUser.id);
+
+      const res = await this.moodleService.getQuizzesFromCourse(course.id).toPromise();
+      const quizzes = res.quizzes;
+      elem.quizCount = quizzes.length;
+      this.courses.push(elem);
+    }
+
+    this.sortCourses();
   }
 
-}
+  private sortCourses(): void {
+    this.courses.sort((a: Course, b: Course) => (b.quizCount - a.quizCount));
+  }
 
-interface Course {
-  title: string;
-  description: string;
-  quizCount?: number;
 }

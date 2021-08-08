@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/services/auth/auth.service';
-import { BackendService, User } from 'src/services/backend/backend.service';
+import { BackendService, MultiPlayerQuestion, User } from 'src/services/backend/backend.service';
 
 @Component({
   selector: 'app-multi-player-overview',
@@ -16,7 +16,7 @@ export class MultiPlayerOverviewPage implements OnInit {
   public myself: User;
   public myTurn: boolean;
   public finished: boolean;
-  public rounds: Round[] = [{ num: 1 }, { num: 2 }, { num: 3 }];
+  public rounds: Map<number, MultiPlayerQuestion[]> = new Map();
   private currentUser: User;
 
   constructor(
@@ -38,13 +38,54 @@ export class MultiPlayerOverviewPage implements OnInit {
     await this.getPlayers();
     this.myTurn = this.currentGame.nextTurnId === this.myself.id;
     this.finished = this.currentGame.inprogress === 0;
+
+    this.rounds.clear();
+    for (let i = 1; i <= this.currentGame.currentRound; i++) {
+      const rounds = await this.backendService.getMultiPlayerQuestions(this.attemptId, i);
+      for (const round of rounds) {
+        if (this.rounds.has(round.roundNumber)) {
+          this.rounds.get(round.roundNumber).push(round);
+        } else {
+          this.rounds.set(round.roundNumber, []);
+          this.rounds.get(round.roundNumber).push(round);
+        }
+      }
+    }
+    console.log(this.rounds);
+    console.log(this.currentGame);
   }
 
   public startNextRound() {
     if (this.currentGame.questionsAreSet === 0) {
       this.currentGame.currentRound++;
     }
-    this.router.navigateByUrl('/multi-player-overview/' + this.attemptId + '/multi-player-round/' + this.currentGame.currentRound);
+
+    const currentUrl = window.location.pathname;
+    this.router.navigateByUrl(currentUrl + '/multi-player-round/' + this.currentGame.currentRound);
+  }
+
+  public getRightPlayerValue(id: number): number {
+    if (id === this.currentGame.initiatorId) {
+      return 1;
+    } else {
+      return 2;
+    }
+  }
+
+  public getFinishedStatus(id: number, round: MultiPlayerQuestion): boolean {
+    if (id === this.currentGame.initiatorId) {
+      return round.playerOneRight !== null;
+    } else {
+      return round.playerTwoRight !== null;
+    }
+  }
+
+  public getScore(id: number): string {
+    if (id === this.currentGame.initiatorId) {
+      return this.currentGame.initiatorPoints + ':' + this.currentGame.opponentPoints;
+    } else {
+      return this.currentGame.opponentPoints + ':' + this.currentGame.initiatorPoints;
+    }
   }
 
   private async getPlayers(): Promise<void> {
@@ -64,9 +105,4 @@ export class MultiPlayerOverviewPage implements OnInit {
     console.log(this.myself, this.opponent);
   }
 
-}
-
-export interface Round {
-  num: number;
-  playerResults?: Map<number, any>;
 }

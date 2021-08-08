@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 import { Gesture, GestureController } from '@ionic/angular';
 import { DraggableComponent } from '../draggable/draggable.component';
 import { DropZoneComponent } from '../drop-zone/drop-zone.component';
@@ -8,14 +8,18 @@ import { DropZoneComponent } from '../drop-zone/drop-zone.component';
   templateUrl: './drag-drop-text-question.component.html',
   styleUrls: ['./drag-drop-text-question.component.scss'],
 })
-export class DragDropTextQuestionComponent implements AfterViewInit {
+export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
   @ViewChildren(DropZoneComponent, { read: ElementRef }) dropZones: QueryList<ElementRef>;
   @ViewChildren(DraggableComponent, { read: ElementRef }) options: QueryList<ElementRef>;
 
   @Input() public snippets: string[];
   @Input() public questionNumber: number;
   @Input() public answerOptions: any[];
+  @Input() public rightAnswers: string[] = [];
+
+  @Output() public setRightAnswer = new EventEmitter<string>();
   @Output() public changeAnswer = new EventEmitter<string[]>();
+
   public gestureArray: Gesture[] = [];
   public givenAnswers: string[] = [];
   public contentScrollActive = true;
@@ -25,11 +29,29 @@ export class DragDropTextQuestionComponent implements AfterViewInit {
     private changeDetectorRef: ChangeDetectorRef) {
   }
 
+  public ngOnInit(): void {
+    let rightAnswer = '';
+
+    console.log(this.answerOptions);
+    console.log(this.rightAnswers);
+
+    for (let i = 0; i < this.rightAnswers.length; i++) {
+      for (const aOption of this.answerOptions) {
+        if (aOption.text === this.rightAnswers[i]) {
+          rightAnswer += (aOption.id).toString() + (i < this.rightAnswers.length - 1 ? '###' : '');
+        }
+      }
+    }
+    console.log(rightAnswer);
+    this.setRightAnswer.emit(rightAnswer);
+  }
+
   public ngAfterViewInit(): void {
     for (const zone of this.dropZones) {
       this.givenAnswers.push('0');
     }
     this.updateGestures();
+    this.changeAnswer.emit(this.givenAnswers);
   }
 
   public handleDropClick(event: any): void {
