@@ -26,13 +26,13 @@ export class GapSelectQuestionComponent implements OnInit {
 
     let rightAnswer = '';
 
-    console.log(this.answerOptions);
-    console.log(this.rightAnswers);
+
+
 
     for (let i = 0; i < this.rightAnswers.length; i++) {
       rightAnswer += (this.answerOptions.indexOf(this.rightAnswers[i]) + 1).toString() + (i < this.rightAnswers.length - 1 ? '###' : '');
     }
-    console.log(rightAnswer);
+
     this.setRightAnswer.emit(rightAnswer);
   }
 

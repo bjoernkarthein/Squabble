@@ -55,7 +55,7 @@ export class MultipleChoiceQuestionComponent implements OnInit {
     const selected = event.detail.value;
     for (let i = 0; i < this.answerOptions.length; i++) {
       if (this.answerOptions[i].text === selected) {
-        this.changeAnswer.emit([(i + 1).toString()]);
+        this.changeAnswer.emit([(i).toString()]);
       }
     }
   }
@@ -72,7 +72,7 @@ export class MultipleChoiceQuestionComponent implements OnInit {
         checkedAnswers.push('0');
       }
     }
-    console.log(checkedAnswers);
+
     this.changeAnswer.emit(checkedAnswers);
   }
 
@@ -80,7 +80,7 @@ export class MultipleChoiceQuestionComponent implements OnInit {
     const regEx = new RegExp('\^\\S+\\s');
     let newString = input.replace(regEx, '');
     newString = newString.substring(0, newString.length - 1);
-    console.log(newString);
+
     return newString;
   }
 

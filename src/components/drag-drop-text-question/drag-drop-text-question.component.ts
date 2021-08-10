@@ -32,8 +32,8 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
   public ngOnInit(): void {
     let rightAnswer = '';
 
-    console.log(this.answerOptions);
-    console.log(this.rightAnswers);
+
+
 
     for (let i = 0; i < this.rightAnswers.length; i++) {
       for (const aOption of this.answerOptions) {
@@ -42,7 +42,7 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
         }
       }
     }
-    console.log(rightAnswer);
+
     this.setRightAnswer.emit(rightAnswer);
   }
 
@@ -55,11 +55,11 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
   }
 
   public handleDropClick(event: any): void {
-    console.log(event.target);
+
     const stext = event.target.textContent;
     const value = event.target.id;
-    console.log(value, stext);
-    console.log(this.givenAnswers);
+
+
     const index = this.givenAnswers.indexOf(value);
     if (stext === '') {
       return;
@@ -103,8 +103,8 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
     this.options.changes.subscribe(res => {
       if (this.gestureArray.length !== this.options.length) {
         this.updateGestures();
-        console.log('changed');
-        console.log(this.givenAnswers);
+
+
         this.changeAnswer.emit(this.givenAnswers);
       }
     });

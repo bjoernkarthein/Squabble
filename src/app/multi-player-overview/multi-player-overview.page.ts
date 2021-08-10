@@ -33,7 +33,7 @@ export class MultiPlayerOverviewPage implements OnInit {
   async ionViewWillEnter() {
     this.attemptId = this.route.snapshot.paramMap.get('gid');
     this.currentGame = await this.backendService.getMultiPlayerAttemptById(this.attemptId);
-    console.log(this.currentGame);
+
     this.currentUser = await this.authService.getCurrentUser();
     await this.getPlayers();
     this.myTurn = this.currentGame.nextTurnId === this.myself.id;
@@ -51,8 +51,8 @@ export class MultiPlayerOverviewPage implements OnInit {
         }
       }
     }
-    console.log(this.rounds);
-    console.log(this.currentGame);
+
+
   }
 
   public startNextRound() {
@@ -89,9 +89,9 @@ export class MultiPlayerOverviewPage implements OnInit {
   }
 
   private async getPlayers(): Promise<void> {
-    const firstPlayer = await this.backendService.getUser(this.currentGame.initiatorId).toPromise();
+    const firstPlayer = await this.backendService.getUser(this.currentGame.initiatorId);
     const first = firstPlayer[0];
-    const secondPlayer = await this.backendService.getUser(this.currentGame.opponentId).toPromise();
+    const secondPlayer = await this.backendService.getUser(this.currentGame.opponentId);
     const second = secondPlayer[0];
 
     if (first.id === this.currentUser.id) {
@@ -101,8 +101,6 @@ export class MultiPlayerOverviewPage implements OnInit {
       this.myself = second;
       this.opponent = first;
     }
-
-    console.log(this.myself, this.opponent);
   }
 
 }

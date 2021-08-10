@@ -23,9 +23,19 @@
   </div>
   <h4>Multi-Player:</h4>
   <div class="multi-player">
-    <ion-button size="large" color="success" (click)="this.startMultiPlayer()"
-      ><span>Start new multi-player game</span></ion-button
+    <ion-button
+      size="large"
+      color="primary"
+      (click)="this.startMultiPlayer(this.courseId)"
     >
+      <span>Start new multi-player game</span>
+    </ion-button>
+    <ion-button size="large" color="secondary" (click)="this.findPlayer()">
+      <ion-icon name="search"></ion-icon>
+    </ion-button>
+    <ion-button size="large" color="secondary" (click)="this.invitePlayer()">
+      <ion-icon name="mail"></ion-icon>
+    </ion-button>
     <ion-list>
       <ion-list-header>
         <ion-label>Your Games</ion-label>

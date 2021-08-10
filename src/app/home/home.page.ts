@@ -24,7 +24,7 @@ export class HomePage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.currentUser = await this.authService.getCurrentUser();
-    console.log(this.currentUser);
+
     this.getMoodleSiteInfo();
     this.getCourses();
   }

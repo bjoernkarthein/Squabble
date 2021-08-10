@@ -1,11 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { MoodleQuestionType } from '../parser/question-parser.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
+  public startGame = new BehaviorSubject<any>(null);
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -18,31 +20,32 @@ export class BackendService {
 
   //TODO: Possibly change type any to interface for the important calls?
   public getAllTables() {
-    return this.http.get<any>('/api');
+    return this.http.get<any>('/api').toPromise();
   }
 
   public getUsers() {
-    return this.http.get<any>('/api/users');
+    return this.http.get<any>('/api/users').toPromise();
   }
 
   public getUser(id: number) {
-    return this.http.get<any>('/api/users/' + id);
+    return this.http.get<any>('/api/users/' + id).toPromise();
   }
 
   public async getRandomOpponentFromCourse(uId: number, cId: string) {
     return await this.http.get<any>('/api/users/random/currentUser/' + uId + '/course/' + cId).toPromise();
   }
 
-  public createUser(user: User) {
-    this.getUser(user.id).subscribe(response => {
-      if (response.length > 0) {
-        return;
-      }
-      console.log('here');
-      this.http.post('/api/users', { user }, this.httpOptions).subscribe(res => {
-        console.log(res);
-      });
-    });
+  public async getAllOtherUsersFromCourse(uId: number, cId: string) {
+    return await this.http.get<any>('/api/users/currentUser/' + uId + '/course/' + cId).toPromise();
+  }
+
+  public async createUser(user: User) {
+    const existingUsers = await this.getUser(user.id);
+    if (existingUsers.length > 0) {
+      return;
+    }
+
+    await this.http.post('/api/users', { user }, this.httpOptions).toPromise();
   }
 
   public async getCourses() {
@@ -90,13 +93,11 @@ export class BackendService {
 
   public async saveSinglePlayerAttempt(spa: SinglePlayerAttempt) {
     const res = await this.getQuizAttemptById(spa.attemptId);
-    console.log(res);
+
     if (res.length > 0) {
       return;
     }
-    this.http.post('/api/single_player_attempts', { spa }, this.httpOptions).subscribe(response => {
-      console.log(response);
-    });
+    await this.http.post('/api/single_player_attempts', { spa }, this.httpOptions).toPromise();
   }
 
   public async getMultiPlayerAttemptsByCourseAndUser(courseId: string, userId: number): Promise<MultiPlayerAttempt[]> {

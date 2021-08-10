@@ -1,0 +1,15 @@
+.empty-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
+ion-list-header {
+  padding: 0;
+  margin: 0;
+}
+
+ion-item {
+  cursor: pointer;
+}

@@ -39,6 +39,15 @@ const routes: Routes = [
     path: 'mycourses/:cid/multi-player-overview/:gid/multi-player-round/:rid',
     loadChildren: () => import('./multi-player-round/multi-player-round.module').then(m => m.MultiPlayerRoundPageModule)
   },
+  {
+    path: 'mycourses/:cid/invite-player',
+    loadChildren: () => import('./invite-player/invite-player.module').then(m => m.InvitePlayerPageModule)
+  },
+  {
+    path: 'mycourses/:cid/find-player',
+    loadChildren: () => import('./find-player/find-player.module').then(m => m.FindPlayerPageModule)
+  },
+
 ];
 
 @NgModule({

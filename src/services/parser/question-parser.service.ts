@@ -47,7 +47,7 @@ export class QuestionParserService {
 
   private parseMultiChoice(qid: number, attemptId: number, inProgress: boolean): MultipleChoice {
     const moodleQId = '#question-' + attemptId + '-' + qid;
-    console.log(moodleQId);
+
     const qtext = document.querySelector(moodleQId + ' .qtext').textContent;
     const qanswer = document.querySelector(moodleQId + ' .answer').textContent;
     const qansweroptions = qanswer.split('\n');
@@ -129,7 +129,7 @@ export class QuestionParserService {
 
   private parseMatch(qid: number, attemptId: number, inProgress: boolean): Match {
     const moodleQId = '#question-' + attemptId + '-' + qid;
-    console.log(moodleQId);
+
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
@@ -191,7 +191,7 @@ export class QuestionParserService {
 
   private parseGapSelect(qid: number, attemptId: number, inProgress: boolean): GapSelect {
     const moodleQId = '#question-' + attemptId + '-' + qid;
-    console.log(moodleQId);
+
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
     const qSequenceValue = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['value'];
@@ -263,7 +263,7 @@ export class QuestionParserService {
 
   private parseMarker(qid: number, attemptId: number, inProgress: boolean): DragMarker {
     const moodleQId = '#question-' + attemptId + '-' + qid;
-    console.log(moodleQId);
+
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
     // eslint-disable-next-line @typescript-eslint/dot-notation
     const qimage = document.querySelector(moodleQId + ' .content .dropbackground').attributes['src'].textContent;
@@ -291,7 +291,7 @@ export class QuestionParserService {
 
   private parseText(qid: number, attemptId: number, inProgress: boolean): DragText {
     const moodleQId = '#question-' + attemptId + '-' + qid;
-    console.log(moodleQId);
+
     let qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
     qtext = qtext.replace(/\w*blank\w*/g, '##BLANK##');
 
@@ -354,7 +354,7 @@ export class QuestionParserService {
 
   private parseNumerical(qid: number, attemptId: number, inProgress: boolean): Numerical {
     const moodleQId = '#question-' + attemptId + '-' + qid;
-    console.log(moodleQId);
+
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
@@ -384,7 +384,7 @@ export class QuestionParserService {
 
   private parseShort(qid: number, attemptId: number, inProgress: boolean): ShortAnswer {
     const moodleQId = '#question-' + attemptId + '-' + qid;
-    console.log(moodleQId);
+
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
@@ -414,7 +414,7 @@ export class QuestionParserService {
 
   private parseEssay(qid: number, attemptId: number, inProgress: boolean): Essay {
     const moodleQId = '#question-' + attemptId + '-' + qid;
-    console.log(moodleQId);
+
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];
@@ -438,7 +438,7 @@ export class QuestionParserService {
 
   private parseTrueFalse(qid: number, attemptId: number, inProgress: boolean): TrueFalse {
     const moodleQId = '#question-' + attemptId + '-' + qid;
-    console.log(moodleQId);
+
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
 
     const qSequenceName = document.querySelector(moodleQId + ' .content .formulation.clearfix input')['name'];

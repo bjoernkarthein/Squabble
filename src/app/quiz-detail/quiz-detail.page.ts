@@ -37,7 +37,7 @@ export class QuizDetailPage implements OnInit {
   async ngOnInit() {
     this.questions.clear();
     this.currentUser = await this.authService.getCurrentUser();
-    console.log(this.currentUser);
+
   }
 
   ionViewWillEnter() {
@@ -50,7 +50,7 @@ export class QuizDetailPage implements OnInit {
   //   const attempt = await this.getAttemptId(this.quizId);
   //   const res = await this.moodleService.processQuizAttempt(attempt, this.currentUser.token, this.givenAnswers, 0);
   //   if (res.errorcode) {
-  //     console.log(res.errorcode);
+  //
   //     this.showToast('An error occured while saving', 'danger');
   //     return;
   //   }
@@ -65,7 +65,7 @@ export class QuizDetailPage implements OnInit {
     this.givenAnswers.clear();
 
     if (res.errorcode) {
-      console.log(res.errorcode);
+
       this.showToast('An error occured while saving', 'danger');
       return;
     }
@@ -89,7 +89,7 @@ export class QuizDetailPage implements OnInit {
       data.push(answers[i]);
     }
     this.givenAnswers.set(sCheck.name, data);
-    console.log(this.givenAnswers);
+
   }
 
   private async getQuizzeQuestions(id: string) {
@@ -114,7 +114,7 @@ export class QuizDetailPage implements OnInit {
       quizname: this.quizTitle,
       startDate: formattedDate
     };
-    console.log(singleAttempt);
+
     await this.backendService.saveSinglePlayerAttempt(singleAttempt);
   }
 
@@ -143,7 +143,7 @@ export class QuizDetailPage implements OnInit {
     };
     const attempt = await this.getAttemptId(this.quizId);
     const parsedQuestion = this.questionParser.parseQuestion(elem, attempt, true);
-    console.log(parsedQuestion);
+
     this.questions.set(parsedQuestion.id, parsedQuestion);
   }
 

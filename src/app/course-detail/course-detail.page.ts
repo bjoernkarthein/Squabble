@@ -35,6 +35,12 @@ export class CourseDetailPage implements OnInit {
 
   async ngOnInit() {
     this.currentUser = await this.authService.getCurrentUser();
+    this.backendService.startGame.subscribe(data => {
+      if (!data) {
+        return;
+      }
+      this.startMultiPlayer(data.courseId, data.opponent);
+    });
   }
 
   async ionViewWillEnter() {
@@ -55,7 +61,7 @@ export class CourseDetailPage implements OnInit {
 
   public async startQuizAttempt(quizId: number, disabled: boolean): Promise<void> {
     const attemptInProgress = await Storage.get({ key: 'inProgressAttempt' + quizId });
-    console.log(attemptInProgress);
+
     if (disabled) {
       return;
     } else if (attemptInProgress.value) {
@@ -65,21 +71,26 @@ export class CourseDetailPage implements OnInit {
     }
   }
 
-  public async startMultiPlayer(): Promise<void> {
-    const randomUser = await this.backendService.getRandomOpponentFromCourse(this.currentUser.id, this.courseId);
+  public async startMultiPlayer(_courseId: string, opponent?: User): Promise<void> {
+    let _opponentId = null;
 
-    if (randomUser.error) {
-      this.showToast('Could not find any other registered users to play against', 'danger');
-      return;
+    if (!opponent) {
+      const randomUser = await this.backendService.getRandomOpponentFromCourse(this.currentUser.id, this.courseId);
+      if (randomUser.error) {
+        this.showToast('Could not find any other registered users to play against', 'danger');
+        return;
+      } else {
+        this.showToast('Successfully started game against ' + randomUser.firstname + ' ' + randomUser.lastname, 'success');
+      }
+      _opponentId = randomUser.id;
     } else {
-      this.showToast('Successfully started game against ' + randomUser.firstname + ' ' + randomUser.lastname, 'success');
+      _opponentId = opponent.id;
     }
 
-    const oId = randomUser.id;
     const multiplayerAttempt: MultiPlayerAttempt = {
       initiatorId: this.currentUser.id,
-      opponentId: oId,
-      courseId: this.courseId,
+      opponentId: _opponentId,
+      courseId: _courseId,
       inProgress: true,
       currentRound: 0,
       questionsAreSet: false,
@@ -95,7 +106,7 @@ export class CourseDetailPage implements OnInit {
   }
 
   public filter(event: any): void {
-    console.log(event.target.value);
+
     if (event.target.value === 'progress') {
       this.filterOpenGames();
     } else {
@@ -105,6 +116,14 @@ export class CourseDetailPage implements OnInit {
 
   public async getOpponentName(game: MultiPlayerAttempt) {
     const opponent = await this.getOpponent(game.initiatorId, game.opponentId);
+  }
+
+  public findPlayer(): void {
+    this.router.navigateByUrl('/mycourses/' + this.courseId + '/find-player');
+  }
+
+  public invitePlayer(): void {
+    this.router.navigateByUrl('/mycourses/' + this.courseId + '/invite-player');
   }
 
   private async getQuizzes(courseId: string): Promise<void> {
@@ -146,9 +165,9 @@ export class CourseDetailPage implements OnInit {
   }
 
   private async getOpponent(initiatorId: number, opponentId: number): Promise<User> {
-    const firstPlayer = await this.backendService.getUser(initiatorId).toPromise();
+    const firstPlayer = await this.backendService.getUser(initiatorId);
     const first = firstPlayer[0];
-    const secondPlayer = await this.backendService.getUser(opponentId).toPromise();
+    const secondPlayer = await this.backendService.getUser(opponentId);
     const second = secondPlayer[0];
 
     let opponent: User;

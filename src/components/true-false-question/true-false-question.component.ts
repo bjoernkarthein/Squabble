@@ -26,7 +26,7 @@ export class TrueFalseQuestionComponent implements OnInit {
   }
 
   public radioGroupChange(event: any) {
-    console.log(event.detail.value);
+
     this.changeAnswer.emit([event.detail.value]);
   }
 

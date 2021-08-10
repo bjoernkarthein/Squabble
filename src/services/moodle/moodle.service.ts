@@ -10,17 +10,16 @@ import { Field, MoodleQuestionType } from '../parser/question-parser.service';
 export class MoodleService {
 
   private moodleBaseUrl = 'http://localhost/moodle/webservice/rest/server.php?';
+  //! Needs to be hidden somehow
   private webServiceUserToken = 'b8f762ebc0e11f9e28d7d1b5ad1f023b';
-  private webServiceName = 'webservices';
+  private studentService = 'comp_quiz_student';
 
   constructor(private http: HttpClient) { }
-
-  //TODO: Possibly change type any to interface for the important calls?
 
   public authenticateAndGetToken(username: string, password: string) {
     let baseUrl = 'http://localhost/moodle/login/token.php?';
     const escPassword = encodeURIComponent(password);
-    baseUrl += 'username=' + username + '&password=' + escPassword + '&service=' + this.webServiceName;
+    baseUrl += 'username=' + username + '&password=' + escPassword + '&service=' + this.studentService;
     return this.http.get<any>(baseUrl);
   }
   /**
@@ -110,7 +109,7 @@ export class MoodleService {
       }
     });
     reqUrl += '&attemptid=' + attemptId + '&finishattempt=' + finish + dataString;
-    console.log(dataString);
+
     return await this.http.get<any>(reqUrl).toPromise();
   }
 
@@ -158,6 +157,12 @@ export class MoodleService {
     let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'core_enrol_get_users_courses', 'json');
     reqUrl += '&userid=' + userId;
     return this.http.get<any>(reqUrl);
+  }
+
+  public async getEnrolledUsersForCourse(courseId: string) {
+    let reqUrl = this.getRequestUrl(this.webServiceUserToken, 'core_enrol_get_enrolled_users', 'json');
+    reqUrl += '&courseid=' + courseId;
+    return await this.http.get<any>(reqUrl).toPromise();
   }
 
   /**
