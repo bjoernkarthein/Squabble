@@ -13,6 +13,7 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
   @ViewChildren(DraggableComponent, { read: ElementRef }) options: QueryList<ElementRef>;
 
   @Input() public snippets: string[];
+  @Input() public gaps: string[];
   @Input() public questionNumber: number;
   @Input() public answerOptions: any[];
   @Input() public rightAnswers: string[] = [];
@@ -38,7 +39,9 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
     for (let i = 0; i < this.rightAnswers.length; i++) {
       for (const aOption of this.answerOptions) {
         if (aOption.text === this.rightAnswers[i]) {
-          rightAnswer += (aOption.id).toString() + (i < this.rightAnswers.length - 1 ? '###' : '');
+          const optionIdAndGroup = aOption.id.split('-');
+          const id = optionIdAndGroup[0];
+          rightAnswer += id + (i < this.rightAnswers.length - 1 ? '###' : '');
         }
       }
     }
@@ -55,19 +58,22 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
   }
 
   public handleDropClick(event: any): void {
-
     const stext = event.target.textContent;
     const value = event.target.id;
 
-
     const index = this.givenAnswers.indexOf(value);
-    if (stext === '') {
+    if (!stext.replace(/\s/g, '').length) {
       return;
     }
     this.givenAnswers[index] = '0';
-    this.answerOptions.push({ text: stext, id: value });
+    this.answerOptions.push({ text: stext, id: event.target.id });
     event.target.innerHTML = '\u00a0';
     event.target.classList.add('clear');
+  }
+
+  public getClass(answerOption: string): string {
+    const groupAndId = answerOption.split('-');
+    return groupAndId[1];
   }
 
   private updateGestures(): void {
@@ -104,8 +110,11 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
       if (this.gestureArray.length !== this.options.length) {
         this.updateGestures();
 
-
-        this.changeAnswer.emit(this.givenAnswers);
+        const givenAnswerIds = [];
+        for (const answer of this.givenAnswers) {
+          givenAnswerIds.push(answer.split('-')[0]);
+        }
+        this.changeAnswer.emit(givenAnswerIds);
       }
     });
   }
@@ -132,12 +141,19 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
     return true;
   }
 
+  private hasSameGroup(index: number, drop: any): boolean {
+    const groupAndId = this.answerOptions[index].id.split('-');
+    const itemGroup = groupAndId[1];
+    const gapGroup = drop.nativeElement.classList[0];
+    return itemGroup === gapGroup;
+  }
+
   private handleDrop(item: ElementRef, x: number, y: number, index: number): void {
     const dropZones = this.dropZones.toArray();
     for (let i = 0; i < dropZones.length; i++) {
       const drop = dropZones[i];
       const box = drop.nativeElement.getBoundingClientRect();
-      if (this.isInZone(x, y, box) && drop.nativeElement.firstChild.classList.contains('clear')) {
+      if (this.isInZone(x, y, box) && drop.nativeElement.firstChild.classList.contains('clear') && this.hasSameGroup(index, drop)) {
         const removedItem = this.answerOptions.splice(index, 1);
         this.givenAnswers[i] = removedItem[0].id;
         drop.nativeElement.firstChild.innerHTML = removedItem[0].text;

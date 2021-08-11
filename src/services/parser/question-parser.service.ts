@@ -303,6 +303,7 @@ export class QuestionParserService {
       id: qid,
       type: Type.DRAG_TEXT,
       text: qtext,
+      gaps: [],
       answerOptions: [],
       sequenceCheck: qSequence,
       answerFields: [],
@@ -311,13 +312,16 @@ export class QuestionParserService {
 
     let answer = null;
     do {
+      const gap = document.querySelector(moodleQId + ' .drop');
       answer = document.querySelector(moodleQId + ' .placeinput');
       if (answer) {
         question.answerFields.push({
           name: answer['name'],
           value: '0'
         });
+        question.gaps.push(gap.classList[3]);
         document.querySelector(moodleQId + ' .placeinput').remove();
+        document.querySelector(moodleQId + ' .drop').remove();
       }
     } while (answer != null);
 
@@ -326,9 +330,10 @@ export class QuestionParserService {
       aOption = document.querySelector(moodleQId + ' .draghome');
       if (aOption != null) {
         let answerOptionId = aOption.classList[1];
+        const answerOptionGroup = aOption.classList[2];
         answerOptionId = answerOptionId.replace('choice', '');
         question.answerOptions.push({
-          id: answerOptionId,
+          id: answerOptionId + '-' + answerOptionGroup,
           text: aOption.textContent
         });
         document.querySelector(moodleQId + ' .draghome').remove();
@@ -349,6 +354,7 @@ export class QuestionParserService {
     }
 
     document.querySelector(moodleQId).remove();
+    console.log(question);
     return question;
   }
 
@@ -606,6 +612,7 @@ interface DragText {
   id: number;
   type: Type;
   text: string;
+  gaps: any[];
   answerOptions: any[];
   sequenceCheck?: Field;
   answerFields?: Field[];

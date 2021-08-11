@@ -5,6 +5,7 @@
       <ng-container *ngFor="let snippet of this.snippets; let i = index">
         {{ snippet }}
         <app-drop-zone
+          [class]="this.gaps[i]"
           *ngIf="i < this.snippets.length - 1"
           (click)="this.handleDropClick($event)"
         ></app-drop-zone>
@@ -14,6 +15,7 @@
   <ion-card-content>
     <app-draggable
       *ngFor="let option of this.answerOptions"
+      [class]="this.getClass(option.id)"
       [text]="option.text"
     ></app-draggable>
   </ion-card-content>

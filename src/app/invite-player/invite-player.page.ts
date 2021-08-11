@@ -68,7 +68,7 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
   }
 
   private sendInvitationMail(opponent: User) {
-
+    // this.backendService.sendInvitationMail(this.currentUser, opponent);
   }
 
   private async presentAlertConfirm(_opponent: User): Promise<void> {

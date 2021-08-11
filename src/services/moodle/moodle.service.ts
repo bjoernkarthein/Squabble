@@ -179,11 +179,11 @@ export class MoodleService {
 
   private async getRandomQuestion(quizArray: any[]): Promise<any> {
     let randomQuizIndex = Math.floor(Math.random() * quizArray.length);
-    let quiz = quizArray[randomQuizIndex];
+    let quiz = quizArray[4];
 
     while (!quiz || quiz.hasquestions !== 1) {
       randomQuizIndex = Math.floor(Math.random() * quizArray.length);
-      quiz = quizArray[randomQuizIndex];
+      quiz = quizArray[4];
     }
 
     const resp = await this.startAttemptForQuiz(quiz.id, this.webServiceUserToken);
@@ -192,7 +192,7 @@ export class MoodleService {
     const info = await this.getFinishedQuizInfo(attempt, this.webServiceUserToken).toPromise();
     const questions = info.questions;
     const randomQuestionIndex = Math.floor(Math.random() * questions.length);
-    const randomQuestion = questions[randomQuestionIndex];
+    const randomQuestion = questions[0];
 
     return { attemptId: attempt, question: randomQuestion };
   }

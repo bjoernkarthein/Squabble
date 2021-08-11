@@ -80,6 +80,7 @@
       <app-drag-drop-text-question
         *ngSwitchCase="'ddwtos'"
         [snippets]="this.getQText(this.currentQuestion.text)"
+        [gaps]="this.currentQuestion.gaps"
         [questionNumber]="this.questionNumber"
         [answerOptions]="this.currentQuestion.answerOptions"
         [rightAnswers]="this.currentQuestion.rightAnswers"

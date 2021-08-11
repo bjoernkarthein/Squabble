@@ -134,6 +134,10 @@ export class BackendService {
       await this.http.post('/api/multi_player_game_answers', { mpa }, this.httpOptions).toPromise();
     }
   }
+
+  public async sendInvitationMail(inviter: User, user: User) {
+    await this.http.post('/api/send_mail', { inviter, user }, this.httpOptions).toPromise();
+  }
 }
 
 export interface User {
