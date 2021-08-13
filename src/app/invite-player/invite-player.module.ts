@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { InvitePlayerPageRoutingModule } from './invite-player-routing.module';
 
 import { InvitePlayerPage } from './invite-player.page';
+import { ComponentsModule } from 'src/components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    InvitePlayerPageRoutingModule
+    InvitePlayerPageRoutingModule,
+    ComponentsModule
   ],
   declarations: [InvitePlayerPage]
 })
-export class InvitePlayerPageModule {}
+export class InvitePlayerPageModule { }

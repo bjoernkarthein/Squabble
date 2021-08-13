@@ -1,13 +1,7 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button [routerLink]="['/home']">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>{{this.courseInfo.displayname}}</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header
+  [title]="this.courseInfo.displayname"
+  [backButtonLink]="'/home'"
+></app-header>
 
 <ion-content>
   <h4>Quizzes of this course:</h4>

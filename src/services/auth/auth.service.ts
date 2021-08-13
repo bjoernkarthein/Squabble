@@ -12,6 +12,7 @@ export class AuthService {
 
   public currentUser: User;
   public loginCheck = new BehaviorSubject<boolean>(true);
+  public closeUserMenu = new BehaviorSubject<boolean>(false);
 
   constructor(
     private router: Router,

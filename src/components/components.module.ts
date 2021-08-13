@@ -15,6 +15,9 @@ import { GapSelectQuestionComponent } from './gap-select-question/gap-select-que
 import { CrQuestionComponent } from './cr-question/cr-question.component';
 import { GamePreviewItemComponent } from './game-preview-item/game-preview-item.component';
 import { QuizRoundPreviewComponent } from './quiz-round-preview/quiz-round-preview.component';
+import { UserMenuComponent } from './user-menu/user-menu.component';
+import { HeaderComponent } from './header/header.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -31,9 +34,11 @@ import { QuizRoundPreviewComponent } from './quiz-round-preview/quiz-round-previ
     GapSelectQuestionComponent,
     CrQuestionComponent,
     GamePreviewItemComponent,
-    QuizRoundPreviewComponent
+    QuizRoundPreviewComponent,
+    UserMenuComponent,
+    HeaderComponent
   ],
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   exports: [
     CourseCardComponent,
     TrueFalseQuestionComponent,
@@ -48,7 +53,9 @@ import { QuizRoundPreviewComponent } from './quiz-round-preview/quiz-round-previ
     GapSelectQuestionComponent,
     CrQuestionComponent,
     GamePreviewItemComponent,
-    QuizRoundPreviewComponent
+    QuizRoundPreviewComponent,
+    UserMenuComponent,
+    HeaderComponent
   ]
 })
 export class ComponentsModule { }

@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-thumbnail slot="start" *ngIf="this.showLogo">
+      <img src="../assets/logo.png" />
+    </ion-thumbnail>
+    <ion-buttons slot="start" *ngIf="this.backButtonLink">
+      <ion-button [routerLink]="this.backButtonLink">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title size="large">{{ this.title }}</ion-title>
+    <ion-icon
+      *ngIf="this.currentUser && this.currentUser.id != -1"
+      slot="end"
+      name="person-circle-outline"
+      (click)="this.presentPopover($event)"
+    ></ion-icon>
+  </ion-toolbar>
+</ion-header>

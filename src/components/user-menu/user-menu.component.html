@@ -1,0 +1,7 @@
+<div class="parent-container">
+  <h4 *ngIf="this.currentUser">Logged in as {{ this.currentUser.username }}</h4>
+  <div class="logout-container" (click)="this.logout()">
+    <ion-icon name="log-out-outline"></ion-icon>
+    <h5>Log out</h5>
+  </div>
+</div>

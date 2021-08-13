@@ -1,0 +1,24 @@
+h5 {
+  text-decoration: underline;
+}
+
+ion-icon {
+  font-size: 2rem;
+  position: relative;
+  top: 0.2rem;
+  margin-right: 0.3rem;
+}
+
+.logout-container {
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  cursor: pointer;
+}
+
+.parent-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin: 1rem;
+}

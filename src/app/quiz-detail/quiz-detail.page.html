@@ -1,13 +1,4 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button [routerLink]="['../../']">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>{{this.quizTitle}}</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [title]="this.quizTitle" [backButtonLink]="'../../'"></app-header>
 
 <ion-content>
   <div id="questions">

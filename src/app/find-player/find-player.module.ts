@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { FindPlayerPageRoutingModule } from './find-player-routing.module';
 
 import { FindPlayerPage } from './find-player.page';
+import { ComponentsModule } from 'src/components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    FindPlayerPageRoutingModule
+    FindPlayerPageRoutingModule,
+    ComponentsModule
   ],
   declarations: [FindPlayerPage]
 })
-export class FindPlayerPageModule {}
+export class FindPlayerPageModule { }

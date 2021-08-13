@@ -1,16 +1,8 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button [routerLink]="['../../']">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title *ngIf="this.opponent"
-      >Game against {{this.opponent.firstname}}
-      {{this.opponent.lastname}}</ion-title
-    >
-  </ion-toolbar>
-</ion-header>
+<app-header
+  *ngIf="this.opponent"
+  [title]="'Game against ' +  this.opponent.firstname + ' ' + this.opponent.lastname"
+  [backButtonLink]="'../../'"
+></app-header>
 
 <ion-content>
   <div id="container">

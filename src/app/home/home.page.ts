@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/services/auth/auth.service';
 import { BackendService, Course, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
@@ -19,7 +18,6 @@ export class HomePage implements OnInit {
     private moodleService: MoodleService,
     private authService: AuthService,
     private backendService: BackendService,
-    private router: Router
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -27,11 +25,6 @@ export class HomePage implements OnInit {
 
     this.getMoodleSiteInfo();
     this.getCourses();
-  }
-
-  public logout() {
-    this.authService.logout();
-    this.router.navigateByUrl('/', { replaceUrl: true });
   }
 
   public getUrl(courseId: number, disabled: boolean): string {

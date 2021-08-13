@@ -1,12 +1,4 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-thumbnail slot="start">
-      <img src="../assets/logo.png" />
-    </ion-thumbnail>
-    <ion-title>Competitive Quiz Login</ion-title>
-  </ion-toolbar>
-</ion-header>
-
+<app-header [title]="'Competitive Quiz Login'" [showLogo]="true"></app-header>
 <ion-content padding>
   <div id="container">
     <form #form="ngForm" (ngSubmit)="login(form)">
