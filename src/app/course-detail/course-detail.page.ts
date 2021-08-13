@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 import { Storage } from '@capacitor/storage';
-import { GameProgressStatus } from 'src/components/game-preview-item/game-preview-item.component';
 import { BackendService, MultiPlayerAttempt, User } from 'src/services/backend/backend.service';
 import { AuthService } from 'src/services/auth/auth.service';
 

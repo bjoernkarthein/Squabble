@@ -168,7 +168,6 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
       }
     }
 
-    // drop.nativeElement.style.background = 'none';
     this.changeDetectorRef.detectChanges();
   }
 

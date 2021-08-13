@@ -67,16 +67,27 @@ export class MoodleService {
   //! Needs to be refactored somehow
   public async getRandomQuizQuestion(courseId: string, amount: number): Promise<any[]> {
     const questionsArray = [];
+    const questionIds = [];
 
     const res = await this.getQuizzesFromCourse(courseId).toPromise();
     const quizzes = res.quizzes;
 
     for (let i = 0; i < amount; i++) {
-      const randomQuestionObject = await this.getRandomQuestion(quizzes);
-      const randomQuestion = randomQuestionObject.question;
-      const attempt = randomQuestionObject.attemptId;
-      questionsArray.push({ attemptId: attempt, question: randomQuestion });
+      let nextQuestionFound = false;
+      while (!nextQuestionFound) {
+        const randomQuestionObject = await this.getRandomQuestion(quizzes);
+        const randomQuestion = randomQuestionObject.question;
+        const attempt = randomQuestionObject.attemptId;
+        const uniqueId = randomQuestionObject.questionUniqueId;
+
+        if (!questionIds.includes(uniqueId)) {
+          questionIds.push(uniqueId);
+          questionsArray.push({ attemptId: attempt, question: randomQuestion });
+          nextQuestionFound = true;
+        }
+      }
     }
+    console.log(questionsArray);
     return questionsArray;
   }
 
@@ -179,11 +190,11 @@ export class MoodleService {
 
   private async getRandomQuestion(quizArray: any[]): Promise<any> {
     let randomQuizIndex = Math.floor(Math.random() * quizArray.length);
-    let quiz = quizArray[4];
+    let quiz = quizArray[randomQuizIndex];
 
     while (!quiz || quiz.hasquestions !== 1) {
       randomQuizIndex = Math.floor(Math.random() * quizArray.length);
-      quiz = quizArray[4];
+      quiz = quizArray[randomQuizIndex];
     }
 
     const resp = await this.startAttemptForQuiz(quiz.id, this.webServiceUserToken);
@@ -191,9 +202,12 @@ export class MoodleService {
     await this.processQuizAttempt(attempt, this.webServiceUserToken, new Map(), 1);
     const info = await this.getFinishedQuizInfo(attempt, this.webServiceUserToken).toPromise();
     const questions = info.questions;
+    const quizId = info.attempt.quiz;
     const randomQuestionIndex = Math.floor(Math.random() * questions.length);
-    const randomQuestion = questions[0];
+    const randomQuestion = questions[randomQuestionIndex];
+    const questionSlot = randomQuestion.slot;
+    const questionId = quizId.toString() + questionSlot.toString();
 
-    return { attemptId: attempt, question: randomQuestion };
+    return { attemptId: attempt, questionUniqueId: questionId, question: randomQuestion };
   }
 }

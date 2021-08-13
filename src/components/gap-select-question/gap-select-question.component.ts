@@ -9,7 +9,7 @@ export class GapSelectQuestionComponent implements OnInit {
   @Input() public questionNumber: number;
   @Input() public snippets: string[];
   @Input() public answerOptions: string[];
-  @Input() public rightAnswers: string[];
+  @Input() public rightAnswers: string[] = [];
 
   @Output() public setRightAnswer = new EventEmitter<string>();
   @Output() public changeAnswer = new EventEmitter<string[]>();

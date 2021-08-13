@@ -25,14 +25,17 @@ export class GamePreviewItemComponent implements OnInit {
 
   async ngOnInit() {
     this.currentUser = await this.authService.getCurrentUser();
-    this.turnText = this.turn === this.currentUser.id ? 'Your turn' : 'Opponents turn';
+    this.turnText = this.getText();
     this.status = this.inProgress === 1 ? 'In progress' : 'Finished';
     this.currentUrl = window.location.href;
   }
 
-}
+  private getText(): string {
+    if (this.inProgress === 0) {
+      return 'Game';
+    } else {
+      return this.currentUser.id ? 'Your turn' : 'Opponents turn';
+    }
+  }
 
-export enum GameProgressStatus {
-  IN_PROGRESS = 'In progress',
-  FINISHED = 'Finished'
 }

@@ -26,7 +26,7 @@ export class MultipleChoiceQuestionComponent implements OnInit {
     if (!this.multipleAllowed) {
       for (let j = 0; j < this.answerOptions.length; j++) {
         if (this.returnChoppedString(this.answerOptions[j].text) === this.rightAnswers[0]) {
-          this.setRightAnswer.emit((j + 1).toString());
+          this.setRightAnswer.emit((j).toString());
         }
       }
       return;

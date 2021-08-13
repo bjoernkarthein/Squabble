@@ -54,7 +54,8 @@ export class MultiPlayerRoundPage implements OnInit {
       this.currentGame.opponentId,
       this.currentGame.initiatorId,
       this.currentGame.initiatorId,
-      this.currentGame.opponentId
+      this.currentGame.opponentId,
+      -1
     ];
 
     await this.getQuestionsForCurrentRound();
@@ -81,7 +82,6 @@ export class MultiPlayerRoundPage implements OnInit {
       this.questions.push(question);
       this.attemptIds.push(this.attemptId);
       this.handleQuestion(question, this.attemptId);
-
     }
   }
 
@@ -138,6 +138,7 @@ export class MultiPlayerRoundPage implements OnInit {
     const parsedQuestion = this.questionParser.parseQuestion(elem, attemptId, false);
     this.parsedQuestions.push(parsedQuestion);
     this.currentQuestion = this.parsedQuestions[this.questionNumber - 1];
+    console.log(this.parsedQuestions);
   }
 
   private saveQuestion(moodleQue: MoodleQuestionType, slot: number): void {
@@ -149,6 +150,7 @@ export class MultiPlayerRoundPage implements OnInit {
       question: moodleQue,
       rightAnswers: this.rightAnswer
     };
+
     this.multiPlayerQuestions.push(multiQuestion);
     this.backendService.saveMultiPlayerQuestion(multiQuestion);
   }
@@ -205,8 +207,12 @@ export class MultiPlayerRoundPage implements OnInit {
     }
 
     this.currentGame.nextTurnId = this.playerIds[this.currentGame.turns];
+    if (this.currentGame.nextTurnId === -1) {
+      this.currentGame.inprogress = false;
+    }
     this.hiddenQuestionDOM.nativeElement.innerHTML = '';
     await this.backendService.updateMultiPlayerAttempt(this.currentGame);
+    console.log(this.currentGame);
   }
 
   private updateGameScore(oneRight: number, twoRight: number) {
