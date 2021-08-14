@@ -2,9 +2,10 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BackendService, MultiPlayerAnswer, MultiPlayerQuestion, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
-import { Field, MoodleQuestionType, QuestionParserService } from 'src/services/parser/question-parser.service';
+import { MoodleQuestionType, QuestionParserService } from 'src/services/parser/question-parser.service';
 import { Location } from '@angular/common';
 import { AuthService } from 'src/services/auth/auth.service';
+import { Storage } from '@capacitor/storage';
 
 @Component({
   selector: 'app-multi-player-round',
@@ -28,6 +29,7 @@ export class MultiPlayerRoundPage implements OnInit {
   private attemptId: number;
   private attemptIds: number[] = [];
   private playerIds: number[] = [];
+  private existsCurrentQuestion: boolean;
 
   constructor(
     private location: Location,
@@ -58,7 +60,11 @@ export class MultiPlayerRoundPage implements OnInit {
       -1
     ];
 
-    await this.getQuestionsForCurrentRound();
+    await this.checkForCurrentQuestion();
+
+    if (!this.existsCurrentQuestion) {
+      await this.getQuestionsForCurrentRound();
+    }
   }
 
   public async getQuestionsForCurrentRound(): Promise<void> {
@@ -71,6 +77,10 @@ export class MultiPlayerRoundPage implements OnInit {
         this.questions.push(question);
         this.handleQuestion(question, elem.attemptId);
       }
+      await Storage.set({
+        key: 'multiplayerQuestions',
+        value: JSON.stringify({ mpq: this.multiPlayerQuestions })
+      });
       return;
     }
 
@@ -83,19 +93,36 @@ export class MultiPlayerRoundPage implements OnInit {
       this.attemptIds.push(this.attemptId);
       this.handleQuestion(question, this.attemptId);
     }
+
+    await Storage.set({
+      key: 'currentQuestions',
+      value: JSON.stringify({ moodleQuestions: this.questions, parsedQuestions: this.parsedQuestions, attemptIds: this.attemptIds })
+    });
+
+    await Storage.set({
+      key: 'currentQuestionNumber',
+      value: this.questionNumber.toString()
+    });
+    console.log('currentQuestions', this.parsedQuestions);
   }
 
   public getQText(input: string): string[] {
     return input.split('##BLANK##');
   }
 
-  public handleNextQuestion(): void {
+  public async handleNextQuestion(): Promise<void> {
     this.updateGame();
-    const nextQuestion = this.parsedQuestions[this.questionNumber - 1];
+    console.log('MultiPlayerQuestions', this.multiPlayerQuestions);
+    const nextQuestion = this.parsedQuestions[this.questionNumber];
+    console.log(nextQuestion);
     if (nextQuestion) {
       this.currentQuestion = nextQuestion;
     } else {
       this.finishRound();
+      await Storage.remove({ key: 'currentQuestions' });
+      await Storage.remove({ key: 'currentQuestionNumber' });
+      await Storage.remove({ key: 'currentQuestions' });
+      await Storage.remove({ key: 'multiplayerQuestions' });
     }
   }
 
@@ -126,6 +153,35 @@ export class MultiPlayerRoundPage implements OnInit {
     console.log(givenAnswers);
   }
 
+  private async checkForCurrentQuestion(): Promise<void> {
+    const ret = await Storage.get({ key: 'currentQuestions' });
+    if (!ret.value) {
+      this.existsCurrentQuestion = false;
+      return;
+    }
+
+    const res = await Storage.get({ key: 'currentQuestionNumber' });
+
+    const resp = await Storage.get({ key: 'multiplayerQuestions' });
+
+    if (resp.value) {
+      const multiplayerQuestions = JSON.parse(resp.value).mpq;
+      this.multiPlayerQuestions = multiplayerQuestions;
+      console.log(multiplayerQuestions);
+    }
+
+    const currentQuestionNumber = Number(res.value);
+    const currentQuestions = JSON.parse(ret.value);
+    const currentQuestion = currentQuestions.parsedQuestions[Number(currentQuestionNumber) - 1];
+    this.parsedQuestions = currentQuestions.parsedQuestions;
+    this.questions = currentQuestions.moodleQuestions;
+    this.attemptIds = currentQuestions.attemptIds;
+    this.questionNumber = currentQuestionNumber;
+    console.log(currentQuestion);
+    this.existsCurrentQuestion = true;
+    this.currentQuestion = currentQuestion;
+  }
+
   private async handleQuestion(question: any, attemptId: number) {
     this.hiddenQuestionDOM.nativeElement.innerHTML += question.html;
     const elem: MoodleQuestionType = {
@@ -141,7 +197,7 @@ export class MultiPlayerRoundPage implements OnInit {
     console.log(this.parsedQuestions);
   }
 
-  private saveQuestion(moodleQue: MoodleQuestionType, slot: number): void {
+  private async saveQuestion(moodleQue: MoodleQuestionType, slot: number): Promise<void> {
     const multiQuestion: MultiPlayerQuestion = {
       gameId: this.currentGame.gameId,
       attemptId: this.attemptIds[slot - 1],
@@ -152,6 +208,10 @@ export class MultiPlayerRoundPage implements OnInit {
     };
 
     this.multiPlayerQuestions.push(multiQuestion);
+    await Storage.set({
+      key: 'multiplayerQuestions',
+      value: JSON.stringify({ mpq: this.multiPlayerQuestions })
+    });
     this.backendService.saveMultiPlayerQuestion(multiQuestion);
   }
 
@@ -177,14 +237,19 @@ export class MultiPlayerRoundPage implements OnInit {
     await this.backendService.updateMultiPlayerQuestion(mpq);
   }
 
-  private updateGame(): void {
+  private async updateGame(): Promise<void> {
     if (this.currentGame.questionsAreSet === 0) {
-      this.saveQuestion(this.questions[this.questionNumber - 1], this.questionNumber);
+      await this.saveQuestion(this.questions[this.questionNumber - 1], this.questionNumber);
     }
 
     this.backendService.saveMultiPlayerAnswer(this.currentAnswer.get(this.questionNumber));
     this.checkQuestionAnswer(this.questionNumber, this.rightAnswer);
     this.questionNumber++;
+
+    await Storage.set({
+      key: 'currentQuestionNumber',
+      value: this.questionNumber.toString()
+    });
   }
 
   private async finishRound(): Promise<void> {

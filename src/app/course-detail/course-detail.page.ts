@@ -113,10 +113,6 @@ export class CourseDetailPage implements OnInit {
     }
   }
 
-  public async getOpponentName(game: MultiPlayerAttempt) {
-    const opponent = await this.getOpponent(game.initiatorId, game.opponentId);
-  }
-
   public findPlayer(): void {
     this.router.navigateByUrl('/mycourses/' + this.courseId + '/find-player');
   }
@@ -161,21 +157,6 @@ export class CourseDetailPage implements OnInit {
         this.filteredGames.push(game);
       }
     }
-  }
-
-  private async getOpponent(initiatorId: number, opponentId: number): Promise<User> {
-    const firstPlayer = await this.backendService.getUser(initiatorId);
-    const first = firstPlayer[0];
-    const secondPlayer = await this.backendService.getUser(opponentId);
-    const second = secondPlayer[0];
-
-    let opponent: User;
-    if (first.id === this.currentUser.id) {
-      opponent = second;
-    } else {
-      opponent = first;
-    }
-    return opponent;
   }
 
   private async presentAlertConfirm(quizId: number): Promise<void> {
