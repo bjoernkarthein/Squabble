@@ -78,6 +78,16 @@ export class MultiPlayerRoundPage implements OnInit {
         this.handleQuestion(question, elem.attemptId);
       }
       await Storage.set({
+        key: 'currentQuestions',
+        value: JSON.stringify({ moodleQuestions: this.questions, parsedQuestions: this.parsedQuestions, attemptIds: this.attemptIds })
+      });
+
+      await Storage.set({
+        key: 'currentQuestionNumber',
+        value: this.questionNumber.toString()
+      });
+
+      await Storage.set({
         key: 'multiplayerQuestions',
         value: JSON.stringify({ mpq: this.multiPlayerQuestions })
       });
@@ -103,7 +113,6 @@ export class MultiPlayerRoundPage implements OnInit {
       key: 'currentQuestionNumber',
       value: this.questionNumber.toString()
     });
-    console.log('currentQuestions', this.parsedQuestions);
   }
 
   public getQText(input: string): string[] {
@@ -111,10 +120,8 @@ export class MultiPlayerRoundPage implements OnInit {
   }
 
   public async handleNextQuestion(): Promise<void> {
-    this.updateGame();
-    console.log('MultiPlayerQuestions', this.multiPlayerQuestions);
-    const nextQuestion = this.parsedQuestions[this.questionNumber];
-    console.log(nextQuestion);
+    await this.updateGame();
+    const nextQuestion = this.parsedQuestions[this.questionNumber - 1];
     if (nextQuestion) {
       this.currentQuestion = nextQuestion;
     } else {
@@ -128,7 +135,6 @@ export class MultiPlayerRoundPage implements OnInit {
 
   public setRightAnswer(input: string) {
     this.rightAnswer = input;
-    console.log(this.rightAnswer);
   }
 
   public saveAnswer(input: string[]) {
@@ -150,7 +156,6 @@ export class MultiPlayerRoundPage implements OnInit {
       givenAnswers[i] = multiAnswer;
       this.currentAnswer.set(multiAnswer.questionSlot, givenAnswers);
     }
-    console.log(givenAnswers);
   }
 
   private async checkForCurrentQuestion(): Promise<void> {
@@ -167,7 +172,6 @@ export class MultiPlayerRoundPage implements OnInit {
     if (resp.value) {
       const multiplayerQuestions = JSON.parse(resp.value).mpq;
       this.multiPlayerQuestions = multiplayerQuestions;
-      console.log(multiplayerQuestions);
     }
 
     const currentQuestionNumber = Number(res.value);
@@ -177,7 +181,6 @@ export class MultiPlayerRoundPage implements OnInit {
     this.questions = currentQuestions.moodleQuestions;
     this.attemptIds = currentQuestions.attemptIds;
     this.questionNumber = currentQuestionNumber;
-    console.log(currentQuestion);
     this.existsCurrentQuestion = true;
     this.currentQuestion = currentQuestion;
   }
@@ -194,7 +197,6 @@ export class MultiPlayerRoundPage implements OnInit {
     const parsedQuestion = this.questionParser.parseQuestion(elem, attemptId, false);
     this.parsedQuestions.push(parsedQuestion);
     this.currentQuestion = this.parsedQuestions[this.questionNumber - 1];
-    console.log(this.parsedQuestions);
   }
 
   private async saveQuestion(moodleQue: MoodleQuestionType, slot: number): Promise<void> {
@@ -208,10 +210,6 @@ export class MultiPlayerRoundPage implements OnInit {
     };
 
     this.multiPlayerQuestions.push(multiQuestion);
-    await Storage.set({
-      key: 'multiplayerQuestions',
-      value: JSON.stringify({ mpq: this.multiPlayerQuestions })
-    });
     this.backendService.saveMultiPlayerQuestion(multiQuestion);
   }
 
@@ -234,6 +232,11 @@ export class MultiPlayerRoundPage implements OnInit {
     } else if (this.currentGame.opponentId === this.currentUser.id) {
       mpq.playerTwoRight = answeredRight;
     }
+
+    await Storage.set({
+      key: 'multiplayerQuestions',
+      value: JSON.stringify({ mpq: this.multiPlayerQuestions })
+    });
     await this.backendService.updateMultiPlayerQuestion(mpq);
   }
 
@@ -277,7 +280,6 @@ export class MultiPlayerRoundPage implements OnInit {
     }
     this.hiddenQuestionDOM.nativeElement.innerHTML = '';
     await this.backendService.updateMultiPlayerAttempt(this.currentGame);
-    console.log(this.currentGame);
   }
 
   private updateGameScore(oneRight: number, twoRight: number) {

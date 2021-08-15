@@ -87,7 +87,6 @@ export class MoodleService {
         }
       }
     }
-    console.log(questionsArray);
     return questionsArray;
   }
 
