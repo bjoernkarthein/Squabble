@@ -94,7 +94,6 @@ export class QuizDetailPage implements OnInit {
 
   private async getQuizzeQuestions(id: string) {
     const attempt = await this.getAttemptId(id);
-    console.log(attempt);
 
     this.moodleService.getQuizInProgressInformation(attempt, this.currentUser.token).subscribe(re => {
       const questions = re.questions;

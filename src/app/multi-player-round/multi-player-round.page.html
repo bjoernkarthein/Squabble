@@ -103,8 +103,37 @@
     </ng-container>
   </div>
   <div id="footer">
-    <ion-button size="large" color="success" (click)="this.handleNextQuestion()"
-      ><span>Next</span></ion-button
+    <div
+      id="feedback-container"
+      *ngIf="this.currentGame && this.currentQuestion && this.showFeedback"
+      (clickOutside)="this.nextQuestion()"
+    >
+      <div *ngIf="this.answeredRight" class="feedback correct">
+        Your answer is correct.
+      </div>
+      <div *ngIf="!this.answeredRight" class="feedback wrong">
+        Your answer is wrong.
+      </div>
+      <div *ngIf="!this.answeredRight" class="feedback right-answer">
+        {{this.currentQuestion.rightAnswerText}}
+      </div>
+      <!-- <div *ngIf="this.currentGame.questionsAreSet === 1" id="opponent-answer">
+        {{this.getOpponentAnswer()}}
+      </div> -->
+    </div>
+    <ion-button
+      *ngIf="!this.showFeedback"
+      size="large"
+      color="success"
+      (click)="this.handleNextQuestion()"
+      ><span>Submit</span></ion-button
+    >
+    <ion-button
+      *ngIf="this.showFeedback"
+      size="large"
+      type="primary"
+      (click)="this.nextQuestion()"
+      ><span>Next Question</span></ion-button
     >
   </div>
 </ion-content>

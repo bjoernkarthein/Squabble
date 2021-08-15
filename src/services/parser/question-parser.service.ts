@@ -115,6 +115,7 @@ export class QuestionParserService {
 
     if (!inProgress) {
       let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      question.rightAnswerText = rightAnswer;
       if (question.multipleAllowed) {
         rightAnswer = rightAnswer.replace('The correct answers are: ', '');
       } else {
@@ -175,6 +176,7 @@ export class QuestionParserService {
 
     if (!inProgress) {
       let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      question.rightAnswerText = rightAnswer;
       rightAnswer = rightAnswer.replace('The correct answer is: ', '');
 
       const regEx = new RegExp('\.+→ ');
@@ -236,6 +238,7 @@ export class QuestionParserService {
 
     if (!inProgress) {
       let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      question.rightAnswerText = rightAnswer;
       rightAnswer = rightAnswer.replace('The correct answer is: ', '');
 
       const regEx = new RegExp('\.+\\[');
@@ -342,6 +345,7 @@ export class QuestionParserService {
 
     if (!inProgress) {
       let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      question.rightAnswerText = rightAnswer;
       rightAnswer = rightAnswer.replace('The correct answer is: ', '');
 
       const regEx = new RegExp('\.+\\[');
@@ -354,7 +358,6 @@ export class QuestionParserService {
     }
 
     document.querySelector(moodleQId).remove();
-    console.log(question);
     return question;
   }
 
@@ -380,6 +383,7 @@ export class QuestionParserService {
 
     if (!inProgress) {
       let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      question.rightAnswerText = rightAnswer;
       rightAnswer = rightAnswer.replace('The correct answer is: ', '');
       question.rightAnswer = rightAnswer;
     }
@@ -410,6 +414,7 @@ export class QuestionParserService {
 
     if (!inProgress) {
       let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      question.rightAnswerText = rightAnswer;
       rightAnswer = rightAnswer.replace('The correct answer is: ', '');
       question.rightAnswer = rightAnswer;
     }
@@ -464,6 +469,7 @@ export class QuestionParserService {
 
     if (!inProgress) {
       let rightAnswer = document.querySelector(moodleQId + ' .rightanswer').textContent;
+      question.rightAnswerText = rightAnswer;
       rightAnswer = rightAnswer.replace('The correct answer is \'', '');
       rightAnswer = rightAnswer.replace('\'.', '');
       question.rightAnswer = rightAnswer;
@@ -480,7 +486,7 @@ export class QuestionParserService {
       text: 'This Question type is currently not supported by this App (' + type + ')',
     };
 
-    // document.querySelector('.que.' + type).remove();
+    // document.querySelector(moodleQId).remove();
     return question;
   }
 }
@@ -527,6 +533,7 @@ interface MultipleChoice {
   sequenceCheck: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
+  rightAnswerText?: string;
 }
 
 interface TrueFalse {
@@ -536,6 +543,7 @@ interface TrueFalse {
   sequenceCheck: Field;
   answerFields?: Field[];
   rightAnswer?: string;
+  rightAnswerText?: string;
 }
 
 interface Numerical {
@@ -545,6 +553,7 @@ interface Numerical {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswer?: string;
+  rightAnswerText?: string;
 }
 
 interface ShortAnswer {
@@ -554,6 +563,7 @@ interface ShortAnswer {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswer?: string;
+  rightAnswerText?: string;
 }
 
 interface Essay {
@@ -573,6 +583,7 @@ interface Cloze {
   answerFields?: Field[];
   rightAnswers?: string[];
   parsedRightAnswer?: string;
+  rightAnswerText?: string;
 }
 
 interface Match {
@@ -584,6 +595,7 @@ interface Match {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
+  rightAnswerText?: string;
 }
 
 interface GapSelect {
@@ -594,6 +606,7 @@ interface GapSelect {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
+  rightAnswerText?: string;
 }
 
 interface DragImage {
@@ -606,6 +619,7 @@ interface DragImage {
   answerFields?: Field[];
   rightAnswers?: string[];
   parsedRightAnswer?: string;
+  rightAnswerText?: string;
 }
 
 interface DragText {
@@ -617,6 +631,7 @@ interface DragText {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
+  rightAnswerText?: string;
 }
 
 interface DragImageOrText {
@@ -628,7 +643,7 @@ interface DragImageOrText {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
-  parsedRightAnswer?: string;
+  rightAnswerText?: string;
 }
 
 interface DragMarker {
@@ -640,7 +655,7 @@ interface DragMarker {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
-  parsedRightAnswer?: string;
+  rightAnswerText?: string;
 }
 
 interface NotSupported {
