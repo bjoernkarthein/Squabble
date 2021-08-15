@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-true-false-question',
   templateUrl: './true-false-question.component.html',
   styleUrls: ['./true-false-question.component.scss'],
 })
-export class TrueFalseQuestionComponent implements OnInit {
+export class TrueFalseQuestionComponent implements OnInit, AfterViewInit {
 
   @Input() public text: string;
   @Input() public questionNumber: number;
@@ -16,13 +16,16 @@ export class TrueFalseQuestionComponent implements OnInit {
 
   constructor() { }
 
+  ngAfterViewInit(): void {
+    this.changeAnswer.emit(['-1']);
+  }
+
   ngOnInit() {
     if (this.rightAnswer === 'True') {
       this.setRightAnswer.emit('1');
     } else {
       this.setRightAnswer.emit('0');
     }
-    this.changeAnswer.emit(['-1']);
   }
 
   public radioGroupChange(event: any) {

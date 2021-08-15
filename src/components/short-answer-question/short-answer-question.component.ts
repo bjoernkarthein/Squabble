@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-short-answer-question',
   templateUrl: './short-answer-question.component.html',
   styleUrls: ['./short-answer-question.component.scss'],
 })
-export class ShortAnswerQuestionComponent implements OnInit {
+export class ShortAnswerQuestionComponent implements OnInit, AfterViewInit {
 
   @Input() public text: string;
   @Input() public questionNumber: number;
@@ -15,6 +15,10 @@ export class ShortAnswerQuestionComponent implements OnInit {
   @Output() public changeAnswer = new EventEmitter<string[]>();
 
   constructor() { }
+
+  ngAfterViewInit(): void {
+    this.changeAnswer.emit([' ']);
+  }
 
   ngOnInit() {
     this.changeAnswer.emit([' ']);

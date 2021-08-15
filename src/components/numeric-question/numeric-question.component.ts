@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-numeric-question',
   templateUrl: './numeric-question.component.html',
   styleUrls: ['./numeric-question.component.scss'],
 })
-export class NumericQuestionComponent implements OnInit {
+export class NumericQuestionComponent implements OnInit, AfterViewInit {
 
   @Input() public text: string;
   @Input() public questionNumber: number;
@@ -16,8 +16,11 @@ export class NumericQuestionComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  ngAfterViewInit(): void {
     this.changeAnswer.emit([' ']);
+  }
+
+  ngOnInit() {
     this.setRightAnswer.emit(this.rightAnswer);
   }
 

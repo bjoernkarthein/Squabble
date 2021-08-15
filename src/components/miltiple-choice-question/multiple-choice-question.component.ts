@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-multiple-choice-question',
   templateUrl: './multiple-choice-question.component.html',
   styleUrls: ['./multiple-choice-question.component.scss'],
 })
-export class MultipleChoiceQuestionComponent implements OnInit {
+export class MultipleChoiceQuestionComponent implements OnInit, AfterViewInit {
 
   @Input() public text: string;
   @Input() public questionNumber: number;
@@ -19,9 +19,16 @@ export class MultipleChoiceQuestionComponent implements OnInit {
   constructor() {
   }
 
+  ngAfterViewInit(): void {
+    const initialValues: string[] = [];
+    for (const option of this.answerOptions) {
+      initialValues.push('-1');
+    }
+    this.changeAnswer.emit(initialValues);
+  }
+
   ngOnInit(): void {
     let rightAnswer = '';
-    const initialValues: string[] = [];
 
     if (!this.multipleAllowed) {
       for (let j = 0; j < this.answerOptions.length; j++) {
@@ -33,7 +40,6 @@ export class MultipleChoiceQuestionComponent implements OnInit {
     }
 
     for (let i = 0; i < this.answerOptions.length; i++) {
-      initialValues.push('-1');
       let includes = false;
       for (const rightA of this.rightAnswers) {
         if (this.returnChoppedString(this.answerOptions[i].text) === rightA) {
@@ -48,7 +54,6 @@ export class MultipleChoiceQuestionComponent implements OnInit {
       }
     }
     this.setRightAnswer.emit(rightAnswer);
-    this.changeAnswer.emit(initialValues);
   }
 
   public radioGroupChange(event: any) {

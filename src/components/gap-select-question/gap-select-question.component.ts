@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-gap-select-question',
   templateUrl: './gap-select-question.component.html',
   styleUrls: ['./gap-select-question.component.scss'],
 })
-export class GapSelectQuestionComponent implements OnInit {
+export class GapSelectQuestionComponent implements OnInit, AfterViewInit {
   @Input() public questionNumber: number;
   @Input() public snippets: string[];
   @Input() public answerOptions: string[];
@@ -18,21 +18,18 @@ export class GapSelectQuestionComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  ngAfterViewInit(): void {
     for (let i = 0; i < this.snippets.length - 1; i++) {
       this.selectedAnswers.push('0');
     }
     this.changeAnswer.emit(this.selectedAnswers);
+  }
 
+  ngOnInit() {
     let rightAnswer = '';
-
-
-
-
     for (let i = 0; i < this.rightAnswers.length; i++) {
       rightAnswer += (this.answerOptions.indexOf(this.rightAnswers[i]) + 1).toString() + (i < this.rightAnswers.length - 1 ? '###' : '');
     }
-
     this.setRightAnswer.emit(rightAnswer);
   }
 

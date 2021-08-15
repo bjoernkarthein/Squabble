@@ -25,6 +25,8 @@ export class MultiPlayerRoundPage implements OnInit {
   public rightAnswer: string;
   public currentUser: User;
   public multiPlayerQuestions: MultiPlayerQuestion[] = [];
+  public answeredRight: boolean;
+  public showFeedback: boolean;
 
   private attemptId: number;
   private attemptIds: number[] = [];
@@ -120,7 +122,17 @@ export class MultiPlayerRoundPage implements OnInit {
   }
 
   public async handleNextQuestion(): Promise<void> {
+    this.presentFeedback();
     await this.updateGame();
+  }
+
+  public async nextQuestion(): Promise<void> {
+    this.questionNumber++;
+    await Storage.set({
+      key: 'currentQuestionNumber',
+      value: this.questionNumber.toString()
+    });
+    this.showFeedback = false;
     const nextQuestion = this.parsedQuestions[this.questionNumber - 1];
     if (nextQuestion) {
       this.currentQuestion = nextQuestion;
@@ -141,6 +153,7 @@ export class MultiPlayerRoundPage implements OnInit {
     const question = this.currentQuestion;
     const answers = question.answerFields;
     const givenAnswers = new Array(input.length);
+    console.log('here');
 
     for (let i = 0; i < input.length; i++) {
       if (!input[i] || input[i] === '') { return; }
@@ -156,6 +169,7 @@ export class MultiPlayerRoundPage implements OnInit {
       givenAnswers[i] = multiAnswer;
       this.currentAnswer.set(multiAnswer.questionSlot, givenAnswers);
     }
+    console.log(this.currentAnswer);
   }
 
   private async checkForCurrentQuestion(): Promise<void> {
@@ -216,21 +230,21 @@ export class MultiPlayerRoundPage implements OnInit {
   private async checkQuestionAnswer(questionSlot: number, rightAnswer: string) {
     const givenAnswer = this.currentAnswer.get(questionSlot);
 
-    let answeredRight = true;
+    this.answeredRight = true;
     const rightAnswerValues = rightAnswer.split('###');
 
     for (let i = 0; i < rightAnswerValues.length; i++) {
       if (rightAnswerValues[i] !== givenAnswer[i].answerValue) {
-        answeredRight = false;
+        this.answeredRight = false;
       }
     }
 
     const mpq = this.multiPlayerQuestions[questionSlot - 1];
 
     if (this.currentGame.initiatorId === this.currentUser.id) {
-      mpq.playerOneRight = answeredRight;
+      mpq.playerOneRight = this.answeredRight;
     } else if (this.currentGame.opponentId === this.currentUser.id) {
-      mpq.playerTwoRight = answeredRight;
+      mpq.playerTwoRight = this.answeredRight;
     }
 
     await Storage.set({
@@ -240,6 +254,10 @@ export class MultiPlayerRoundPage implements OnInit {
     await this.backendService.updateMultiPlayerQuestion(mpq);
   }
 
+  private presentFeedback(): void {
+    this.showFeedback = true;
+  }
+
   private async updateGame(): Promise<void> {
     if (this.currentGame.questionsAreSet === 0) {
       await this.saveQuestion(this.questions[this.questionNumber - 1], this.questionNumber);
@@ -247,12 +265,6 @@ export class MultiPlayerRoundPage implements OnInit {
 
     this.backendService.saveMultiPlayerAnswer(this.currentAnswer.get(this.questionNumber));
     this.checkQuestionAnswer(this.questionNumber, this.rightAnswer);
-    this.questionNumber++;
-
-    await Storage.set({
-      key: 'currentQuestionNumber',
-      value: this.questionNumber.toString()
-    });
   }
 
   private async finishRound(): Promise<void> {

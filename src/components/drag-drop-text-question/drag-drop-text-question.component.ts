@@ -33,9 +33,6 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
   public ngOnInit(): void {
     let rightAnswer = '';
 
-
-
-
     for (let i = 0; i < this.rightAnswers.length; i++) {
       for (const aOption of this.answerOptions) {
         if (aOption.text === this.rightAnswers[i]) {

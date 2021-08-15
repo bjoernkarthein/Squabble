@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-matching-question',
   templateUrl: './matching-question.component.html',
   styleUrls: ['./matching-question.component.scss'],
 })
-export class MatchingQuestionComponent implements OnInit {
+export class MatchingQuestionComponent implements OnInit, AfterViewInit {
 
   @Input() public text: string[];
   @Input() public questionNumber: number;
@@ -20,17 +20,15 @@ export class MatchingQuestionComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  ngAfterViewInit(): void {
     for (const g of this.gapText) {
       this.selectedAnswers.push('0');
     }
     this.changeAnswer.emit(this.selectedAnswers);
+  }
 
+  ngOnInit() {
     let rightAnswer = '';
-
-
-
-
     for (let i = 0; i < this.rightAnswers.length; i++) {
       rightAnswer += (this.answerOptions.indexOf(this.rightAnswers[i]) + 1).toString() + (i < this.rightAnswers.length - 1 ? '###' : '');
     }
