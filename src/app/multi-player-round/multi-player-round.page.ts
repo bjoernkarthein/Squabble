@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BackendService, MultiPlayerAnswer, MultiPlayerQuestion, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
-import { Field, MoodleQuestionType, QuestionParserService } from 'src/services/parser/question-parser.service';
+import { MoodleQuestionType, QuestionParserService } from 'src/services/parser/question-parser.service';
 import { Location } from '@angular/common';
 import { AuthService } from 'src/services/auth/auth.service';
 

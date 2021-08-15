@@ -1,11 +1,9 @@
-h5 {
+.log-out {
   text-decoration: underline;
 }
 
 ion-icon {
-  font-size: 2rem;
-  position: relative;
-  top: 0.2rem;
+  font-size: 1.5rem;
   margin-right: 0.3rem;
 }
 
@@ -14,6 +12,7 @@ ion-icon {
   justify-content: flex-start;
   display: flex;
   cursor: pointer;
+  margin-top: 1rem;
 }
 
 .parent-container {
