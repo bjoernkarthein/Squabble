@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BackendService, User } from '../backend/backend.service';
+import { BackendService, MultiPlayerStatistic, User } from '../backend/backend.service';
 import { MoodleService } from '../moodle/moodle.service';
 import { Storage } from '@capacitor/storage';
 import { BehaviorSubject } from 'rxjs';
@@ -53,6 +53,7 @@ export class AuthService {
     this.currentUser.loggedIn = true;
 
     this.backendService.createUser(this.currentUser);
+    this.addStatisticEntry(this.currentUser.id);
 
     await Storage.set({
       key: 'currentUser',
@@ -80,5 +81,16 @@ export class AuthService {
     const ret = await Storage.get({ key: 'currentUser' });
     const user = JSON.parse(ret.value);
     return user;
+  }
+
+  private async addStatisticEntry(_userId: number) {
+    const userStatistic: MultiPlayerStatistic = {
+      userId: _userId,
+      totalWins: 0,
+      totalLosses: 0,
+      totalRight: 0,
+      totalWrong: 0
+    };
+    await this.backendService.addMultiPlayerStatistic(userStatistic);
   }
 }

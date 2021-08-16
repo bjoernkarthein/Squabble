@@ -135,6 +135,26 @@ export class BackendService {
     }
   }
 
+  public async getMultiPlayerStatisticByPlayerId(userId: number) {
+    return await this.http.get<any>('/api/multi_player_statistics/user/' + userId).toPromise();
+  }
+
+  public async getMultiPlayerStatisticByCourseId(courseId: string) {
+    return await this.http.get<any>('/api/multi_player_statistics/course/' + courseId).toPromise();
+  }
+
+  public async addMultiPlayerStatistic(statistic: MultiPlayerStatistic) {
+    const existingStatistics = await this.getMultiPlayerStatisticByPlayerId(statistic.userId);
+    if (existingStatistics.length > 0) {
+      return;
+    }
+    await this.http.post('/api/multi_player_statistics', { statistic }, this.httpOptions).toPromise();
+  }
+
+  public async updateMultiPlayerStatistic(statistic: MultiPlayerStatistic) {
+    await this.http.put('/api/multi_player_statistics', { statistic }, this.httpOptions).toPromise();
+  }
+
   public async sendInvitationMail(inviter: User, user: User) {
     await this.http.post('/api/send_mail', { inviter, user }, this.httpOptions).toPromise();
   }
@@ -200,4 +220,12 @@ export interface MultiPlayerAnswer {
   questionSlot: number;
   answerOption: string;
   answerValue: string;
+}
+
+export interface MultiPlayerStatistic {
+  userId: number;
+  totalWins: number;
+  totalLosses: number;
+  totalRight: number;
+  totalWrong: number;
 }

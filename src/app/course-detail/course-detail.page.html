@@ -54,5 +54,9 @@
         >Nothing here...</ion-item
       >
     </ion-list>
+    <app-leaderboard
+      *ngIf="this.courseId"
+      [courseId]="this.courseId"
+    ></app-leaderboard>
   </div>
 </ion-content>

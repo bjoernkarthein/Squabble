@@ -1,0 +1,30 @@
+<ion-list>
+  <ion-list-header>
+    <ion-label class="first">Leaderboard of this course</ion-label>
+    <ion-select
+      interface="popover"
+      value="absolute"
+      (ionChange)="this.filter($event)"
+    >
+      <ion-select-option value="absolute">Absolute Values</ion-select-option>
+      <ion-select-option value="average">Average Values</ion-select-option>
+      <ion-select-option value="percent">Percentage Values</ion-select-option>
+    </ion-select>
+  </ion-list-header>
+  <ion-item>
+    <ion-label class="first">Name</ion-label>
+    <ion-label>Games Played</ion-label>
+    <ion-label>Total Wins</ion-label>
+    <ion-label>Answered right</ion-label>
+  </ion-item>
+  <ion-item *ngFor="let userStatistic of this.userStatistics">
+    <ion-label class="first"
+      >{{ userStatistic.firstname }} {{ userStatistic.lastname }}</ion-label
+    >
+    <ion-label>{{
+      userStatistic.totalWins + userStatistic.totalLosses
+    }}</ion-label>
+    <ion-label>{{ userStatistic.totalWins }}</ion-label>
+    <ion-label>{{ userStatistic.totalRight }}</ion-label>
+  </ion-item>
+</ion-list>

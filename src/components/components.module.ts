@@ -18,6 +18,7 @@ import { QuizRoundPreviewComponent } from './quiz-round-preview/quiz-round-previ
 import { UserMenuComponent } from './user-menu/user-menu.component';
 import { HeaderComponent } from './header/header.component';
 import { RouterModule } from '@angular/router';
+import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { RouterModule } from '@angular/router';
     GamePreviewItemComponent,
     QuizRoundPreviewComponent,
     UserMenuComponent,
-    HeaderComponent
+    HeaderComponent,
+    LeaderboardComponent
   ],
   imports: [CommonModule, FormsModule, RouterModule],
   exports: [
@@ -55,7 +57,8 @@ import { RouterModule } from '@angular/router';
     GamePreviewItemComponent,
     QuizRoundPreviewComponent,
     UserMenuComponent,
-    HeaderComponent
+    HeaderComponent,
+    LeaderboardComponent
   ]
 })
 export class ComponentsModule { }

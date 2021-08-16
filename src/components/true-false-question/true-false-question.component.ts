@@ -29,7 +29,6 @@ export class TrueFalseQuestionComponent implements OnInit, AfterViewInit {
   }
 
   public radioGroupChange(event: any) {
-
     this.changeAnswer.emit([event.detail.value]);
   }
 

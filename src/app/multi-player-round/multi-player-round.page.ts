@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BackendService, MultiPlayerAnswer, MultiPlayerQuestion, User } from 'src/services/backend/backend.service';
+import { BackendService, MultiPlayerAnswer, MultiPlayerQuestion, MultiPlayerStatistic, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 import { MoodleQuestionType, QuestionParserService } from 'src/services/parser/question-parser.service';
 import { Location } from '@angular/common';
@@ -33,6 +33,9 @@ export class MultiPlayerRoundPage implements OnInit {
   private playerIds: number[] = [];
   private existsCurrentQuestion: boolean;
 
+  private initiatorStatistic: MultiPlayerStatistic;
+  private opponentStatistic: MultiPlayerStatistic;
+
   constructor(
     private location: Location,
     private route: ActivatedRoute,
@@ -51,6 +54,13 @@ export class MultiPlayerRoundPage implements OnInit {
     this.currentGame = await this.backendService.getMultiPlayerAttemptById(attemptId);
     this.currentGame.gameId = attemptId;
     this.currentUser = await this.authService.getCurrentUser();
+
+    let statistic = await this.backendService.getMultiPlayerStatisticByPlayerId(this.currentGame.initiatorId);
+    this.initiatorStatistic = statistic[0];
+    statistic = await this.backendService.getMultiPlayerStatisticByPlayerId(this.currentGame.opponentId);
+    this.opponentStatistic = statistic[0];
+    console.log(this.initiatorStatistic);
+    console.log(this.opponentStatistic);
 
     this.playerIds = [
       this.currentGame.initiatorId,
@@ -243,8 +253,12 @@ export class MultiPlayerRoundPage implements OnInit {
 
     if (this.currentGame.initiatorId === this.currentUser.id) {
       mpq.playerOneRight = this.answeredRight;
+      this.answeredRight ? this.initiatorStatistic.totalRight++ : this.initiatorStatistic.totalWrong++;
+      await this.backendService.updateMultiPlayerStatistic(this.initiatorStatistic);
     } else if (this.currentGame.opponentId === this.currentUser.id) {
       mpq.playerTwoRight = this.answeredRight;
+      this.answeredRight ? this.opponentStatistic.totalRight++ : this.opponentStatistic.totalWrong++;
+      await this.backendService.updateMultiPlayerStatistic(this.opponentStatistic);
     }
 
     await Storage.set({
@@ -268,7 +282,6 @@ export class MultiPlayerRoundPage implements OnInit {
   }
 
   private async finishRound(): Promise<void> {
-    this.location.back();
     if (this.currentGame.questionsAreSet === 0) {
       this.currentGame.currentRound++;
     }
@@ -283,7 +296,7 @@ export class MultiPlayerRoundPage implements OnInit {
         playerOneRight += !!question.playerOneRight ? 1 : 0;
         playerTwoRight += !!question.playerTwoRight ? 1 : 0;
       }
-      this.updateGameScore(playerOneRight, playerTwoRight);
+      await this.updateGameScore(playerOneRight, playerTwoRight);
     }
 
     this.currentGame.nextTurnId = this.playerIds[this.currentGame.turns];
@@ -292,17 +305,29 @@ export class MultiPlayerRoundPage implements OnInit {
     }
     this.hiddenQuestionDOM.nativeElement.innerHTML = '';
     await this.backendService.updateMultiPlayerAttempt(this.currentGame);
+    this.location.back();
   }
 
-  private updateGameScore(oneRight: number, twoRight: number) {
+  private async updateGameScore(oneRight: number, twoRight: number) {
     if (oneRight > twoRight) {
       this.currentGame.initiatorPoints++;
-
     } else if (oneRight < twoRight) {
       this.currentGame.opponentPoints++;
     } else {
       this.currentGame.initiatorPoints++;
       this.currentGame.opponentPoints++;
+    }
+
+    if (this.currentGame.turns >= 6) {
+      if (this.currentGame.initiatorPoints > this.currentGame.opponentPoints) {
+        this.initiatorStatistic.totalWins++;
+        this.opponentStatistic.totalLosses++;
+      } else if (this.currentGame.initiatorPoints < this.currentGame.opponentPoints) {
+        this.opponentStatistic.totalWins++;
+        this.initiatorStatistic.totalLosses++;
+      }
+      await this.backendService.updateMultiPlayerStatistic(this.initiatorStatistic);
+      await this.backendService.updateMultiPlayerStatistic(this.opponentStatistic);
     }
   }
 }
