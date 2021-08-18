@@ -19,6 +19,7 @@ import { UserMenuComponent } from './user-menu/user-menu.component';
 import { HeaderComponent } from './header/header.component';
 import { RouterModule } from '@angular/router';
 import { LeaderboardComponent } from './leaderboard/leaderboard.component';
+import { GamelistComponent } from './gamelist/gamelist.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { LeaderboardComponent } from './leaderboard/leaderboard.component';
     QuizRoundPreviewComponent,
     UserMenuComponent,
     HeaderComponent,
-    LeaderboardComponent
+    LeaderboardComponent,
+    GamelistComponent
   ],
   imports: [CommonModule, FormsModule, RouterModule],
   exports: [
@@ -58,7 +60,8 @@ import { LeaderboardComponent } from './leaderboard/leaderboard.component';
     QuizRoundPreviewComponent,
     UserMenuComponent,
     HeaderComponent,
-    LeaderboardComponent
+    LeaderboardComponent,
+    GamelistComponent
   ]
 })
 export class ComponentsModule { }

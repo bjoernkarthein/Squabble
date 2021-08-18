@@ -1,0 +1,24 @@
+<ion-list>
+  <ion-list-header>
+    <ion-label>Your Games</ion-label>
+    <ion-select
+      interface="popover"
+      value="progress"
+      (ionChange)="this.filter($event)"
+    >
+      <ion-select-option value="progress">In Progress</ion-select-option>
+      <ion-select-option value="finished">Finished</ion-select-option>
+    </ion-select>
+  </ion-list-header>
+  <app-game-preview-item
+    *ngFor="let game of this.filteredGames"
+    [gameId]="game.gid"
+    [turn]="game.nextTurnId"
+    [opponentName]=""
+    [inProgress]="game.inprogress"
+    [score]="'0:0'"
+  ></app-game-preview-item>
+  <ion-item class="empty" *ngIf="this.filteredGames.length <= 0"
+    >Nothing here...</ion-item
+  >
+</ion-list>

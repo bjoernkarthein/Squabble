@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, Output, QueryList, ViewChildren } from '@angular/core';
 import { Gesture, GestureController } from '@ionic/angular';
 import { DraggableComponent } from '../draggable/draggable.component';
 import { DropZoneComponent } from '../drop-zone/drop-zone.component';
