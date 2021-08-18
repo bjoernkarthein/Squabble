@@ -21,7 +21,6 @@ export class MultipleChoiceQuestionComponent implements OnChanges {
 
 
   ngOnChanges(): void {
-    console.log("onChanges");
     const initialValues: string[] = [];
     for (const option of this.answerOptions) {
       initialValues.push('-1');

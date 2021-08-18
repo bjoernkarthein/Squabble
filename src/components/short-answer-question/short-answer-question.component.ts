@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-short-answer-question',
   templateUrl: './short-answer-question.component.html',
   styleUrls: ['./short-answer-question.component.scss'],
 })
-export class ShortAnswerQuestionComponent implements OnInit, AfterViewInit {
+export class ShortAnswerQuestionComponent implements OnChanges {
 
   @Input() public text: string;
   @Input() public questionNumber: number;
@@ -16,11 +16,7 @@ export class ShortAnswerQuestionComponent implements OnInit, AfterViewInit {
 
   constructor() { }
 
-  ngAfterViewInit(): void {
-    this.changeAnswer.emit([' ']);
-  }
-
-  ngOnInit() {
+  ngOnChanges(): void {
     this.changeAnswer.emit([' ']);
     this.setRightAnswer.emit(this.rightAnswer);
   }

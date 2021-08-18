@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
 import { Gesture, GestureController } from '@ionic/angular';
 import { DraggableComponent } from '../draggable/draggable.component';
 import { DropZoneComponent } from '../drop-zone/drop-zone.component';
@@ -8,7 +8,7 @@ import { DropZoneComponent } from '../drop-zone/drop-zone.component';
   templateUrl: './drag-drop-text-question.component.html',
   styleUrls: ['./drag-drop-text-question.component.scss'],
 })
-export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
+export class DragDropTextQuestionComponent implements OnChanges, AfterViewInit {
   @ViewChildren(DropZoneComponent, { read: ElementRef }) dropZones: QueryList<ElementRef>;
   @ViewChildren(DraggableComponent, { read: ElementRef }) options: QueryList<ElementRef>;
 
@@ -30,8 +30,9 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
     private changeDetectorRef: ChangeDetectorRef) {
   }
 
-  public ngOnInit(): void {
+  ngOnChanges(): void {
     let rightAnswer = '';
+    this.givenAnswers = [];
 
     for (let i = 0; i < this.rightAnswers.length; i++) {
       for (const aOption of this.answerOptions) {
@@ -43,15 +44,14 @@ export class DragDropTextQuestionComponent implements AfterViewInit, OnInit {
       }
     }
 
-    this.setRightAnswer.emit(rightAnswer);
+    for (const gap of this.gaps) {
+      this.givenAnswers.push('0');
+    }
+    this.changeAnswer.emit(this.givenAnswers);
   }
 
   public ngAfterViewInit(): void {
-    for (const zone of this.dropZones) {
-      this.givenAnswers.push('0');
-    }
     this.updateGestures();
-    this.changeAnswer.emit(this.givenAnswers);
   }
 
   public handleDropClick(event: any): void {
