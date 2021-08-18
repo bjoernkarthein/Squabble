@@ -8,12 +8,22 @@
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title size="large">{{ this.title }}</ion-title>
-    <ion-icon
+    <ion-title size="large"
+      >{{ this.title }}
+      <ion-icon
+        *ngIf="this.externalLink"
+        class="external-url"
+        name="open-outline"
+        (click)="this.goToExternalUrl()"
+      ></ion-icon
+    ></ion-title>
+    <ion-thumbnail
       *ngIf="this.currentUser && this.currentUser.id != -1"
+      class="avatar"
       slot="end"
-      name="person-circle-outline"
       (click)="this.presentPopover($event)"
-    ></ion-icon>
+    >
+      <img [src]="this.currentUser.profileimageurl" />
+    </ion-thumbnail>
   </ion-toolbar>
 </ion-header>

@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-multiple-choice-question',
   templateUrl: './multiple-choice-question.component.html',
   styleUrls: ['./multiple-choice-question.component.scss'],
 })
-export class MultipleChoiceQuestionComponent implements OnInit, AfterViewInit {
+export class MultipleChoiceQuestionComponent implements OnChanges {
 
   @Input() public text: string;
   @Input() public questionNumber: number;
@@ -19,15 +19,15 @@ export class MultipleChoiceQuestionComponent implements OnInit, AfterViewInit {
   constructor() {
   }
 
-  ngAfterViewInit(): void {
+
+  ngOnChanges(): void {
+    console.log("onChanges");
     const initialValues: string[] = [];
     for (const option of this.answerOptions) {
       initialValues.push('-1');
     }
     this.changeAnswer.emit(initialValues);
-  }
 
-  ngOnInit(): void {
     let rightAnswer = '';
 
     if (!this.multipleAllowed) {

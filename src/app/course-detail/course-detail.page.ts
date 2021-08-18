@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 import { Storage } from '@capacitor/storage';
-import { BackendService, MultiPlayerAttempt, MultiPlayerStatistic, User } from 'src/services/backend/backend.service';
+import { BackendService, MultiPlayerAttempt, User } from 'src/services/backend/backend.service';
 import { AuthService } from 'src/services/auth/auth.service';
 
 @Component({
@@ -71,6 +71,11 @@ export class CourseDetailPage implements OnInit {
   }
 
   public async startMultiPlayer(_courseId: string, opponent?: User): Promise<void> {
+    if (await this.isOtherRoundInProgress()) {
+      this.presentAlertInfo();
+      return;
+    }
+
     let _opponentId = null;
 
     if (!opponent) {
@@ -159,6 +164,15 @@ export class CourseDetailPage implements OnInit {
     }
   }
 
+  private async isOtherRoundInProgress(): Promise<boolean> {
+    const res = await Storage.get({ key: 'currentQuestionNumber' });
+    if (res.value) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   private async presentAlertConfirm(quizId: number): Promise<void> {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -175,6 +189,25 @@ export class CourseDetailPage implements OnInit {
           text: 'Continue',
           handler: () => {
             this.router.navigateByUrl('/mycourses/' + this.courseId + '/myquizzes/' + quizId);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async presentAlertInfo(): Promise<void> {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Failed to start new game',
+      message: 'You have to finish all in progress game rounds to start a new game',
+      buttons: [
+        {
+          text: 'Dismiss',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
           }
         }
       ]

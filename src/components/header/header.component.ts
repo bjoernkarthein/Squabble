@@ -14,6 +14,7 @@ export class HeaderComponent implements OnInit {
   @Input() title: string;
   @Input() backButtonLink: string;
   @Input() showLogo: boolean;
+  @Input() externalLink: string;
 
   public currentPopover: HTMLIonPopoverElement;
   public currentUser: User;
@@ -39,6 +40,10 @@ export class HeaderComponent implements OnInit {
     await this.currentPopover.present();
 
     const { role } = await this.currentPopover.onDidDismiss();
+  }
+
+  public goToExternalUrl(): void {
+    document.location.href = this.externalLink;
   }
 
   private dismissPopover(): void {

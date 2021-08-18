@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { AuthService } from 'src/services/auth/auth.service';
 import { BackendService, MultiPlayerQuestion, User } from 'src/services/backend/backend.service';
+import { Storage } from '@capacitor/storage';
 
 @Component({
   selector: 'app-multi-player-overview',
@@ -23,7 +25,8 @@ export class MultiPlayerOverviewPage implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private backendService: BackendService,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
@@ -52,10 +55,14 @@ export class MultiPlayerOverviewPage implements OnInit {
       }
     }
 
-
   }
 
-  public startNextRound() {
+  public async startNextRound() {
+    if (await this.isOtherRoundInProgress(this.attemptId)) {
+      this.presentAlertInfo();
+      return;
+    }
+
     if (this.currentGame.questionsAreSet === 0) {
       this.currentGame.currentRound++;
     }
@@ -101,6 +108,38 @@ export class MultiPlayerOverviewPage implements OnInit {
       this.myself = second;
       this.opponent = first;
     }
+  }
+
+  private async isOtherRoundInProgress(gameId: string): Promise<boolean> {
+    const res = await Storage.get({ key: 'multiplayerQuestions' });
+    if (res.value) {
+      const multiplayerQuestions = JSON.parse(res.value).mpq;
+      console.log(multiplayerQuestions[0].gameId, gameId);
+      if (multiplayerQuestions[0].gameId !== gameId) {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  private async presentAlertInfo(): Promise<void> {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Failed to start new game',
+      message: 'You have to finish all in progress game rounds to start a new game',
+      buttons: [
+        {
+          text: 'Dismiss',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
 }

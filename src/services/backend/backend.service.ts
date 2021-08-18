@@ -168,6 +168,8 @@ export interface User {
   lastname?: string;
   username?: string;
   loggedIn?: boolean;
+  profileimageurlsmall?: string;
+  profileimageurl?: string;
 }
 
 export interface Course {

@@ -51,6 +51,8 @@ export class AuthService {
     this.currentUser.lastname = user.lastname;
     this.currentUser.username = user.username;
     this.currentUser.loggedIn = true;
+    this.currentUser.profileimageurlsmall = user.profileimageurlsmall;
+    this.currentUser.profileimageurl = user.profileimageurl;
 
     this.backendService.createUser(this.currentUser);
     this.addStatisticEntry(this.currentUser.id);
