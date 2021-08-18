@@ -8,6 +8,7 @@ import { MoodleQuestionType } from '../parser/question-parser.service';
 })
 export class BackendService {
   public startGame = new BehaviorSubject<any>(null);
+  public refreshList = new BehaviorSubject<boolean>(true);
 
   private httpOptions = {
     headers: new HttpHeaders({

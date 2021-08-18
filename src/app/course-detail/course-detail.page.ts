@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertController, ToastController } from '@ionic/angular';
-import { MoodleService } from 'src/services/moodle/moodle.service';
 import { Storage } from '@capacitor/storage';
-import { BackendService, MultiPlayerAttempt, User } from 'src/services/backend/backend.service';
+import { AlertController, ToastController } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
 import { AuthService } from 'src/services/auth/auth.service';
+import { BackendService, MultiPlayerAttempt, User } from 'src/services/backend/backend.service';
+import { MoodleService } from 'src/services/moodle/moodle.service';
 
 @Component({
   selector: 'app-course-detail',
@@ -19,8 +20,6 @@ export class CourseDetailPage implements OnInit {
   public quizzes: Quiz[] = [];
   public courseId: string;
   public currentUser: User;
-  public multiPlayerGames = [];
-  public filteredGames = [];
 
   constructor(
     private router: Router,
@@ -54,8 +53,6 @@ export class CourseDetailPage implements OnInit {
     });
 
     this.getQuizzes(this.courseId);
-    this.multiPlayerGames = await this.backendService.getMultiPlayerAttemptsByCourseAndUser(this.courseId, this.currentUser.id);
-    this.filterOpenGames();
   }
 
   public async startQuizAttempt(quizId: number, disabled: boolean): Promise<void> {
@@ -105,17 +102,7 @@ export class CourseDetailPage implements OnInit {
     };
 
     await this.backendService.saveMultiPlayerAttempt(multiplayerAttempt);
-    this.multiPlayerGames = await this.backendService.getMultiPlayerAttemptsByCourseAndUser(this.courseId, this.currentUser.id);
-    this.filterOpenGames();
-  }
-
-  public filter(event: any): void {
-
-    if (event.target.value === 'progress') {
-      this.filterOpenGames();
-    } else {
-      this.filterClosedGames();
-    }
+    this.backendService.refreshList.next(true);
   }
 
   public findPlayer(): void {
@@ -144,24 +131,6 @@ export class CourseDetailPage implements OnInit {
 
   private sortQuizzes(): void {
     this.quizzes.sort((a: Quiz, b: Quiz) => a.hasQuestions ? -1 : 1);
-  }
-
-  private filterOpenGames(): void {
-    this.filteredGames = [];
-    for (const game of this.multiPlayerGames) {
-      if (game.inprogress === 1) {
-        this.filteredGames.push(game);
-      }
-    }
-  }
-
-  private filterClosedGames(): void {
-    this.filteredGames = [];
-    for (const game of this.multiPlayerGames) {
-      if (game.inprogress === 0) {
-        this.filteredGames.push(game);
-      }
-    }
   }
 
   private async isOtherRoundInProgress(): Promise<boolean> {
