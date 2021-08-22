@@ -5,7 +5,7 @@ import { AlertController, ToastController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from 'src/services/auth/auth.service';
 import { BackendService, MultiPlayerAttempt, User } from 'src/services/backend/backend.service';
-import { MoodleService } from 'src/services/moodle/moodle.service';
+import { MoodleService, QuestionAmount } from 'src/services/moodle/moodle.service';
 
 @Component({
   selector: 'app-course-detail',
@@ -20,6 +20,7 @@ export class CourseDetailPage implements OnInit {
   public quizzes: Quiz[] = [];
   public courseId: string;
   public currentUser: User;
+  public multiPlayerEnabled: boolean;
 
   constructor(
     private router: Router,
@@ -53,6 +54,12 @@ export class CourseDetailPage implements OnInit {
     });
 
     this.getQuizzes(this.courseId);
+
+    // Checks if the minimal amount of questions exits in the course
+    // Feel free to use another value from the QuestionAmount ENUM or set your own.
+
+    this.multiPlayerEnabled = await this.moodleService.checkQuestionAmount(this.courseId, QuestionAmount.MINIMUM);
+    console.log(this.multiPlayerEnabled);
   }
 
   public async startQuizAttempt(quizId: number, disabled: boolean): Promise<void> {

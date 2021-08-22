@@ -15,8 +15,8 @@
       (click)="this.startQuizAttempt(quiz.id, !quiz.hasQuestions)"
     ></app-course-card>
   </div>
-  <h4>Multi-Player:</h4>
-  <div class="multi-player">
+  <div *ngIf="this.multiPlayerEnabled" class="multi-player">
+    <h4>Multi-Player:</h4>
     <ion-button
       size="large"
       color="primary"

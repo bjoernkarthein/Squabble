@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/services/auth/auth.service';
-import { BackendService, Course, User } from 'src/services/backend/backend.service';
+import { BackendService, Course, MultiPlayerStatistic, User } from 'src/services/backend/backend.service';
 import { MoodleService } from 'src/services/moodle/moodle.service';
 
 @Component({
@@ -44,8 +44,8 @@ export class HomePage implements OnInit {
 
   private async getCourses() {
     this.courses = [];
-    const id = this.currentUser.id;
-    const userCourses = await this.moodleService.getCoursesForUser(id).toPromise();
+    const userId = this.currentUser.id;
+    const userCourses = await this.moodleService.getCoursesForUser(userId).toPromise();
 
     for (const course of userCourses) {
       const elem: Course = {
@@ -56,6 +56,7 @@ export class HomePage implements OnInit {
 
       await this.backendService.saveCourse(elem);
       await this.backendService.saveUserCourseMapping(elem.id, this.currentUser.id);
+      await this.addStatisticEntry(userId, course.id);
 
       const res = await this.moodleService.getQuizzesFromCourse(course.id).toPromise();
       const quizzes = res.quizzes;
@@ -68,6 +69,18 @@ export class HomePage implements OnInit {
 
   private sortCourses(): void {
     this.courses.sort((a: Course, b: Course) => (b.quizCount - a.quizCount));
+  }
+
+  private async addStatisticEntry(_userId: number, _courseId: number) {
+    const userStatistic: MultiPlayerStatistic = {
+      userId: _userId,
+      courseId: _courseId,
+      totalWins: 0,
+      totalLosses: 0,
+      totalRight: 0,
+      totalWrong: 0
+    };
+    await this.backendService.addMultiPlayerStatistic(userStatistic);
   }
 
 }

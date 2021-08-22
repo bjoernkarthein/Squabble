@@ -22,9 +22,9 @@ export class LeaderboardComponent implements OnInit {
 
   public getIcon(index: number): string {
     if (this.iconStates[index]) {
-      return "arrow-up-outline";
+      return 'arrow-up-outline';
     } else {
-      return "arrow-down-outline";
+      return 'arrow-down-outline';
     }
   }
 

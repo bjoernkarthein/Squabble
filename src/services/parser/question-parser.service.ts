@@ -4,11 +4,9 @@ import { asNativeElements, Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class QuestionParserService {
-  public feedback: Feedback;
   public rightAnswer: HTMLCollection;
 
   constructor() {
-    this.feedback = { block: null };
   }
 
   public parseQuestion(question: MoodleQuestionType, attemptId: number, inProgress: boolean) {
@@ -42,8 +40,6 @@ export class QuestionParserService {
         return this.parseNotSupported(qid, questionType, attemptId);
     }
   }
-
-  //! ALSO GET ANSWER OPTION VALUES IN CASE OF RELOAD
 
   private parseMultiChoice(qid: number, attemptId: number, inProgress: boolean): MultipleChoice {
     const moodleQId = '#question-' + attemptId + '-' + qid;
@@ -79,34 +75,14 @@ export class QuestionParserService {
     let answer = null;
     do {
 
-      // if (inProgress) {
-      //   answer = document.querySelector(moodleQId + ' .answer input');
-      // } else {
-      //   answer = document.querySelector(moodleQId + ' .answer div');
-      // }
-
       answer = document.querySelector(moodleQId + ' .answer input');
       if (answer) {
-        // if (inProgress ? answer['type'] === 'radio' : answer.classList[0][0] === 'r') {
         if (answer['type'] === 'radio') {
           question.multipleAllowed = false;
         }
-
-        // if (inProgress) {
-        //   question.answerFields.push({ name: answer['name'], value: '' });
-        //   document.querySelector(moodleQId + ' .answer input').remove();
-        // } else {
-        //   let optionName = answer.firstChild.id;
-        //   optionName = optionName.replace('-label', '');
-        //   question.answerFields.push({ name: optionName, value: '' });
-        //   document.querySelector(moodleQId + ' .answer div').remove();
-        // }
         question.answerFields.push({ name: answer['name'], value: '' });
         document.querySelector(moodleQId + ' .answer input').remove();
 
-        // if (question.multipleAllowed && inProgress) {
-        //   document.querySelector(moodleQId + ' .answer input').remove();
-        // }
         if (question.multipleAllowed && inProgress) {
           document.querySelector(moodleQId + ' .answer input').remove();
         }
@@ -264,32 +240,9 @@ export class QuestionParserService {
     document.querySelector('.que.ddimageortext').remove();
   }
 
-  private parseMarker(qid: number, attemptId: number, inProgress: boolean): DragMarker {
-    const moodleQId = '#question-' + attemptId + '-' + qid;
-
-    const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    const qimage = document.querySelector(moodleQId + ' .content .dropbackground').attributes['src'].textContent;
-
-    const question: DragMarker = {
-      id: qid,
-      type: Type.DRAG_MARKER,
-      text: qtext,
-      image: qimage,
-      markers: []
-    };
-
-    let marker = null;
-    do {
-      marker = document.querySelector(moodleQId + ' .content .markertext');
-      if (marker != null) {
-        question.markers.push(marker.textContent);
-        document.querySelector(moodleQId + ' .content .markertext').remove();
-      }
-    } while (marker != null);
-
-    // document.querySelector('.que.ddmarker').remove();
-    return question;
+  private parseMarker(qid: number, attemptId: number, inProgress: boolean) {
+    // TODO
+    document.querySelector('.que.ddmarker').remove();
   }
 
   private parseText(qid: number, attemptId: number, inProgress: boolean): DragText {
@@ -486,26 +439,13 @@ export class QuestionParserService {
       text: 'This Question type is currently not supported by this App (' + type + ')',
     };
 
-    // document.querySelector(moodleQId).remove();
+    document.querySelector(moodleQId).remove();
     return question;
   }
 }
 
-interface Feedback {
-  block: HTMLCollection;
-  general?: HTMLCollection;
-  specific?: HTMLCollection;
-}
-
-export interface MoodleQuestionType {
-  type: string;
-  html: string;
-  blockedByPrevious: boolean;
-  slot: number;
-}
-
 //TODO: comment
-enum Type {
+export enum Type {
   MULTIPLE_CHOICE = 'multichoice',
   NUMERICAL = 'numerical',
   SHORT_ANSWER = 'shortanswer',
@@ -516,7 +456,14 @@ enum Type {
   DRAG_MARKER = 'ddmarker',
   DRAG_IMAGE = 'ddimageortext',
   GAP_SELECT = 'gapselect',
-  ESSAY = 'essay'
+  ESSAY = 'essay',
+}
+
+export interface MoodleQuestionType {
+  type: string;
+  html: string;
+  blockedByPrevious: boolean;
+  slot: number;
 }
 
 export interface Field {

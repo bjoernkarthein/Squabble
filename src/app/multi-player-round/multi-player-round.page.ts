@@ -55,9 +55,9 @@ export class MultiPlayerRoundPage implements OnInit {
     this.currentGame.gameId = attemptId;
     this.currentUser = await this.authService.getCurrentUser();
 
-    let statistic = await this.backendService.getMultiPlayerStatisticByPlayerId(this.currentGame.initiatorId);
+    let statistic = await this.backendService.getMultiPlayerStatisticById(this.currentGame.initiatorId, this.currentGame.courseId);
     this.initiatorStatistic = statistic[0];
-    statistic = await this.backendService.getMultiPlayerStatisticByPlayerId(this.currentGame.opponentId);
+    statistic = await this.backendService.getMultiPlayerStatisticById(this.currentGame.opponentId, this.currentGame.courseId);
     this.opponentStatistic = statistic[0];
     console.log(this.initiatorStatistic);
     console.log(this.opponentStatistic);

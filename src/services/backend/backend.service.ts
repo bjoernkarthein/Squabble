@@ -19,7 +19,6 @@ export class BackendService {
 
   constructor(private http: HttpClient) { }
 
-  //TODO: Possibly change type any to interface for the important calls?
   public getAllTables() {
     return this.http.get<any>('/api').toPromise();
   }
@@ -136,8 +135,8 @@ export class BackendService {
     }
   }
 
-  public async getMultiPlayerStatisticByPlayerId(userId: number) {
-    return await this.http.get<any>('/api/multi_player_statistics/user/' + userId).toPromise();
+  public async getMultiPlayerStatisticById(userId: number, courseId: number) {
+    return await this.http.get<any>('/api/multi_player_statistics/user/' + userId + '/course/' + courseId).toPromise();
   }
 
   public async getMultiPlayerStatisticByCourseId(courseId: string) {
@@ -145,7 +144,7 @@ export class BackendService {
   }
 
   public async addMultiPlayerStatistic(statistic: MultiPlayerStatistic) {
-    const existingStatistics = await this.getMultiPlayerStatisticByPlayerId(statistic.userId);
+    const existingStatistics = await this.getMultiPlayerStatisticById(statistic.userId, statistic.courseId);
     if (existingStatistics.length > 0) {
       return;
     }
@@ -161,6 +160,18 @@ export class BackendService {
   }
 }
 
+/**
+ * interface for the User type
+ * id: unique moodle user id
+ * email: user email
+ * token: the users token for the student webservice in moodle
+ * firstname: users first name
+ * lastname: users last name
+ * username: users user name
+ * loggedIn: if the user is currently logged in or not
+ * profileimageurlsmall: users small profile image url
+ * profileimageurl: users normal profile image url
+ */
 export interface User {
   id: number;
   email?: string;
@@ -173,6 +184,13 @@ export interface User {
   profileimageurl?: string;
 }
 
+/**
+ * interface for the course type
+ * id: unique moodle course id
+ * name: courses displayname
+ * description: courses description
+ * quizCount: Amount of quizzes in the course
+ */
 export interface Course {
   id: number;
   name: string;
@@ -227,6 +245,7 @@ export interface MultiPlayerAnswer {
 
 export interface MultiPlayerStatistic {
   userId: number;
+  courseId: number;
   totalWins: number;
   totalLosses: number;
   totalRight: number;

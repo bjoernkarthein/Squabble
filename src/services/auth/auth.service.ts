@@ -21,6 +21,11 @@ export class AuthService {
     this.currentUser = { id: -1 };
   }
 
+  /**
+   * Login the user and update localStorage
+   *
+   * @param form The form data from the login page
+   */
   public async login(form) {
     const tokenResponse = await this.moodleService.authenticateAndGetToken(form.email, form.password).toPromise();
     const error = tokenResponse.error;
@@ -35,16 +40,20 @@ export class AuthService {
     const userWithMailResponse = await this.moodleService.getUsers('email', form.email).toPromise();
     const userbyMail = userWithMailResponse.users[0];
     if (userbyMail) {
+      // user used email to authenticate
       user = userbyMail;
     } else {
       const userWithUsernameResponse = await this.moodleService.getUsers('username', form.email).toPromise();
       const userbyUsername = userWithUsernameResponse.users[0];
       if (!userbyUsername) {
+        // wrong user credentials
         return;
       }
+      // user used username to authenticate
       user = userbyUsername;
     }
 
+    // build current user object
     this.currentUser.id = user.id;
     this.currentUser.email = user.email;
     this.currentUser.firstname = user.firstname;
@@ -54,22 +63,32 @@ export class AuthService {
     this.currentUser.profileimageurlsmall = user.profileimageurlsmall;
     this.currentUser.profileimageurl = user.profileimageurl;
 
+    // Create user in database
     this.backendService.createUser(this.currentUser);
-    this.addStatisticEntry(this.currentUser.id);
 
+    // Set currentUser in LocalStorage to remember information on reloads
     await Storage.set({
       key: 'currentUser',
       value: JSON.stringify(this.currentUser)
     });
 
+    // successfull login
     this.loginCheck.next(true);
     this.router.navigateByUrl('/home');
   }
 
+  /**
+   * Log out currently signed in user
+   */
   public async logout() {
     await Storage.remove({ key: 'currentUser' });
   }
 
+  /**
+   * Check if current user is logged in
+   *
+   * @returns true if the current user is logged in
+   */
   public async isLoggedIn(): Promise<boolean> {
     const ret = await Storage.get({ key: 'currentUser' });
     if (!ret.value) {
@@ -79,20 +98,14 @@ export class AuthService {
     return user.loggedIn;
   }
 
+  /**
+   * Get the current user
+   *
+   * @returns The currently signed in user
+   */
   public async getCurrentUser(): Promise<User> {
     const ret = await Storage.get({ key: 'currentUser' });
     const user = JSON.parse(ret.value);
     return user;
-  }
-
-  private async addStatisticEntry(_userId: number) {
-    const userStatistic: MultiPlayerStatistic = {
-      userId: _userId,
-      totalWins: 0,
-      totalLosses: 0,
-      totalRight: 0,
-      totalWrong: 0
-    };
-    await this.backendService.addMultiPlayerStatistic(userStatistic);
   }
 }
