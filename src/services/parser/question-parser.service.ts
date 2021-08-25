@@ -529,7 +529,6 @@ interface Cloze {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
-  parsedRightAnswer?: string;
   rightAnswerText?: string;
 }
 
@@ -565,7 +564,6 @@ interface DragImage {
   sequenceCheck?: Field;
   answerFields?: Field[];
   rightAnswers?: string[];
-  parsedRightAnswer?: string;
   rightAnswerText?: string;
 }
 

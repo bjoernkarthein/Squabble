@@ -32,7 +32,7 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.searchbar = document.querySelector('ion-searchbar');
-    this.searchbar.addEventListener('ionInput', this.handleInput);
+    this.searchbar.addEventListener('ionInput', this.handleSearchInput);
   }
 
   async ionViewWillEnter() {
@@ -51,7 +51,7 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
     this.presentAlertConfirm(opponent);
   }
 
-  private handleInput(event: any) {
+  private handleSearchInput(event: any) {
     const filteredItems: any[] = Array.from(document.querySelector('ion-list').children);
     filteredItems.shift();
     const query = event.target.value.toLowerCase();

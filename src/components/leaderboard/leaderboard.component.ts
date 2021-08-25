@@ -32,7 +32,7 @@ export class LeaderboardComponent implements OnInit {
     switch (value) {
       case 'wins':
         this.iconStates[0] = !this.iconStates[0];
-        this.sortRight(this.iconStates[0]);
+        this.sortWins(this.iconStates[0]);
         break;
       case 'right':
         this.iconStates[1] = !this.iconStates[1];

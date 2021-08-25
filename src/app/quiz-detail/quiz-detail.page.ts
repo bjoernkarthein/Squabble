@@ -43,22 +43,10 @@ export class QuizDetailPage implements OnInit {
   ionViewWillEnter() {
     this.quizId = this.route.snapshot.paramMap.get('qid');
 
-    this.getQuizzeQuestions(this.quizId);
+    this.getQuizQuestions(this.quizId);
   }
 
-  // public async handleSaveClick(): Promise<void> {
-  //   const attempt = await this.getAttemptId(this.quizId);
-  //   const res = await this.moodleService.processQuizAttempt(attempt, this.currentUser.token, this.givenAnswers, 0);
-  //   if (res.errorcode) {
-  //
-  //     this.showToast('An error occured while saving', 'danger');
-  //     return;
-  //   }
-  //   await this.getQuizzeQuestions(this.quizId);
-  //   this.showToast('Attempt saved successfully', 'success');
-  // }
-
-  public async handleSubmitClick(): Promise<void> {
+  public async handleSubmit(): Promise<void> {
     const attempt = await this.getAttemptId(this.quizId);
     const res = await this.moodleService.processQuizAttempt(attempt, this.currentUser.token, this.givenAnswers, 1);
     await Storage.remove({ key: 'inProgressAttempt' + this.quizId });
@@ -92,7 +80,7 @@ export class QuizDetailPage implements OnInit {
 
   }
 
-  private async getQuizzeQuestions(id: string) {
+  private async getQuizQuestions(id: string) {
     const attempt = await this.getAttemptId(id);
 
     this.moodleService.getQuizInProgressInformation(attempt, this.currentUser.token).subscribe(re => {
