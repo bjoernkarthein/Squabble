@@ -1,0 +1,9 @@
+ion-card {
+  width: auto;
+  height: 100%;
+  cursor: pointer;
+}
+
+.unclickable {
+  pointer-events: none;
+}

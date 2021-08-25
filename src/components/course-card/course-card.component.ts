@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-course-card',
@@ -7,7 +7,6 @@ import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '
 })
 export class CourseCardComponent implements AfterViewInit {
   @ViewChild('description') description: ElementRef;
-
 
   @Input() courseName: string;
   @Input() courseDesc: string;

@@ -20,6 +20,7 @@ import { HeaderComponent } from './header/header.component';
 import { RouterModule } from '@angular/router';
 import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 import { GamelistComponent } from './gamelist/gamelist.component';
+import { QuizItemComponent } from './quiz-item/quiz-item.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { GamelistComponent } from './gamelist/gamelist.component';
     UserMenuComponent,
     HeaderComponent,
     LeaderboardComponent,
-    GamelistComponent
+    GamelistComponent,
+    QuizItemComponent,
   ],
   imports: [CommonModule, FormsModule, RouterModule],
   exports: [
@@ -61,7 +63,8 @@ import { GamelistComponent } from './gamelist/gamelist.component';
     UserMenuComponent,
     HeaderComponent,
     LeaderboardComponent,
-    GamelistComponent
+    GamelistComponent,
+    QuizItemComponent,
   ]
 })
 export class ComponentsModule { }

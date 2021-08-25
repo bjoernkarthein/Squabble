@@ -1,0 +1,23 @@
+<app-header
+  [title]="this.courseInfo.displayname"
+  [backButtonLink]="'../'"
+  [externalLink]="this.courseUrl"
+></app-header>
+
+<ion-content>
+  <h4>Quizzes of this course:</h4>
+  <div id="quizzes">
+    <div class="quiz-container" *ngFor="let quiz of this.quizzes">
+      <app-quiz-item
+        [quizName]="quiz.title"
+        [type]="'Quiz'"
+        [disabled]="!quiz.hasQuestions"
+        (click)="this.startQuizAttempt(quiz.id, !quiz.hasQuestions)"
+      ></app-quiz-item>
+      <ion-icon
+        name="open-outline"
+        (click)="this.goToExternalUrl(quiz.url)"
+      ></ion-icon>
+    </div>
+  </div>
+</ion-content>

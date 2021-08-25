@@ -9,7 +9,8 @@ import { Field, MoodleQuestionType, Type } from '../parser/question-parser.servi
 })
 export class MoodleService {
 
-  private moodleBaseUrl = 'http://localhost/moodle/webservice/rest/server.php?';
+  public moodleInstalationUrl = 'http://localhost/moodle';
+  private moodleBaseUrl = this.moodleInstalationUrl + '/webservice/rest/server.php?';
   //! Needs to be hidden somehow
   private webServiceUserToken = 'b8f762ebc0e11f9e28d7d1b5ad1f023b';
   private studentService = 'comp_quiz_student';
@@ -25,7 +26,7 @@ export class MoodleService {
    * is allowed to create a token for the studentService
    */
   public authenticateAndGetToken(username: string, password: string) {
-    let baseUrl = 'http://localhost/moodle/login/token.php?';
+    let baseUrl = this.moodleInstalationUrl + '/login/token.php?';
     const escPassword = encodeURIComponent(password);
     baseUrl += 'username=' + username + '&password=' + escPassword + '&service=' + this.studentService;
     return this.http.get<any>(baseUrl);
