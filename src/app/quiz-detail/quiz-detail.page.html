@@ -1,4 +1,7 @@
-<app-header [title]="this.quizTitle" [backButtonLink]="'../../'"></app-header>
+<app-header
+  [title]="this.quizTitle"
+  [backButtonLink]="'../../single-player'"
+></app-header>
 
 <ion-content>
   <div id="questions">
@@ -90,7 +93,7 @@
       size="large"
       color="primary"
       (click)="this.handleSubmit()"
-      routerLink="../../"
+      routerLink="../../single-player"
       ><span>Submit Attempt</span></ion-button
     >
   </div>

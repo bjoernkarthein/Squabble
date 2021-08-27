@@ -160,7 +160,9 @@ export class MultiPlayerRoundPage implements OnInit {
   }
 
   public saveAnswer(input: string[]) {
+    console.log(input);
     const question = this.currentQuestion;
+    console.log(question);
     const answers = question.answerFields;
     const givenAnswers = new Array(input.length);
     console.log('here');

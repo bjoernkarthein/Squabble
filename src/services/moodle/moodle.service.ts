@@ -322,7 +322,5 @@ export class MoodleService {
  * Keep in mind the higher this value, the better and more random the question selection will be.
  */
 export enum QuestionAmount {
-  MINIMUM = 3,
-  AVERAGE = 9,
-  OPTIMAL = 27
+  MINIMUM = 3
 }
