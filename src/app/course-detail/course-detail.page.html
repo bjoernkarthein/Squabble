@@ -1,43 +1,21 @@
 <app-header
-  [title]="this.courseInfo.displayname"
+  [title]="this.title"
   [backButtonLink]="'/home'"
+  [externalLink]="this.courseUrl"
 ></app-header>
 
 <ion-content>
-  <h4>Quizzes of this course:</h4>
-  <div id="quizzes">
-    <app-course-card
-      *ngFor="let quiz of this.quizzes"
-      [courseName]="quiz.title"
-      [courseDesc]="quiz.description"
-      [type]="'Quiz'"
-      [disabled]="!quiz.hasQuestions"
-      (click)="this.startQuizAttempt(quiz.id, !quiz.hasQuestions)"
-    ></app-course-card>
-  </div>
-  <div *ngIf="this.multiPlayerEnabled" class="multi-player">
-    <h4>Multi-Player:</h4>
+  <div class="text-container" #text></div>
+  <div id="container">
+    <ion-button size="large" color="primary" (click)="this.goToSinglePlayer()"
+      >Single Player</ion-button
+    >
     <ion-button
       size="large"
-      color="primary"
-      (click)="this.startMultiPlayer(this.courseId)"
+      color="secondary"
+      [disabled]="!this.multiPlayerEnabled"
+      (click)="this.goToMultiPlayer()"
+      >Multi Player</ion-button
     >
-      <span>Start new multi-player game</span>
-    </ion-button>
-    <ion-button size="large" color="secondary" (click)="this.findPlayer()">
-      <ion-icon name="search"></ion-icon>
-    </ion-button>
-    <ion-button size="large" color="secondary" (click)="this.invitePlayer()">
-      <ion-icon name="mail"></ion-icon>
-    </ion-button>
-    <app-gamelist
-      *ngIf="this.courseId && this.currentUser"
-      [courseId]="this.courseId"
-      [currentUser]="this.currentUser"
-    ></app-gamelist>
-    <app-leaderboard
-      *ngIf="this.courseId"
-      [courseId]="this.courseId"
-    ></app-leaderboard>
   </div>
 </ion-content>

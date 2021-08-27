@@ -1,0 +1,33 @@
+<app-header
+  [title]="this.courseInfo.displayname"
+  [backButtonLink]="'../'"
+  [externalLink]="this.courseUrl"
+></app-header>
+
+<ion-content>
+  <div class="multi-player">
+    <h4>Multi-Player:</h4>
+    <ion-button
+      size="large"
+      color="primary"
+      (click)="this.startMultiPlayer(this.courseId)"
+    >
+      <span>Start new multi-player game</span>
+    </ion-button>
+    <ion-button size="large" color="secondary" (click)="this.findPlayer()">
+      <ion-icon name="search"></ion-icon>
+    </ion-button>
+    <ion-button size="large" color="secondary" (click)="this.invitePlayer()">
+      <ion-icon name="mail"></ion-icon>
+    </ion-button>
+    <app-gamelist
+      *ngIf="this.courseId && this.currentUser"
+      [courseId]="this.courseId"
+      [currentUser]="this.currentUser"
+    ></app-gamelist>
+    <app-leaderboard
+      *ngIf="this.courseId"
+      [courseId]="this.courseId"
+    ></app-leaderboard>
+  </div>
+</ion-content>

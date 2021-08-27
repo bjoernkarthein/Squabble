@@ -21,6 +21,7 @@ export class MatchingQuestionComponent implements OnChanges {
   constructor() { }
 
   ngOnChanges(): void {
+    this.selectedAnswers = [];
     for (const g of this.gapText) {
       this.selectedAnswers.push('0');
     }

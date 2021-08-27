@@ -1,21 +1,10 @@
-#quizzes {
-  margin-top: 1rem;
-  padding: 0 0.5rem;
-  width: 100%;
+.text-container {
+  margin: 1rem;
+  text-align: justify;
+}
+
+#container {
+  margin: 1rem 0.5rem;
   display: flex;
-  flex-wrap: wrap;
-}
-
-h4 {
-  margin-top: 2rem;
-  margin-left: 1.5rem;
-}
-
-.multi-player {
-  margin: 0 1rem;
-  margin-bottom: 3rem;
-
-  h4 {
-    margin-left: 0.5rem;
-  }
+  flex-direction: column;
 }

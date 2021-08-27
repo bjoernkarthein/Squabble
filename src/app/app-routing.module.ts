@@ -47,6 +47,15 @@ const routes: Routes = [
     path: 'mycourses/:cid/find-player',
     loadChildren: () => import('./find-player/find-player.module').then(m => m.FindPlayerPageModule)
   },
+  {
+    path: 'mycourses/:cid/single-player',
+    loadChildren: () => import('./single-player/single-player.module').then(m => m.SinglePlayerPageModule)
+  },
+  {
+    path: 'mycourses/:cid/multi-player',
+    loadChildren: () => import('./multi-player/multi-player.module').then(m => m.MultiPlayerPageModule)
+  },
+
 
 ];
 

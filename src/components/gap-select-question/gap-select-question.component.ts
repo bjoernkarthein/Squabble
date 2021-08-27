@@ -19,6 +19,7 @@ export class GapSelectQuestionComponent implements OnChanges {
   constructor() { }
 
   ngOnChanges(): void {
+    this.selectedAnswers = [];
     for (let i = 0; i < this.snippets.length - 1; i++) {
       this.selectedAnswers.push('0');
     }

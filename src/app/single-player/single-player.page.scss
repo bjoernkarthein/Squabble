@@ -1,0 +1,28 @@
+#quizzes {
+  margin-top: 1rem;
+  padding: 0 0.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+h4 {
+  margin-top: 2rem;
+  margin-left: 1.5rem;
+}
+
+app-quiz-item {
+  width: 95%;
+  display: inline-block;
+}
+
+.quiz-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  ion-icon {
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+}
