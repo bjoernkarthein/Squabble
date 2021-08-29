@@ -12,7 +12,7 @@ import { MoodleService } from 'src/services/moodle/moodle.service';
   styleUrls: ['./single-player.page.scss'],
 })
 export class SinglePlayerPage implements OnInit {
-  public courseInfo = {};
+  public courseInfo: any = {};
   public quizzes: Quiz[] = [];
   public courseId: string;
   public currentUser: User;

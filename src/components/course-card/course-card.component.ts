@@ -10,6 +10,7 @@ export class CourseCardComponent implements AfterViewInit {
 
   @Input() courseName: string;
   @Input() courseDesc: string;
+  @Input() courseId: number;
   @Input() courseImage: string;
   @Input() type: string;
   @Input() disabled: boolean;
@@ -17,7 +18,7 @@ export class CourseCardComponent implements AfterViewInit {
   constructor() { }
 
   ngAfterViewInit() {
-    this.description.nativeElement.innerHTML = this.courseDesc;
+    document.getElementById(this.courseId.toString()).innerHTML = this.courseDesc;
   }
 
 }

@@ -21,6 +21,7 @@ import { RouterModule } from '@angular/router';
 import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 import { GamelistComponent } from './gamelist/gamelist.component';
 import { QuizItemComponent } from './quiz-item/quiz-item.component';
+import { IonicModule } from '@ionic/angular';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,7 @@ import { QuizItemComponent } from './quiz-item/quiz-item.component';
     GamelistComponent,
     QuizItemComponent,
   ],
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, IonicModule],
   exports: [
     CourseCardComponent,
     TrueFalseQuestionComponent,

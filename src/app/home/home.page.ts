@@ -63,7 +63,7 @@ export class HomePage implements OnInit {
       elem.quizCount = quizzes.length;
       this.courses.push(elem);
     }
-
+    console.log(this.courses);
     this.sortCourses();
   }
 

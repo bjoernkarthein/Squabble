@@ -12,7 +12,7 @@ import { MoodleService } from 'src/services/moodle/moodle.service';
   styleUrls: ['./multi-player.page.scss'],
 })
 export class MultiPlayerPage implements OnInit {
-  public courseInfo = {};
+  public courseInfo: any = {};
   public courseId: string;
   public currentUser: User;
   public courseUrl: string;

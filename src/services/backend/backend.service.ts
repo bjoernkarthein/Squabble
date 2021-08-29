@@ -10,6 +10,8 @@ export class BackendService {
   public startGame = new BehaviorSubject<any>(null);
   public refreshList = new BehaviorSubject<boolean>(true);
 
+  private APIUrl = '/api';
+
   private httpOptions = {
     headers: new HttpHeaders({
       // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -20,23 +22,23 @@ export class BackendService {
   constructor(private http: HttpClient) { }
 
   public getAllTables() {
-    return this.http.get<any>('/api').toPromise();
+    return this.http.get<any>(this.APIUrl).toPromise();
   }
 
   public getUsers() {
-    return this.http.get<any>('/api/users').toPromise();
+    return this.http.get<any>(this.APIUrl + '/users').toPromise();
   }
 
   public getUser(id: number) {
-    return this.http.get<any>('/api/users/' + id).toPromise();
+    return this.http.get<any>(this.APIUrl + '/users/' + id).toPromise();
   }
 
   public async getRandomOpponentFromCourse(uId: number, cId: string) {
-    return await this.http.get<any>('/api/users/random/currentUser/' + uId + '/course/' + cId).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/users/random/currentUser/' + uId + '/course/' + cId).toPromise();
   }
 
   public async getAllOtherUsersFromCourse(uId: number, cId: string) {
-    return await this.http.get<any>('/api/users/currentUser/' + uId + '/course/' + cId).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/users/currentUser/' + uId + '/course/' + cId).toPromise();
   }
 
   public async createUser(user: User) {
@@ -45,15 +47,15 @@ export class BackendService {
       return;
     }
 
-    await this.http.post('/api/users', { user }, this.httpOptions).toPromise();
+    await this.http.post(this.APIUrl + '/users', { user }, this.httpOptions).toPromise();
   }
 
   public async getCourses() {
-    return await this.http.get<any>('/api/courses').toPromise();
+    return await this.http.get<any>(this.APIUrl + '/courses').toPromise();
   }
 
   public async getCourse(id: number) {
-    return await this.http.get<any>('/api/courses/' + id).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/courses/' + id).toPromise();
   }
 
   public async saveCourse(course: Course) {
@@ -62,11 +64,11 @@ export class BackendService {
       return;
     }
 
-    await this.http.post('/api/courses', { course }, this.httpOptions).toPromise();
+    await this.http.post(this.APIUrl + '/courses', { course }, this.httpOptions).toPromise();
   }
 
   public async existsUserCourseMapping(courseId: number, userId: number) {
-    const userCourseMappings = await this.http.get<any>('/api/user_courses/user/' + userId + '/course/' + courseId).toPromise();
+    const userCourseMappings = await this.http.get<any>(this.APIUrl + '/user_courses/user/' + userId + '/course/' + courseId).toPromise();
     return userCourseMappings.length > 0;
   }
 
@@ -76,19 +78,19 @@ export class BackendService {
       return;
     }
 
-    await this.http.post('/api/user_courses', { courseId, userId }, this.httpOptions).toPromise();
+    await this.http.post(this.APIUrl + '/user_courses', { courseId, userId }, this.httpOptions).toPromise();
   }
 
   public async getQuizAttemptById(attemptId: number) {
-    return await this.http.get<any>('/api/single_player_attempts/' + attemptId).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/single_player_attempts/' + attemptId).toPromise();
   }
 
   public async getQuizAttemptsByUsername(username: string) {
-    return await this.http.get<any>('/api/single_player_attempts/user/' + username).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/single_player_attempts/user/' + username).toPromise();
   }
 
   public async getQuizAttemptsByQuizId(quizId: string) {
-    return await this.http.get<any>('/api/single_player_attempts/quiz/' + quizId).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/single_player_attempts/quiz/' + quizId).toPromise();
   }
 
   public async saveSinglePlayerAttempt(spa: SinglePlayerAttempt) {
@@ -97,50 +99,50 @@ export class BackendService {
     if (res.length > 0) {
       return;
     }
-    await this.http.post('/api/single_player_attempts', { spa }, this.httpOptions).toPromise();
+    await this.http.post(this.APIUrl + '/single_player_attempts', { spa }, this.httpOptions).toPromise();
   }
 
   public async getMultiPlayerAttemptsByCourseAndUser(courseId: string, userId: number): Promise<MultiPlayerAttempt[]> {
-    return await this.http.get<any>('/api/multi_player_attempts/course/' + courseId + '/user/' + userId).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/multi_player_attempts/course/' + courseId + '/user/' + userId).toPromise();
   }
 
   public async getMultiPlayerAttemptById(attemptId: string): Promise<MultiPlayerAttempt> {
-    const res = await this.http.get<any>('/api/multi_player_attempts/' + attemptId).toPromise();
+    const res = await this.http.get<any>(this.APIUrl + '/multi_player_attempts/' + attemptId).toPromise();
     return res[0];
   }
 
   public async saveMultiPlayerAttempt(mpa: MultiPlayerAttempt) {
-    await this.http.post('/api/multi_player_attempts', { mpa }, this.httpOptions).toPromise();
+    await this.http.post(this.APIUrl + '/multi_player_attempts', { mpa }, this.httpOptions).toPromise();
   }
 
   public async updateMultiPlayerAttempt(mpa: MultiPlayerAttempt) {
-    await this.http.put('/api/multi_player_attempts', { mpa }, this.httpOptions).toPromise();
+    await this.http.put(this.APIUrl + '/multi_player_attempts', { mpa }, this.httpOptions).toPromise();
   }
 
   public async saveMultiPlayerQuestion(mpq: MultiPlayerQuestion) {
-    await this.http.post('/api/multi_player_game_questions', { mpq }, this.httpOptions).toPromise();
+    await this.http.post(this.APIUrl + '/multi_player_game_questions', { mpq }, this.httpOptions).toPromise();
   }
 
   public async updateMultiPlayerQuestion(mpq: MultiPlayerQuestion) {
-    await this.http.put('/api/multi_player_game_questions', { mpq }, this.httpOptions).toPromise();
+    await this.http.put(this.APIUrl + '/multi_player_game_questions', { mpq }, this.httpOptions).toPromise();
   }
 
   public async getMultiPlayerQuestions(gameId: string, roundId: number) {
-    return await this.http.get<any>('/api/multi_player_game_questions/' + gameId + '/round/' + roundId).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/multi_player_game_questions/' + gameId + '/round/' + roundId).toPromise();
   }
 
   public async saveMultiPlayerAnswer(multiPlayerAnswers: MultiPlayerAnswer[]) {
     for (const mpa of multiPlayerAnswers) {
-      await this.http.post('/api/multi_player_game_answers', { mpa }, this.httpOptions).toPromise();
+      await this.http.post(this.APIUrl + '/multi_player_game_answers', { mpa }, this.httpOptions).toPromise();
     }
   }
 
   public async getMultiPlayerStatisticById(userId: number, courseId: number) {
-    return await this.http.get<any>('/api/multi_player_statistics/user/' + userId + '/course/' + courseId).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/multi_player_statistics/user/' + userId + '/course/' + courseId).toPromise();
   }
 
   public async getMultiPlayerStatisticByCourseId(courseId: string) {
-    return await this.http.get<any>('/api/multi_player_statistics/course/' + courseId).toPromise();
+    return await this.http.get<any>(this.APIUrl + '/multi_player_statistics/course/' + courseId).toPromise();
   }
 
   public async addMultiPlayerStatistic(statistic: MultiPlayerStatistic) {
@@ -148,15 +150,15 @@ export class BackendService {
     if (existingStatistics.length > 0) {
       return;
     }
-    await this.http.post('/api/multi_player_statistics', { statistic }, this.httpOptions).toPromise();
+    await this.http.post(this.APIUrl + '/multi_player_statistics', { statistic }, this.httpOptions).toPromise();
   }
 
   public async updateMultiPlayerStatistic(statistic: MultiPlayerStatistic) {
-    await this.http.put('/api/multi_player_statistics', { statistic }, this.httpOptions).toPromise();
+    await this.http.put(this.APIUrl + '/multi_player_statistics', { statistic }, this.httpOptions).toPromise();
   }
 
   public async sendInvitationMail(inviter: User, user: User) {
-    await this.http.post('/api/send_mail', { inviter, user }, this.httpOptions).toPromise();
+    await this.http.post(this.APIUrl + '/send_mail', { inviter, user }, this.httpOptions).toPromise();
   }
 }
 

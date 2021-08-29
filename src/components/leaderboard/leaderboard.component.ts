@@ -9,7 +9,7 @@ import { BackendService, MultiPlayerStatistic } from 'src/services/backend/backe
 export class LeaderboardComponent implements OnInit {
   @Input() public courseId: string;
 
-  public userStatistics: MultiPlayerStatistic[];
+  public userStatistics: any[];
   private iconStates: boolean[] = new Array(3);
 
   constructor(private backendService: BackendService) { }

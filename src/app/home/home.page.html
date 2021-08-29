@@ -9,6 +9,7 @@
     <app-course-card
       *ngFor="let course of this.courses"
       [courseName]="course.name"
+      [courseId]="course.id"
       [courseDesc]="course.description"
       [type]="'Course'"
       [disabled]="course.quizCount < 1"

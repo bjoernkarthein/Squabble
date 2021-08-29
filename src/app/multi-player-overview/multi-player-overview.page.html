@@ -5,11 +5,11 @@
 ></app-header>
 
 <ion-content>
-  <div id="container">
-    <div class="names-and-score" *ngIf="this.opponent && this.myself">
-      <h3>{{this.myself.firstname}} {{this.myself.lastname}}</h3>
-      <h3>{{this.getScore(this.myself.id)}}</h3>
-      <h3>{{this.opponent.firstname}} {{this.opponent.lastname}}</h3>
+  <div id="container" *ngIf="this.myself">
+    <div class="self">{{this.myself.firstname}} {{this.myself.lastname}}</div>
+    <h3 class="score">{{this.getScore(this.myself.id)}}</h3>
+    <div class="opponent">
+      {{this.opponent.firstname}} {{this.opponent.lastname}}
     </div>
     <div id="rounds">
       <div class="quiz-round" *ngFor="let round of this.rounds | keyvalue">

@@ -7,7 +7,7 @@
   "proxies": [
     {
       "path": "/api",
-      "proxyUrl": "http://localhost:5000"
+      "proxyUrl": "https://squabble-api.herokuapp.com/"
     }
   ]
 }
