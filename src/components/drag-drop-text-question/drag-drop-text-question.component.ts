@@ -1,3 +1,4 @@
+import { SimpleChanges } from '@angular/core';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, Output, QueryList, ViewChildren } from '@angular/core';
 import { Gesture, GestureController } from '@ionic/angular';
 import { DraggableComponent } from '../draggable/draggable.component';
@@ -30,7 +31,11 @@ export class DragDropTextQuestionComponent implements OnChanges, AfterViewInit {
     private changeDetectorRef: ChangeDetectorRef) {
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    if (!changes.questionNumber) {
+      return;
+    }
     let rightAnswer = '';
     this.givenAnswers = [];
 

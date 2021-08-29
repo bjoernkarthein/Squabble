@@ -10,7 +10,7 @@ export class BackendService {
   public startGame = new BehaviorSubject<any>(null);
   public refreshList = new BehaviorSubject<boolean>(true);
 
-  private APIUrl = '/api';
+  private APIUrl = 'https://squabble-api.herokuapp.com';
 
   private httpOptions = {
     headers: new HttpHeaders({
