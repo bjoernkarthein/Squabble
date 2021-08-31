@@ -87,6 +87,7 @@ export class MoodleService {
 
   /**
    * Checks if a given course has enough distinct, supported questions
+   *
    * @param courseId The moodle coure id of the course to check
    * @param threshHold The minimum amount of questions the course needs to have
    * @returns true if the course has at least as much distinct, supported questions as threshHold

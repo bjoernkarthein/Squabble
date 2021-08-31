@@ -38,13 +38,15 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
   async ionViewWillEnter() {
     this.courseId = this.activeRoute.snapshot.paramMap.get('cid');
     const students = await this.moodleService.getEnrolledUsersForCourse(this.courseId);
+    const registeredStudents = await this.backendService.getUsers();
+    console.log(registeredStudents);
     if (students.error) {
       return;
     }
     for (const student of students) {
       this.students.set(student.id, student);
     }
-    this.removeCurrentUser(this.currentUser.id);
+    this.removeRegisteredUsers(registeredStudents);
   }
 
   public inviteUser(opponent: User) {
@@ -63,8 +65,10 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
     });
   }
 
-  private removeCurrentUser(currentUserId: number) {
-    this.students.delete(currentUserId);
+  private removeRegisteredUsers(registeredUsers: User[]) {
+    for (const user of registeredUsers) {
+      this.students.delete(user.id);
+    }
   }
 
   private sendInvitationMail(opponent: User) {

@@ -83,7 +83,7 @@ export class FindPlayerPage implements OnInit, AfterViewInit {
           text: 'Continue',
           handler: () => {
             this.backendService.startGame.next({ opponent: _opponent, courseId: this.courseId });
-            this.router.navigateByUrl('/mycourses/' + this.courseId);
+            this.router.navigateByUrl('/mycourses/' + this.courseId + '/multi-player');
           }
         }
       ]
