@@ -39,6 +39,7 @@ export class DragDropTextQuestionComponent implements OnChanges, AfterViewInit {
     let rightAnswer = '';
     this.givenAnswers = [];
 
+    console.log('right', this.rightAnswers);
     for (let i = 0; i < this.rightAnswers.length; i++) {
       for (const aOption of this.answerOptions) {
         if (aOption.text === this.rightAnswers[i]) {
@@ -53,6 +54,7 @@ export class DragDropTextQuestionComponent implements OnChanges, AfterViewInit {
       this.givenAnswers.push('0');
     }
     this.changeAnswer.emit(this.givenAnswers);
+    this.setRightAnswer.emit(rightAnswer);
   }
 
   public ngAfterViewInit(): void {

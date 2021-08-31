@@ -302,12 +302,11 @@ export class QuestionParserService {
       question.rightAnswerText = rightAnswer;
       rightAnswer = rightAnswer.replace('The correct answer is: ', '');
 
-      const regEx = new RegExp('\.+\\[');
       const answerArray = rightAnswer.split(']');
       answerArray.pop();
 
       for (const str of answerArray) {
-        question.rightAnswers.push(str.replace(regEx, ''));
+        question.rightAnswers.push(str.split('[')[1]);
       }
     }
 

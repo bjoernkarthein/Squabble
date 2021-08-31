@@ -3,7 +3,7 @@
     <ion-label>Your Games</ion-label>
     <ion-select
       interface="popover"
-      value="progress"
+      [value]="this.currentValue"
       (ionChange)="this.filter($event)"
     >
       <ion-select-option value="progress">In Progress</ion-select-option>
