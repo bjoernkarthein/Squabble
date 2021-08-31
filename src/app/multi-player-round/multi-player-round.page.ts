@@ -132,16 +132,16 @@ export class MultiPlayerRoundPage implements OnInit {
   }
 
   public async handleNextQuestion(): Promise<void> {
+    await Storage.set({
+      key: 'currentQuestionNumber',
+      value: (this.questionNumber + 1).toString()
+    });
     this.presentFeedback();
     await this.updateGame();
   }
 
   public async nextQuestion(): Promise<void> {
     this.questionNumber++;
-    await Storage.set({
-      key: 'currentQuestionNumber',
-      value: this.questionNumber.toString()
-    });
     this.showFeedback = false;
     const nextQuestion = this.parsedQuestions[this.questionNumber - 1];
     if (nextQuestion) {
@@ -156,6 +156,7 @@ export class MultiPlayerRoundPage implements OnInit {
   }
 
   public setRightAnswer(input: string) {
+    console.log('Rightanswer', input);
     this.rightAnswer = input;
   }
 
@@ -252,6 +253,7 @@ export class MultiPlayerRoundPage implements OnInit {
     }
 
     const mpq = this.multiPlayerQuestions[questionSlot - 1];
+    console.log('QUESTIONS', this.multiPlayerQuestions);
 
     if (this.currentGame.initiatorId === this.currentUser.id) {
       mpq.playerOneRight = this.answeredRight;

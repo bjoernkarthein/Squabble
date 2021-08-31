@@ -25,11 +25,11 @@
           [questions]="round.value"
         ></app-quiz-round-preview>
       </div>
+      <ion-button
+        *ngIf="this.myTurn && !this.finished"
+        (click)="this.startNextRound()"
+        >Play</ion-button
+      >
     </div>
-    <ion-button
-      *ngIf="this.myTurn && !this.finished"
-      (click)="this.startNextRound()"
-      >Play</ion-button
-    >
   </div>
 </ion-content>

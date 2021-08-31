@@ -209,7 +209,8 @@ export class QuestionParserService {
     } while (answer != null);
 
     const qtext = document.querySelector(moodleQId + ' .content .qtext').textContent;
-    const gaps = qtext.split(/[ ]+/);
+    console.log(qtext);
+    const gaps = qtext.split(/[^\S\r\n]{2,}/);
     question.gapText = gaps;
 
     if (!inProgress) {
