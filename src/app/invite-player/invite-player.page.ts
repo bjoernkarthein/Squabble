@@ -38,13 +38,19 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
   async ionViewWillEnter() {
     this.courseId = this.activeRoute.snapshot.paramMap.get('cid');
     const students = await this.moodleService.getEnrolledUsersForCourse(this.courseId);
-    const registeredStudents = await this.backendService.getUsers();
+    const registeredStudents = await this.backendService.getAllOtherUsersFromCourse(this.currentUser.id, this.courseId);
     console.log(registeredStudents);
     if (students.error) {
       return;
     }
     for (const student of students) {
       this.students.set(student.id, student);
+    }
+
+    this.students.delete(this.currentUser.id);
+
+    if (registeredStudents.error) {
+      return;
     }
     this.removeRegisteredUsers(registeredStudents);
   }
