@@ -56,7 +56,7 @@ export class HomePage implements OnInit {
 
       await this.backendService.saveCourse(elem);
       await this.backendService.saveUserCourseMapping(elem.id, this.currentUser.id);
-      await this.addStatisticEntry(userId, course.id);
+      await this.addStatisticsEntry(userId, course.id);
 
       const res = await this.moodleService.getQuizzesFromCourse(course.id).toPromise();
       const quizzes = res.quizzes;
@@ -71,7 +71,7 @@ export class HomePage implements OnInit {
     this.courses.sort((a: Course, b: Course) => (b.quizCount - a.quizCount));
   }
 
-  private async addStatisticEntry(_userId: number, _courseId: number) {
+  private async addStatisticsEntry(_userId: number, _courseId: number): Promise<void> {
     const userStatistic: MultiPlayerStatistic = {
       userId: _userId,
       courseId: _courseId,

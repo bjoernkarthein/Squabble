@@ -32,11 +32,19 @@ export class FindPlayerPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.searchbar = document.querySelector('ion-searchbar');
-    this.searchbar.addEventListener('ionInput', this.handleInput);
+    this.searchbar.addEventListener('ionInput', this.handleSearchInput);
   }
 
   async ionViewWillEnter() {
     this.courseId = this.activeRoute.snapshot.paramMap.get('cid');
+    this.getUsersForCourse();
+  }
+
+  public startGame(opponent: User): void {
+    this.presentAlertConfirm(opponent);
+  }
+
+  private async getUsersForCourse(): Promise<void> {
     const students = await this.backendService.getAllOtherUsersFromCourse(this.currentUser.id, this.courseId);
     if (students.error) {
       return;
@@ -47,11 +55,7 @@ export class FindPlayerPage implements OnInit, AfterViewInit {
     this.removeCurrentUser(this.currentUser.id);
   }
 
-  public startGame(opponent: User) {
-    this.presentAlertConfirm(opponent);
-  }
-
-  private handleInput(event: any) {
+  private handleSearchInput(event: any): void {
     const filteredItems: any[] = Array.from(document.querySelector('ion-list').children);
     filteredItems.shift();
     const query = event.target.value.toLowerCase();

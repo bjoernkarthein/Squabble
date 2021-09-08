@@ -131,16 +131,16 @@ export class MultiPlayerRoundPage implements OnInit {
     return input.split('##BLANK##');
   }
 
-  public async handleNextQuestion(): Promise<void> {
+  public async prepareNextQuestion(): Promise<void> {
     await Storage.set({
       key: 'currentQuestionNumber',
       value: (this.questionNumber + 1).toString()
     });
     this.presentFeedback();
-    await this.updateGame();
+    await this.updateGameState();
   }
 
-  public async nextQuestion(): Promise<void> {
+  public async showNextQuestion(): Promise<void> {
     this.questionNumber++;
     this.showFeedback = false;
     const nextQuestion = this.parsedQuestions[this.questionNumber - 1];
@@ -155,12 +155,12 @@ export class MultiPlayerRoundPage implements OnInit {
     }
   }
 
-  public setRightAnswer(input: string) {
+  public setRightAnswer(input: string): void {
     console.log('Rightanswer', input);
     this.rightAnswer = input;
   }
 
-  public saveAnswer(input: string[]) {
+  public saveAnswer(input: string[]): void {
     console.log(input);
     const question = this.currentQuestion;
     console.log(question);
@@ -212,7 +212,7 @@ export class MultiPlayerRoundPage implements OnInit {
     this.currentQuestion = currentQuestion;
   }
 
-  private async handleQuestion(question: any, attemptId: number) {
+  private async handleQuestion(question: any, attemptId: number): Promise<void> {
     this.hiddenQuestionDOM.nativeElement.innerHTML += question.html;
     const elem: MoodleQuestionType = {
       type: question.type,
@@ -240,7 +240,7 @@ export class MultiPlayerRoundPage implements OnInit {
     this.backendService.saveMultiPlayerQuestion(multiQuestion);
   }
 
-  private async checkQuestionAnswer(questionSlot: number, rightAnswer: string) {
+  private async checkQuestionAnswer(questionSlot: number, rightAnswer: string): Promise<void> {
     const givenAnswer = this.currentAnswer.get(questionSlot);
 
     this.answeredRight = true;
@@ -276,7 +276,7 @@ export class MultiPlayerRoundPage implements OnInit {
     this.showFeedback = true;
   }
 
-  private async updateGame(): Promise<void> {
+  private async updateGameState(): Promise<void> {
     if (this.currentGame.questionsAreSet === 0) {
       await this.saveQuestion(this.questions[this.questionNumber - 1], this.questionNumber);
     }

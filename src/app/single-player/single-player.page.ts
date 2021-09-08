@@ -16,7 +16,6 @@ export class SinglePlayerPage implements OnInit {
   public quizzes: Quiz[] = [];
   public courseId: string;
   public currentUser: User;
-  public multiPlayerEnabled: boolean;
   public courseUrl: string;
 
   constructor(
@@ -50,7 +49,7 @@ export class SinglePlayerPage implements OnInit {
     } else if (attemptInProgress.value) {
       this.router.navigateByUrl('/mycourses/' + this.courseId + '/myquizzes/' + quizId);
     } else {
-      this.presentAlertConfirm(quizId);
+      this.presentAlert(quizId);
     }
   }
 
@@ -79,7 +78,7 @@ export class SinglePlayerPage implements OnInit {
     this.quizzes.sort((a: Quiz, b: Quiz) => a.hasQuestions ? -1 : 1);
   }
 
-  private async presentAlertConfirm(quizId: number): Promise<void> {
+  private async presentAlert(quizId: number): Promise<void> {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Start Quiz Attempt',

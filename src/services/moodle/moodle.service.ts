@@ -1,8 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
-import { Field, MoodleQuestionType, Type } from '../parser/question-parser.service';
+
+import { Field, Type } from '../parser/question-parser.service';
 
 @Injectable({
   providedIn: 'root'

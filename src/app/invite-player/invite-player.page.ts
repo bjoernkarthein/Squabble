@@ -71,13 +71,13 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
     });
   }
 
-  private removeRegisteredUsers(registeredUsers: User[]) {
+  private removeRegisteredUsers(registeredUsers: User[]): void {
     for (const user of registeredUsers) {
       this.students.delete(user.id);
     }
   }
 
-  private sendInvitationMail(opponent: User) {
+  private sendInvitationMail(opponent: User): void {
     // this.backendService.sendInvitationMail(this.currentUser, opponent);
   }
 

@@ -64,7 +64,7 @@ export class QuizDetailPage implements OnInit {
     return input.split('##BLANK##');
   }
 
-  public addAnswer(input: string[], questionId: number) {
+  public addAnswer(input: string[], questionId: number): void {
     const question = this.questions.get(questionId);
     const answers = question.answerFields;
     const sCheck = question.sequenceCheck;
@@ -80,7 +80,7 @@ export class QuizDetailPage implements OnInit {
 
   }
 
-  private async getQuizQuestions(id: string) {
+  private async getQuizQuestions(id: string): Promise<void> {
     const attempt = await this.getAttemptId(id);
 
     this.moodleService.getQuizInProgressInformation(attempt, this.currentUser.token).subscribe(re => {
@@ -120,7 +120,7 @@ export class QuizDetailPage implements OnInit {
     return createdAttempt.attempt.id;
   }
 
-  private async handleQuestion(question: any) {
+  private async handleQuestion(question: any): Promise<void> {
     this.hiddenQuestionDOM.nativeElement.innerHTML += question.html;
     const elem: MoodleQuestionType = {
       type: question.type,
