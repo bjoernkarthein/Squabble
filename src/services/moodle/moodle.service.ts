@@ -106,7 +106,7 @@ export class MoodleService {
    * @returns An array of objects with the attempt id created by moodle and the moodle question object
    * All questions in the array are guaranteed to be supported and distinct
    */
-  public async getRandomQuizQuestion(courseId: string, amount: number): Promise<any[]> {
+  public async getRandomQuizQuestions(courseId: string, amount: number): Promise<any[]> {
     const notSupported = [Type.ESSAY, Type.CLOZE, Type.DRAG_IMAGE, Type.DRAG_MARKER];
     const questionsArray = [];
     const questionIds = [];

@@ -32,7 +32,7 @@ export class SinglePlayerPage implements OnInit {
 
   async ionViewWillEnter() {
     this.courseId = this.activeRoute.snapshot.paramMap.get('cid');
-    this.courseUrl = this.moodleService.moodleInstalationUrl + 'course/view.php?id=' + this.courseId;
+    this.courseUrl = this.moodleService.moodleInstalationUrl + '/course/view.php?id=' + this.courseId;
 
     this.moodleService.getCourseById(this.courseId).subscribe(info => {
       this.courseInfo = info[0];

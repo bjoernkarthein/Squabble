@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
     }
   }
 
-  public login(form) {
+  public submit(form) {
     this.authService.login(form.value);
   }
 

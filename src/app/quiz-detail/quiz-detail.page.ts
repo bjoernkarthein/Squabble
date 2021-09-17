@@ -46,7 +46,7 @@ export class QuizDetailPage implements OnInit {
     this.getQuizQuestions(this.quizId);
   }
 
-  public async handleSubmit(): Promise<void> {
+  public async submitAttempt(): Promise<void> {
     const attempt = await this.getAttemptId(this.quizId);
     const res = await this.moodleService.processQuizAttempt(attempt, this.currentUser.token, this.givenAnswers, 1);
     await Storage.remove({ key: 'inProgressAttempt' + this.quizId });

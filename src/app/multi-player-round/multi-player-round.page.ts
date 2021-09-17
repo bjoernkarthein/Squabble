@@ -106,7 +106,7 @@ export class MultiPlayerRoundPage implements OnInit {
       return;
     }
 
-    const data = await this.moodleService.getRandomQuizQuestion(this.currentGame.courseId, 3);
+    const data = await this.moodleService.getRandomQuizQuestions(this.currentGame.courseId, 3);
 
     for (const elem of data) {
       const question = elem.question;
