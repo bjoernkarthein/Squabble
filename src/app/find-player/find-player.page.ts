@@ -11,11 +11,11 @@ import { MoodleService } from 'src/services/moodle/moodle.service';
   styleUrls: ['./find-player.page.scss'],
 })
 export class FindPlayerPage implements OnInit, AfterViewInit {
-  public students: Map<number, User> = new Map();
-  public filteredItems: any[];
-  private searchbar;
-  private courseId: string;
-  private currentUser: User;
+  public students: Map<number, User> = new Map(); // Map of all students enrolled in the course and registered at the app
+  public filteredItems: any[]; // Students currently displayed in the list, changes with every search
+  private searchbar; // searchbar element
+  private courseId: string; // ID of the selected course
+  private currentUser: User; // currently logged in user
 
   constructor(
     private moodleService: MoodleService,
@@ -44,6 +44,7 @@ export class FindPlayerPage implements OnInit, AfterViewInit {
     this.presentAlertConfirm(opponent);
   }
 
+  // Retrieve all users from the current course
   private async getUsersForCourse(): Promise<void> {
     const students = await this.backendService.getAllOtherUsersFromCourse(this.currentUser.id, this.courseId);
     if (students.error) {
@@ -52,9 +53,11 @@ export class FindPlayerPage implements OnInit, AfterViewInit {
     for (const student of students) {
       this.students.set(student.id, student);
     }
+    // Removes the currently logged in user from the list
     this.removeCurrentUser(this.currentUser.id);
   }
 
+  // Search all users in the list
   private handleSearchInput(event: any): void {
     const filteredItems: any[] = Array.from(document.querySelector('ion-list').children);
     filteredItems.shift();
@@ -71,6 +74,11 @@ export class FindPlayerPage implements OnInit, AfterViewInit {
     this.students.delete(currentUserId);
   }
 
+  /**
+   * Presents a pop-up window to notify the player about the game start
+   *
+   * @param _opponent user object of the possible game opponent
+   */
   private async presentAlertConfirm(_opponent: User): Promise<void> {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',

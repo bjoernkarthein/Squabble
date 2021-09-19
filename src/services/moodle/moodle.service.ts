@@ -315,10 +315,8 @@ export class MoodleService {
 }
 
 /**
- * Enum to store some reference values for good question amounts
+ * Enum to store reference value for minimum amount of questions required to play multi-player games in a course
  * MINIMUM means that at least 3 Questions have to be provided by the course because one round needs 3 Questions
- * AVERAGE could enable different questions for each round
- * OPTIMAL is one value that enables a good experience with mixed questions
  * Keep in mind the higher this value, the better and more random the question selection will be.
  */
 export enum QuestionAmount {

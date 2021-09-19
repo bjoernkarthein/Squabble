@@ -18,14 +18,6 @@ export class QuestionParserService {
         return this.parseMultiChoice(qid, attemptId, inProgress);
       case Type.MATCH:
         return this.parseMatch(qid, attemptId, inProgress);
-      //   case Type.CLOZE:
-      //     return this.parseCloze(qid);
-      //   case Type.DRAG_IMAGE:
-      //     return this.parseImage(qid);
-      // case Type.DRAG_MARKER:
-      //   return this.parseMarker(qid);
-      // case Type.ESSAY:
-      //   return this.parseEssay(qid, attemptId);
       case Type.DRAG_TEXT:
         return this.parseText(qid, attemptId, inProgress);
       case Type.NUMERICAL:
@@ -229,21 +221,6 @@ export class QuestionParserService {
 
     document.querySelector(moodleQId).remove();
     return question;
-  }
-
-  private parseCloze(id: number) {
-    // TODO
-    document.querySelector('.que.multianswer').remove();
-  }
-
-  private parseImage(id: number) {
-    // TODO
-    document.querySelector('.que.ddimageortext').remove();
-  }
-
-  private parseMarker(qid: number, attemptId: number, inProgress: boolean) {
-    // TODO
-    document.querySelector('.que.ddmarker').remove();
   }
 
   private parseText(qid: number, attemptId: number, inProgress: boolean): DragText {

@@ -134,6 +134,12 @@ export class QuizDetailPage implements OnInit {
     this.questions.set(parsedQuestion.id, parsedQuestion);
   }
 
+  /**
+  * present a message toast
+  *
+  * @param msg Message to be displayed
+  * @param clr color of the Toast
+  */
   private async showToast(msg: string, clr: string) {
     const toast = await this.toastController.create({
       message: msg,

@@ -120,6 +120,12 @@ export class MultiPlayerPage implements OnInit {
     await alert.present();
   }
 
+  /**
+  * present a message toast
+  *
+  * @param msg Message to be displayed
+  * @param clr color of the Toast
+  */
   private async showToast(msg: string, clr: string): Promise<void> {
     const toast = await this.toastController.create({
       message: msg,

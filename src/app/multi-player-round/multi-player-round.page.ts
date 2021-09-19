@@ -15,26 +15,26 @@ import { Storage } from '@capacitor/storage';
 export class MultiPlayerRoundPage implements OnInit {
   @ViewChild('hiddenQuestions') hiddenQuestionDOM: ElementRef;
 
-  public roundId: string;
-  public currentGame;
-  public questions: MoodleQuestionType[] = [];
-  public parsedQuestions = [];
-  public currentQuestion;
-  public currentAnswer: Map<number, MultiPlayerAnswer[]> = new Map();
-  public questionNumber = 1;
-  public rightAnswer: string;
-  public currentUser: User;
-  public multiPlayerQuestions: MultiPlayerQuestion[] = [];
-  public answeredRight: boolean;
-  public showFeedback: boolean;
+  public roundId: string; // current round ID
+  public currentGame; // MultiPlayerAttempt object storing the current game state
+  public questions: MoodleQuestionType[] = []; // array of Moodle questions selected for the round
+  public parsedQuestions = []; // array of parsed questions from the question parser
+  public currentQuestion; // currently displayed parsed question
+  public currentAnswer: Map<number, MultiPlayerAnswer[]> = new Map(); // currently given answer to the question
+  public questionNumber = 1; // current question number
+  public rightAnswer: string; // right answer for the current question
+  public currentUser: User; // currently logged in user
+  public multiPlayerQuestions: MultiPlayerQuestion[] = []; // multiPlayerQuestion objects to be stored after the round
+  public answeredRight: boolean; // Determines if the current player answered the current question right or not
+  public showFeedback: boolean; // Determines if feedback is visible or hidden
 
-  private attemptId: number;
-  private attemptIds: number[] = [];
-  private playerIds: number[] = [];
-  private existsCurrentQuestion: boolean;
+  private attemptId: number; // Current game ID
+  private attemptIds: number[] = []; // Moodle attempt IDs for the questions
+  private playerIds: number[] = []; // Array that determines the order of turns for the players
+  private existsCurrentQuestion: boolean; // Specifies if a question for the current round has already been set in case of a page reload
 
-  private initiatorStatistic: MultiPlayerStatistic;
-  private opponentStatistic: MultiPlayerStatistic;
+  private initiatorStatistic: MultiPlayerStatistic; // MultiPlayerStatistic object for the initiator
+  private opponentStatistic: MultiPlayerStatistic; // MultiPlayerStatistic object for the opponent
 
   constructor(
     private location: Location,
@@ -55,6 +55,7 @@ export class MultiPlayerRoundPage implements OnInit {
     this.currentGame.gameId = attemptId;
     this.currentUser = await this.authService.getCurrentUser();
 
+    // Retrieve the statistics for both players for the current course
     let statistic = await this.backendService.getMultiPlayerStatisticById(this.currentGame.initiatorId, this.currentGame.courseId);
     this.initiatorStatistic = statistic[0];
     statistic = await this.backendService.getMultiPlayerStatisticById(this.currentGame.opponentId, this.currentGame.courseId);
@@ -62,6 +63,7 @@ export class MultiPlayerRoundPage implements OnInit {
     console.log(this.initiatorStatistic);
     console.log(this.opponentStatistic);
 
+    // Set order of turns
     this.playerIds = [
       this.currentGame.initiatorId,
       this.currentGame.opponentId,
@@ -79,6 +81,8 @@ export class MultiPlayerRoundPage implements OnInit {
     }
   }
 
+  // Retrieves the questions for the current round
+  // If no questions were previously set by the other player three questions are selected randomly
   public async getQuestionsForCurrentRound(): Promise<void> {
     this.questions = [];
     if (this.currentGame.questionsAreSet === 1) {
@@ -131,6 +135,7 @@ export class MultiPlayerRoundPage implements OnInit {
     return input.split('##BLANK##');
   }
 
+  // Handles the click on the 'Next' button by presenting feedback and updating the game state
   public async prepareNextQuestion(): Promise<void> {
     await Storage.set({
       key: 'currentQuestionNumber',
@@ -140,6 +145,7 @@ export class MultiPlayerRoundPage implements OnInit {
     await this.updateGameState();
   }
 
+  // Hides the current question and shows the next one
   public async showNextQuestion(): Promise<void> {
     this.questionNumber++;
     this.showFeedback = false;
@@ -155,11 +161,13 @@ export class MultiPlayerRoundPage implements OnInit {
     }
   }
 
+  // Saves the correct answer for the current question
   public setRightAnswer(input: string): void {
     console.log('Rightanswer', input);
     this.rightAnswer = input;
   }
 
+  // Saves the answer given by the player for the current question after submitting
   public saveAnswer(input: string[]): void {
     console.log(input);
     const question = this.currentQuestion;
@@ -185,6 +193,7 @@ export class MultiPlayerRoundPage implements OnInit {
     console.log(this.currentAnswer);
   }
 
+  // Checks to see if a question was already selected in case of a page reload
   private async checkForCurrentQuestion(): Promise<void> {
     const ret = await Storage.get({ key: 'currentQuestions' });
     if (!ret.value) {
@@ -212,6 +221,7 @@ export class MultiPlayerRoundPage implements OnInit {
     this.currentQuestion = currentQuestion;
   }
 
+  // Sends a Moodle question to the question parser and displays the returned object
   private async handleQuestion(question: any, attemptId: number): Promise<void> {
     this.hiddenQuestionDOM.nativeElement.innerHTML += question.html;
     const elem: MoodleQuestionType = {
@@ -226,6 +236,7 @@ export class MultiPlayerRoundPage implements OnInit {
     this.currentQuestion = this.parsedQuestions[this.questionNumber - 1];
   }
 
+  // Saves the question after submitting in order to display the same question to the opponent
   private async saveQuestion(moodleQue: MoodleQuestionType, slot: number): Promise<void> {
     const multiQuestion: MultiPlayerQuestion = {
       gameId: this.currentGame.gameId,
@@ -240,6 +251,8 @@ export class MultiPlayerRoundPage implements OnInit {
     this.backendService.saveMultiPlayerQuestion(multiQuestion);
   }
 
+  // Checks to see if the answer given by the player is correct or not
+  // Updates the players statistic to reflect the results
   private async checkQuestionAnswer(questionSlot: number, rightAnswer: string): Promise<void> {
     const givenAnswer = this.currentAnswer.get(questionSlot);
 
@@ -276,6 +289,7 @@ export class MultiPlayerRoundPage implements OnInit {
     this.showFeedback = true;
   }
 
+  // Updates the games state after one game round
   private async updateGameState(): Promise<void> {
     if (this.currentGame.questionsAreSet === 0) {
       await this.saveQuestion(this.questions[this.questionNumber - 1], this.questionNumber);
@@ -285,6 +299,7 @@ export class MultiPlayerRoundPage implements OnInit {
     this.checkQuestionAnswer(this.questionNumber, this.rightAnswer);
   }
 
+  // Handles updating all values after finishing a round
   private async finishRound(): Promise<void> {
     if (this.currentGame.questionsAreSet === 0) {
       this.currentGame.currentRound++;
@@ -312,6 +327,7 @@ export class MultiPlayerRoundPage implements OnInit {
     this.location.back();
   }
 
+  // Updates the game score and the players statistics to reflect the changes
   private async updateGameScore(oneRight: number, twoRight: number) {
     if (oneRight > twoRight) {
       this.currentGame.initiatorPoints++;

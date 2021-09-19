@@ -12,14 +12,14 @@ import { Storage } from '@capacitor/storage';
 })
 export class MultiPlayerOverviewPage implements OnInit {
 
-  public courseId: string;
-  public attemptId: string;
-  public currentGame;
-  public opponent: User;
-  public myself: User;
-  public myTurn: boolean;
-  public finished: boolean;
-  public rounds: Map<number, MultiPlayerQuestion[]> = new Map();
+  public courseId: string; // Id of the selected course
+  public attemptId: string; // unique game ID of the multi-player game
+  public currentGame; // MultiPlayerAttempt object storing all game related data
+  public opponent: User; // Opponent user object
+  public myself: User; // Currently logged in player
+  public myTurn: boolean; // Determines if it is the currently logged in player's turn
+  public finished: boolean; // Determines if the game has finished
+  public rounds: Map<number, MultiPlayerQuestion[]> = new Map(); // Map of round Number to MultiPlayerQuestion objects of that round
   private currentUser: User;
 
   constructor(
@@ -37,6 +37,7 @@ export class MultiPlayerOverviewPage implements OnInit {
   async ionViewWillEnter() {
     this.attemptId = this.route.snapshot.paramMap.get('gid');
     this.courseId = this.route.snapshot.paramMap.get('cid');
+    // Get the current game object from the database
     this.currentGame = await this.backendService.getMultiPlayerAttemptById(this.attemptId);
 
     this.currentUser = await this.authService.getCurrentUser();
@@ -59,6 +60,7 @@ export class MultiPlayerOverviewPage implements OnInit {
 
   }
 
+  // Starts the next multi-player game round
   public async startNextRound() {
     if (await this.isOtherRoundInProgress(this.attemptId)) {
       this.presentAlertInfo();

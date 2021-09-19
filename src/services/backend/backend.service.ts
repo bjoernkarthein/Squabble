@@ -13,6 +13,8 @@ export class BackendService {
   // Base url of the database API
   private APIUrl = 'http://localhost:5000';
 
+  // Https options for post requests
+  // content type needs to be set to JSON as the data sent is in JSON format
   private httpOptions = {
     headers: new HttpHeaders({
       // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -205,6 +207,18 @@ export interface Course {
   quizCount?: number;
 }
 
+/**
+ * interface for the SinglePlayerAttempt type
+ * attemptId unique numerical attempt ID
+ * userId: user ID of the user that started the attempt
+ * username: the users Moodle username
+ * quizId: The quiz ID for which the attempt was created
+ * quizName: The quizzes title
+ * totalPoints: Achieved points by the user
+ * grade: The users grade according to the quiz results
+ * startDate: Timestamp for the creation date
+ * endDate: imestamp for the completion date
+ */
 export interface SinglePlayerAttempt {
   attemptId: number;
   userId: number;
@@ -217,6 +231,19 @@ export interface SinglePlayerAttempt {
   endDate?: string;
 }
 
+/**
+ * interface for the MultiPlayerAttempt type
+ * gameId: Unique ID for the created game
+ * initiatorId: user ID of the player that started the game
+ * opponentId: user ID of the opponent
+ * inProgress: shows if the game is in progress or finished
+ * currentRound: Number of the current round of the game
+ * nextTurnId: User ID of the player that is allowed to start the next round
+ * turns: Total number of turns played so far
+ * questionsAreSet: determines if the questions from the previous round are saved
+ * initiatorPoints: Points of the initiator
+ * opponentPoints: Points of the opponent
+ */
 export interface MultiPlayerAttempt {
   gameId?: number;
   initiatorId: number;
@@ -231,6 +258,17 @@ export interface MultiPlayerAttempt {
   opponentPoints?: number;
 }
 
+/**
+ * interface for the MultiPlayerQuestion type
+ * gameId: Unique id of the game the question was saved for
+ * attemptId: Moodle attempt ID for the quiz the question was taken from
+ * roundNumber: Number of the round the saved question appears in
+ * questionSlot: Place in which the question appears within the round
+ * question: The MoodleQuestionType object defining the question
+ * rightAnswers: String representation of the right answer for the question
+ * playerOneRight: Determines if the initiator answered the question right or wrong
+ * playerTwoRight: Determines if the opponent answered the question right or wrong
+ */
 export interface MultiPlayerQuestion {
   gameId: number;
   attemptId: number;
@@ -242,6 +280,14 @@ export interface MultiPlayerQuestion {
   playerTwoRight?: boolean;
 }
 
+/**
+ * interface for the MultiPlayerAnswer type
+ * gameId: Unique ID of the game that the answer belongs to
+ * roundNumber: Number of the round the answer was given in
+ * questionSlot: Position of the question within the round for which the answer was given
+ * answerOption: ID of the answer input field
+ * answerValue: Value of the input field (given answer)
+ */
 export interface MultiPlayerAnswer {
   gameId: number;
   roundNumber: number;
@@ -250,6 +296,15 @@ export interface MultiPlayerAnswer {
   answerValue: string;
 }
 
+/**
+ * interface for the MultiPlayerStatistic type
+ * userId: Unique user ID for the user that the statistic belongs to
+ * courseId: Unique course ID for the course that the statistic belongs to
+ * totalWins: Total number of wins the player has
+ * totalLosses: Total number of losses the player has
+ * totalRight: Number of questions answered correctly overall
+ * totalWrong: Number of questions answered wrong overall
+ */
 export interface MultiPlayerStatistic {
   userId: number;
   courseId: number;

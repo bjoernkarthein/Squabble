@@ -9,6 +9,13 @@ import { MoodleService } from 'src/services/moodle/moodle.service';
 export class CourseGuard implements CanLoad {
   constructor(private authService: AuthService, private moodleService: MoodleService, private router: Router) { }
 
+  /**
+   * Determines if a user can load course related pages
+   *
+   * @param route Current URL
+   * @param segments URL Segments
+   * @returns true if the current user can access the courses contents, false otherwise
+   */
   async canLoad(
     route: Route,
     segments: UrlSegment[]): Promise<boolean> {

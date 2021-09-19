@@ -10,6 +10,11 @@ export class AuthGuard implements CanLoad {
     private authService: AuthService,
     private router: Router) { }
 
+  /**
+   * Determines if the user can view the page
+   *
+   * @returns True if the user is currently logged in, false otherwise
+   */
   async canLoad(): Promise<boolean> {
     const currentUser = await this.authService.getCurrentUser();
     if (currentUser) {
