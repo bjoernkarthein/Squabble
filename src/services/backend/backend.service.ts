@@ -161,6 +161,10 @@ export class BackendService {
   public async sendInvitationMail(inviter: User, user: User) {
     await this.http.post(this.APIUrl + '/send_mail', { inviter, user }, this.httpOptions).toPromise();
   }
+
+  public async deleteMultiPlayerAttempt(gameId: number) {
+    await this.http.delete(this.APIUrl + '/multi_player_attempts/' + gameId, this.httpOptions).toPromise();
+  }
 }
 
 /**

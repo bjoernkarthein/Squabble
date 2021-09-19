@@ -12,6 +12,7 @@ import { Storage } from '@capacitor/storage';
 })
 export class MultiPlayerOverviewPage implements OnInit {
 
+  public courseId: string;
   public attemptId: string;
   public currentGame;
   public opponent: User;
@@ -35,6 +36,7 @@ export class MultiPlayerOverviewPage implements OnInit {
 
   async ionViewWillEnter() {
     this.attemptId = this.route.snapshot.paramMap.get('gid');
+    this.courseId = this.route.snapshot.paramMap.get('cid');
     this.currentGame = await this.backendService.getMultiPlayerAttemptById(this.attemptId);
 
     this.currentUser = await this.authService.getCurrentUser();
@@ -93,6 +95,12 @@ export class MultiPlayerOverviewPage implements OnInit {
     } else {
       return this.currentGame.opponentPoints + ':' + this.currentGame.initiatorPoints;
     }
+  }
+
+  public async surrenderGame(): Promise<void> {
+    const gameId = this.currentGame.gid;
+    this.router.navigateByUrl('mycourses/' + this.courseId + '/multi-player');
+    await this.backendService.deleteMultiPlayerAttempt(gameId);
   }
 
   private async getPlayers(): Promise<void> {

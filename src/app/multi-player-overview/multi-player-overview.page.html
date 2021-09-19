@@ -7,7 +7,7 @@
 <ion-content>
   <div id="container" *ngIf="this.myself">
     <div class="self">{{this.myself.firstname}} {{this.myself.lastname}}</div>
-    <h3 class="score">{{this.getScore(this.myself.id)}}</h3>
+    <h4 class="score">{{this.getScore(this.myself.id)}}</h4>
     <div class="opponent">
       {{this.opponent.firstname}} {{this.opponent.lastname}}
     </div>
@@ -28,7 +28,14 @@
       <ion-button
         *ngIf="this.myTurn && !this.finished"
         (click)="this.startNextRound()"
+        color="primary"
         >Play</ion-button
+      >
+      <ion-button
+        *ngIf="!this.finished"
+        (click)="this.surrenderGame()"
+        color="secondary"
+        >Surrender</ion-button
       >
     </div>
   </div>

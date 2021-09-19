@@ -1,17 +1,17 @@
-import { NgModule, OnInit } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
-
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
-import { ComponentsModule } from 'src/components/components.module';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouteReuseStrategy } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { ComponentsModule } from 'src/components/components.module';
 import { environment } from '../environments/environment';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+
+
 
 @NgModule({
   declarations: [AppComponent],

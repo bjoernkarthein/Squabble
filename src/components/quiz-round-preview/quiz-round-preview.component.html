@@ -1,5 +1,5 @@
 <div id="outer">
-  <span *ngIf="!this.isFinished">Not answered yet...</span>
+  <span *ngIf="!this.isFinished">waiting...</span>
   <ng-container *ngIf="this.isFinished">
     <div
       *ngFor="let question of this.questions"

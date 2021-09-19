@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CourseCardComponent } from './course-card/course-card.component';
-import { MultipleChoiceQuestionComponent } from './miltiple-choice-question/multiple-choice-question.component';
+import { MultipleChoiceQuestionComponent } from './multiple-choice-question/multiple-choice-question.component';
 import { TrueFalseQuestionComponent } from './true-false-question/true-false-question.component';
 import { MatchingQuestionComponent } from './matching-question/matching-question.component';
 import { NumericQuestionComponent } from './numeric-question/numeric-question.component';

@@ -78,6 +78,8 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
   }
 
   private sendInvitationMail(opponent: User): void {
+    // TODO: This is commented out for now as the right mailserver credentials need to be provided in the API
+    // TODO: After providing the right credentials in the API this line can be enabled and sending mails works
     // this.backendService.sendInvitationMail(this.currentUser, opponent);
   }
 
