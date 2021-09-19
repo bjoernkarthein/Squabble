@@ -106,7 +106,7 @@
     <div
       id="feedback-container"
       *ngIf="this.currentGame && this.currentQuestion && this.showFeedback"
-      (clickOutside)="this.nextQuestion()"
+      (clickOutside)="this.showNextQuestion()"
     >
       <div *ngIf="this.answeredRight" class="feedback correct">
         Your answer is correct.
@@ -125,14 +125,14 @@
       *ngIf="!this.showFeedback"
       size="large"
       color="success"
-      (click)="this.handleNextQuestion()"
+      (click)="this.prepareNextQuestion()"
       ><span>Submit</span></ion-button
     >
     <ion-button
       *ngIf="this.showFeedback"
       size="large"
       type="primary"
-      (click)="this.nextQuestion()"
+      (click)="this.showNextQuestion()"
       ><span>Next Question</span></ion-button
     >
   </div>

@@ -2,8 +2,12 @@
   <span *ngIf="this.currentUser"
     >Logged in as {{ this.currentUser.username }}</span
   >
-  <div class="logout-container" (click)="this.logout()">
+  <div class="child-container" (click)="this.logout()">
     <ion-icon name="log-out-outline"></ion-icon>
     <span class="log-out">Log out</span>
+  </div>
+  <div class="child-container" (click)="this.reload()">
+    <ion-icon name="refresh-outline"></ion-icon>
+    <span class="reload">Reload Application</span>
   </div>
 </div>

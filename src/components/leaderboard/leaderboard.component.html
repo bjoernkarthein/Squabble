@@ -4,26 +4,14 @@
   </ion-list-header>
   <ion-item>
     <ion-label class="first">Name</ion-label>
-    <ion-label
-      >Total Wins
-      <ion-icon
-        [name]="this.getIcon(0)"
-        (click)="this.sortList('wins')"
-      ></ion-icon
+    <ion-label (click)="this.sortList('wins')"
+      >Total Wins <ion-icon [name]="this.getIcon(0)"></ion-icon
     ></ion-label>
-    <ion-label
-      >Answered right
-      <ion-icon
-        [name]="this.getIcon(1)"
-        (click)="this.sortList('right')"
-      ></ion-icon
+    <ion-label (click)="this.sortList('right')"
+      >Answered right <ion-icon [name]="this.getIcon(1)"></ion-icon
     ></ion-label>
-    <ion-label
-      >Games Played
-      <ion-icon
-        [name]="this.getIcon(2)"
-        (click)="this.sortList('games')"
-      ></ion-icon
+    <ion-label (click)="this.sortList('games')"
+      >Games Played <ion-icon [name]="this.getIcon(2)"></ion-icon
     ></ion-label>
   </ion-item>
   <ion-item *ngFor="let userStatistic of this.userStatistics">

@@ -48,7 +48,7 @@ export class MultiPlayerPage implements OnInit {
 
   public async startMultiPlayer(_courseId: string, opponent?: User): Promise<void> {
     if (await this.isOtherRoundInProgress()) {
-      this.presentAlertInfo();
+      this.presentAlert();
       return;
     }
 
@@ -101,7 +101,7 @@ export class MultiPlayerPage implements OnInit {
     }
   }
 
-  private async presentAlertInfo(): Promise<void> {
+  private async presentAlert(): Promise<void> {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: 'Failed to start new game',
@@ -120,7 +120,13 @@ export class MultiPlayerPage implements OnInit {
     await alert.present();
   }
 
-  private async showToast(msg: string, clr: string) {
+  /**
+  * present a message toast
+  *
+  * @param msg Message to be displayed
+  * @param clr color of the Toast
+  */
+  private async showToast(msg: string, clr: string): Promise<void> {
     const toast = await this.toastController.create({
       message: msg,
       duration: 3000,

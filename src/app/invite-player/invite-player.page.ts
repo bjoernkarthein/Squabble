@@ -35,22 +35,35 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
     this.searchbar.addEventListener('ionInput', this.handleSearchInput);
   }
 
+  // Get all users from the Moodle course that are not registered at the Squabble app
   async ionViewWillEnter() {
     this.courseId = this.activeRoute.snapshot.paramMap.get('cid');
     const students = await this.moodleService.getEnrolledUsersForCourse(this.courseId);
+    const registeredStudents = await this.backendService.getAllOtherUsersFromCourse(this.currentUser.id, this.courseId);
+    console.log(registeredStudents);
     if (students.error) {
       return;
     }
     for (const student of students) {
       this.students.set(student.id, student);
     }
-    this.removeCurrentUser(this.currentUser.id);
+
+    // Removes current user
+    this.students.delete(this.currentUser.id);
+
+    if (registeredStudents.error) {
+      return;
+    }
+
+    // Removes already registered users
+    this.removeRegisteredUsers(registeredStudents);
   }
 
   public inviteUser(opponent: User) {
     this.presentAlertConfirm(opponent);
   }
 
+  // Search all users in the list
   private handleSearchInput(event: any) {
     const filteredItems: any[] = Array.from(document.querySelector('ion-list').children);
     filteredItems.shift();
@@ -63,14 +76,23 @@ export class InvitePlayerPage implements OnInit, AfterViewInit {
     });
   }
 
-  private removeCurrentUser(currentUserId: number) {
-    this.students.delete(currentUserId);
+  private removeRegisteredUsers(registeredUsers: User[]): void {
+    for (const user of registeredUsers) {
+      this.students.delete(user.id);
+    }
   }
 
-  private sendInvitationMail(opponent: User) {
+  private sendInvitationMail(opponent: User): void {
+    // TODO: This is commented out for now as the right mailserver credentials need to be provided in the API
+    // TODO: After providing the right credentials in the API this line can be enabled and sending mails works
     // this.backendService.sendInvitationMail(this.currentUser, opponent);
   }
 
+  /**
+   * Presents a pop-up window to notify the player about the sending of the mail
+   *
+   * @param _opponent user object of the invited player
+   */
   private async presentAlertConfirm(_opponent: User): Promise<void> {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',

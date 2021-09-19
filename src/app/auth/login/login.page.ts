@@ -17,22 +17,31 @@ export class LoginPage implements OnInit {
   ) { }
 
   async ngOnInit() {
+    // Subscibes to the loginCheck Observable to get notified if a login attempt fails or succeeds
     this.authService.loginCheck.subscribe(succsessfullLogin => {
       if (!succsessfullLogin) {
         this.showToast('Wrong login credentials', 'danger');
       }
     });
 
+    // redirect user to home page if already logged in
     const loggedIn = await this.authService.isLoggedIn();
     if (loggedIn) {
       this.router.navigateByUrl('/home');
     }
   }
 
-  public login(form) {
+  // submit the login credentials
+  public submit(form) {
     this.authService.login(form.value);
   }
 
+  /**
+   * present a message toast
+   *
+   * @param msg Message to be displayed
+   * @param clr color of the Toast
+   */
   private async showToast(msg: string, clr: string) {
     const toast = await this.toastController.create({
       message: msg,

@@ -13,12 +13,12 @@ import { MoodleService, QuestionAmount } from 'src/services/moodle/moodle.servic
 export class CourseDetailPage implements OnInit, AfterViewInit {
   @ViewChild('text') description: ElementRef;
 
-  public title: string;
-  public courseDesc: string;
-  public courseId: string;
-  public currentUser: User;
-  public multiPlayerEnabled: boolean;
-  public courseUrl: string;
+  public title: string; // Course title
+  public courseDesc: string; // Course description
+  public courseId: string; // Cousre id
+  public currentUser: User; // Currently logged in user
+  public multiPlayerEnabled: boolean; // If the course has enough questions for multi-player games
+  public courseUrl: string; // url of the Moodle course site
 
   constructor(
     private router: Router,
@@ -43,16 +43,19 @@ export class CourseDetailPage implements OnInit, AfterViewInit {
 
     // Checks if the minimal amount of questions exits in the course
     // Feel free to use another value from the QuestionAmount ENUM or set your own.
+    // For the application to work properly the value must be greater or equal 3
 
     this.multiPlayerEnabled = await this.moodleService.checkQuestionAmount(this.courseId, QuestionAmount.MINIMUM);
     console.log(this.multiPlayerEnabled);
     this.description.nativeElement.innerHTML = this.courseDesc;
   }
 
+  // Navigate to single-player page
   public goToSinglePlayer(): void {
     this.router.navigateByUrl(this.router.url + '/single-player');
   }
 
+  // Navigate to multi-player page
   public goToMultiPlayer(): void {
     this.router.navigateByUrl(this.router.url + '/multi-player');
   }

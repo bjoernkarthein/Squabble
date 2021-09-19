@@ -32,6 +32,7 @@ export class AuthService {
     if (error) {
       // Wrong login credentials
       this.loginCheck.next(false);
+      console.log(tokenResponse);
       return;
     }
     this.currentUser.token = tokenResponse.token;

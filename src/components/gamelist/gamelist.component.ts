@@ -12,6 +12,7 @@ export class GamelistComponent implements OnInit {
 
   public multiPlayerGames = [];
   public filteredGames = [];
+  public currentValue: string;
 
   constructor(private backendService: BackendService) {
   }
@@ -23,8 +24,11 @@ export class GamelistComponent implements OnInit {
       }
       console.log(this.courseId, this.currentUser.id);
       this.multiPlayerGames = await this.backendService.getMultiPlayerAttemptsByCourseAndUser(this.courseId, this.currentUser.id);
+      this.currentValue = 'progress';
       this.filterOpenGames();
     });
+
+    this.currentValue = 'progress';
   }
 
   public filter(event: any): void {
