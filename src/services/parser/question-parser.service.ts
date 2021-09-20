@@ -9,6 +9,14 @@ export class QuestionParserService {
   constructor() {
   }
 
+  /**
+   * Selects the right parsing function according to the provided question type
+   *
+   * @param question Moodle Question Object
+   * @param attemptId attempt ID of the quiz attempt that the question is recieved from
+   * @param inProgress If the attempt is still in progress or not
+   * @returns The question object returned by the specific function
+   */
   public parseQuestion(question: MoodleQuestionType, attemptId: number, inProgress: boolean) {
     const qid = question.slot;
     const questionType = question.type;
@@ -33,6 +41,14 @@ export class QuestionParserService {
     }
   }
 
+  /**
+   * parses a multiple-choice Moodle question to display an interactive component
+   *
+   * @param qid Moodle question slot ID
+   * @param attemptId  Moodle quiz attempt ID the question is taken from
+   * @param inProgress If the attempt is still in progress or not
+   * @returns A MultiPleChoice question object with the data from the Moodle question
+   */
   private parseMultiChoice(qid: number, attemptId: number, inProgress: boolean): MultipleChoice {
     const moodleQId = '#question-' + attemptId + '-' + qid;
 
@@ -96,6 +112,14 @@ export class QuestionParserService {
     return question;
   }
 
+  /**
+   * parses a Moodle matching question to display an interactive component
+   *
+   * @param qid Moodle question slot ID
+   * @param attemptId  Moodle quiz attempt ID the question is taken from
+   * @param inProgress If the attempt is still in progress or not
+   * @returns A Match question object with the data from the Moodle question
+   */
   private parseMatch(qid: number, attemptId: number, inProgress: boolean): Match {
     const moodleQId = '#question-' + attemptId + '-' + qid;
 
@@ -159,6 +183,14 @@ export class QuestionParserService {
     return question;
   }
 
+  /**
+   * parses a Moodle Gap Select question to display an interactive component
+   *
+   * @param qid Moodle question slot ID
+   * @param attemptId  Moodle quiz attempt ID the question is taken from
+   * @param inProgress If the attempt is still in progress or not
+   * @returns A GapSelect question object with the data from the Moodle question
+   */
   private parseGapSelect(qid: number, attemptId: number, inProgress: boolean): GapSelect {
     const moodleQId = '#question-' + attemptId + '-' + qid;
 
@@ -223,6 +255,14 @@ export class QuestionParserService {
     return question;
   }
 
+  /**
+   * parses a Moodle Drag and Drop question to display an interactive component
+   *
+   * @param qid Moodle question slot ID
+   * @param attemptId  Moodle quiz attempt ID the question is taken from
+   * @param inProgress If the attempt is still in progress or not
+   * @returns A DragText question object with the data from the Moodle question
+   */
   private parseText(qid: number, attemptId: number, inProgress: boolean): DragText {
     const moodleQId = '#question-' + attemptId + '-' + qid;
 
@@ -291,6 +331,14 @@ export class QuestionParserService {
     return question;
   }
 
+  /**
+   * parses a Moodle numeric question to display an interactive component
+   *
+   * @param qid Moodle question slot ID
+   * @param attemptId  Moodle quiz attempt ID the question is taken from
+   * @param inProgress If the attempt is still in progress or not
+   * @returns A Numerical question object with the data from the Moodle question
+   */
   private parseNumerical(qid: number, attemptId: number, inProgress: boolean): Numerical {
     const moodleQId = '#question-' + attemptId + '-' + qid;
 
@@ -322,6 +370,14 @@ export class QuestionParserService {
     return question;
   }
 
+  /**
+   * parses a Moodle Short Answer question to display an interactive component
+   *
+   * @param qid Moodle question slot ID
+   * @param attemptId  Moodle quiz attempt ID the question is taken from
+   * @param inProgress If the attempt is still in progress or not
+   * @returns A ShortAnswer question object with the data from the Moodle question
+   */
   private parseShort(qid: number, attemptId: number, inProgress: boolean): ShortAnswer {
     const moodleQId = '#question-' + attemptId + '-' + qid;
 
@@ -353,6 +409,14 @@ export class QuestionParserService {
     return question;
   }
 
+  /**
+   * parses a Moodle essay question to display an interactive component
+   *
+   * @param qid Moodle question slot ID
+   * @param attemptId  Moodle quiz attempt ID the question is taken from
+   * @param inProgress If the attempt is still in progress or not
+   * @returns An Essay question object with the data from the Moodle question
+   */
   private parseEssay(qid: number, attemptId: number, inProgress: boolean): Essay {
     const moodleQId = '#question-' + attemptId + '-' + qid;
 
@@ -377,6 +441,14 @@ export class QuestionParserService {
     return question;
   }
 
+  /**
+   * parses a Moodle true-false question to display an interactive component
+   *
+   * @param qid Moodle question slot ID
+   * @param attemptId  Moodle quiz attempt ID the question is taken from
+   * @param inProgress If the attempt is still in progress or not
+   * @returns A TrueFalse question object with the data from the Moodle question
+   */
   private parseTrueFalse(qid: number, attemptId: number, inProgress: boolean): TrueFalse {
     const moodleQId = '#question-' + attemptId + '-' + qid;
 
@@ -409,6 +481,13 @@ export class QuestionParserService {
     return question;
   }
 
+  /**
+   * parses all not supported Moodle question types
+   *
+   * @param qid Moodle question slot ID
+   * @param attemptId  Moodle quiz attempt ID the question is taken from
+   * @returns A NotSupported question object with the data from the Moodle question
+   */
   private parseNotSupported(qid: number, type: string, attemptId: number): NotSupported {
     const moodleQId = '#question-' + attemptId + '-' + qid;
     const question: NotSupported = {
@@ -421,7 +500,11 @@ export class QuestionParserService {
   }
 }
 
-//TODO: comment
+/* Moodle question type enum
+  The provided strings for every enum are the question types defined by Moodle.
+  These strings have to be identical to all values that Moodle can assign the 'type' property of a Moodle question object.
+  If the strings do not match any predefined Moodle type string the parsing fails.
+*/
 export enum Type {
   MULTIPLE_CHOICE = 'multichoice',
   NUMERICAL = 'numerical',
@@ -436,6 +519,13 @@ export enum Type {
   ESSAY = 'essay',
 }
 
+/**
+ * interface for a MoodleQuestionType object
+ * type: string form to describe the moodle question type
+ * html: HTML template of the Moodle question
+ * blockedByPrevious: If the question is blocked by the previous question or not
+ * slot: Position that the question appears in within the quiz
+ */
 export interface MoodleQuestionType {
   type: string;
   html: string;
@@ -443,11 +533,28 @@ export interface MoodleQuestionType {
   slot: number;
 }
 
+/**
+ * interface to descibe the Fields of a Moodle question
+ * every field has a name and a value
+ * the sequenceCheck of a question and all answer Fields are described by this interface
+ */
 export interface Field {
   name: string;
   value: string;
 }
 
+/**
+ * interface for the multiple-choice question type
+ * id: Moodle question slot number
+ * type: Moodle question type
+ * text: Question text
+ * multipleAllowed: Determines if multiple answers can be selected or only one
+ * answerOptions: All answer option texts for the question
+ * sequenceCheck: Moodle sequenceCheck field that has to be sent when saving the quiz results
+ * answerFields: All answer field names and values that have to be sent when saving the question
+ * rightAnswers: String representation of the correct answers for the question for the multi-player mode
+ * rightAnswerText: Moodle Feedback text
+ */
 interface MultipleChoice {
   id: number;
   type: Type;
@@ -460,6 +567,16 @@ interface MultipleChoice {
   rightAnswerText?: string;
 }
 
+/**
+ * interface for the true-false question type
+ * id: Moodle question slot number
+ * type: Moodle question type
+ * text: Question text
+ * sequenceCheck: Moodle sequenceCheck field that has to be sent when saving the quiz results
+ * answerFields: All answer field names and values that have to be sent when saving the question
+ * rightAnswers: String representation of the correct answers for the question for the multi-player mode
+ * rightAnswerText: Moodle Feedback text
+ */
 interface TrueFalse {
   id: number;
   type: Type;
@@ -470,6 +587,16 @@ interface TrueFalse {
   rightAnswerText?: string;
 }
 
+/**
+ * interface for the numeric question type
+ * id: Moodle question slot number
+ * type: Moodle question type
+ * text: Question text
+ * sequenceCheck: Moodle sequenceCheck field that has to be sent when saving the quiz results
+ * answerFields: All answer field names and values that have to be sent when saving the question
+ * rightAnswers: String representation of the correct answers for the question for the multi-player mode
+ * rightAnswerText: Moodle Feedback text
+ */
 interface Numerical {
   id: number;
   type: Type;
@@ -480,6 +607,16 @@ interface Numerical {
   rightAnswerText?: string;
 }
 
+/**
+ * interface for the short answer question type
+ * id: Moodle question slot number
+ * type: Moodle question type
+ * text: Question text
+ * sequenceCheck: Moodle sequenceCheck field that has to be sent when saving the quiz results
+ * answerFields: All answer field names and values that have to be sent when saving the question
+ * rightAnswers: String representation of the correct answers for the question for the multi-player mode
+ * rightAnswerText: Moodle Feedback text
+ */
 interface ShortAnswer {
   id: number;
   type: Type;
@@ -490,6 +627,14 @@ interface ShortAnswer {
   rightAnswerText?: string;
 }
 
+/**
+ * interface for the true-false question type
+ * id: Moodle question slot number
+ * type: Moodle question type
+ * text: Question text
+ * sequenceCheck: Moodle sequenceCheck field that has to be sent when saving the quiz results
+ * answerFields: All answer field names and values that have to be sent when saving the question
+ */
 interface Essay {
   id: number;
   type: Type;
@@ -498,17 +643,18 @@ interface Essay {
   answerFields?: Field[];
 }
 
-interface Cloze {
-  id: number;
-  type: Type;
-  text: string;
-  answerOptions: string[];
-  sequenceCheck?: Field;
-  answerFields?: Field[];
-  rightAnswers?: string[];
-  rightAnswerText?: string;
-}
-
+/**
+ * interface for the matching text question type
+ * id: Moodle question slot number
+ * type: Moodle question type
+ * text: Question text
+ * gapText: All text snippets in front of the drop-down selections
+ * answerOptions: All drop-down answer option texts for the question
+ * sequenceCheck: Moodle sequenceCheck field that has to be sent when saving the quiz results
+ * answerFields: All answer field names and values that have to be sent when saving the question
+ * rightAnswers: String representation of the correct answers for the question for the multi-player mode
+ * rightAnswerText: Moodle Feedback text
+ */
 interface Match {
   id: number;
   type: Type;
@@ -521,6 +667,17 @@ interface Match {
   rightAnswerText?: string;
 }
 
+/**
+ * interface for the matching text question type
+ * id: Moodle question slot number
+ * type: Moodle question type
+ * gapText: All text snippets in front of the drop-down selections
+ * answerOptions: All drop-down answer option texts for the question
+ * sequenceCheck: Moodle sequenceCheck field that has to be sent when saving the quiz results
+ * answerFields: All answer field names and values that have to be sent when saving the question
+ * rightAnswers: String representation of the correct answers for the question for the multi-player mode
+ * rightAnswerText: Moodle Feedback text
+ */
 interface GapSelect {
   id: number;
   type: Type;
@@ -532,18 +689,18 @@ interface GapSelect {
   rightAnswerText?: string;
 }
 
-interface DragImage {
-  id: number;
-  type: Type;
-  text?: string;
-  image: string;
-  answerOptions: string[];
-  sequenceCheck?: Field;
-  answerFields?: Field[];
-  rightAnswers?: string[];
-  rightAnswerText?: string;
-}
-
+/**
+ * interface for the matching text question type
+ * id: Moodle question slot number
+ * type: Moodle question type
+ * text: Question text without the gaps
+ * gaps: List of all gaps and what group they belong to
+ * answerOptions: All drop-down answer option texts for the question
+ * sequenceCheck: Moodle sequenceCheck field that has to be sent when saving the quiz results
+ * answerFields: All answer field names and values that have to be sent when saving the question
+ * rightAnswers: String representation of the correct answers for the question for the multi-player mode
+ * rightAnswerText: Moodle Feedback text
+ */
 interface DragText {
   id: number;
   type: Type;
@@ -556,30 +713,13 @@ interface DragText {
   rightAnswerText?: string;
 }
 
-interface DragImageOrText {
-  id: number;
-  type: Type;
-  text?: string;
-  image?: string;
-  answerOptions: string[];
-  sequenceCheck?: Field;
-  answerFields?: Field[];
-  rightAnswers?: string[];
-  rightAnswerText?: string;
-}
-
-interface DragMarker {
-  id: number;
-  type: Type;
-  text?: string;
-  image: string;
-  markers: string[];
-  sequenceCheck?: Field;
-  answerFields?: Field[];
-  rightAnswers?: string[];
-  rightAnswerText?: string;
-}
-
+/**
+ * interface for the matching text question type
+ * id: Moodle question slot number
+ * text: Question text
+ * sequenceCheck: Moodle sequenceCheck field that has to be sent when saving the quiz results
+ * answerFields: All answer field names and values that have to be sent when saving the question
+ */
 interface NotSupported {
   id: number;
   text: string;

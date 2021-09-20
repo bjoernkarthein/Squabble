@@ -11,6 +11,8 @@ export class MoodleService {
   public moodleInstalationUrl = 'http://localhost/moodle';
   private moodleBaseUrl = this.moodleInstalationUrl + '/webservice/rest/server.php?';
   //! Needs to be hidden somehow
+  //! This token is kept in the plain code for easy development and testing access
+  //! It must be hidden before the application is deployed in the final environmen, possibly inside the environment variables
   private webServiceUserToken = 'b8f762ebc0e11f9e28d7d1b5ad1f023b';
   private studentService = 'comp_quiz_student';
 
